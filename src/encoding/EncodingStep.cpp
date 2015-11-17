@@ -7,4 +7,20 @@
 namespace pipe {
 
 
+EncodingStep::EncodingStep(const std::string &info,
+                           const std::string &usage,
+                           const std::string &help)
+        :
+        PipelineStep(info, usage, help)
+{
+
+}
+
+
+EncodingStep::~EncodingStep()
+{
+
+}
+
+
 }
