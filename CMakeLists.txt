@@ -13,7 +13,6 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(SOURCE_FILES src/main.cpp
-                 src/pipeline/PipeLine.cpp
                  src/pipeline/PipeLine.h
                  src/pipeline/PipelineStep.cpp
                  src/pipeline/PipelineStep.h

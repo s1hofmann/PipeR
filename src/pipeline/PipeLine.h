@@ -9,10 +9,11 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include "PipelineStep.h"
+#include "../preprocessing/PreprocessingStep.h"
 
 namespace pipe {
 
-
+template <class T>
 class PipeLine {
 public:
     PipeLine();
@@ -20,9 +21,9 @@ public:
 
     void train();
 
-    void classify();
+    T classify();
 
-    unsigned long addPreprocessingStep(const cv::Ptr<PipelineStep> step);
+    unsigned long addPreprocessingStep(const cv::Ptr<PreprocessingStep> step);
     bool removePreprocessingStep(const std::string name);
     bool removePreprocessingStep(const unsigned long index);
 
@@ -48,7 +49,7 @@ public:
     void showPipeline();
 
 private:
-    std::vector<cv::Ptr<PipelineStep>> preprocessing;
+    std::vector<cv::Ptr<PreprocessingStep>> preprocessing;
     cv::Ptr<PipelineStep> featureExtraction = nullptr;
     std::vector<cv::Ptr<PipelineStep>> postprocessing;
     cv::Ptr<PipelineStep> dimensionalityReduction = nullptr;
@@ -59,6 +60,8 @@ private:
     cv::Mat1b feMask;
 };
 
+//Includes template implementation for successful compilation
+#include "PipeLine.cpp"
 
 }
 

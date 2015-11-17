@@ -2,28 +2,28 @@
 // Created by Simon Hofmann on 16.11.15.
 //
 
-#include "PipeLine.h"
 
-namespace pipe {
-
-
-PipeLine::PipeLine() {
+template <typename T>
+PipeLine<T>::PipeLine() {
 
 }
 
 
-PipeLine::~PipeLine() {
+template <typename T>
+PipeLine<T>::~PipeLine() {
 
 }
 
 
-unsigned long PipeLine::addPreprocessingStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+unsigned long PipeLine<T>::addPreprocessingStep(const cv::Ptr<PreprocessingStep> step) {
     this->preprocessing.push_back(step);
     return this->preprocessing.size() - 1;
 }
 
 
-bool PipeLine::removePreprocessingStep(const std::string name) {
+template <typename T>
+bool PipeLine<T>::removePreprocessingStep(const std::string name) {
     if(this->preprocessing.empty()) {
         return false;
     }
@@ -38,7 +38,8 @@ bool PipeLine::removePreprocessingStep(const std::string name) {
 }
 
 
-bool PipeLine::removePreprocessingStep(const unsigned long index) {
+template <typename T>
+bool PipeLine<T>::removePreprocessingStep(const unsigned long index) {
     if(this->preprocessing.empty()) {
         return false;
     }
@@ -51,13 +52,15 @@ bool PipeLine::removePreprocessingStep(const unsigned long index) {
 }
 
 
-unsigned long PipeLine::addPostprocessingStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+unsigned long PipeLine<T>::addPostprocessingStep(const cv::Ptr<PipelineStep> step) {
     this->postprocessing.push_back(step);
     return this->postprocessing.size() - 1;
 }
 
 
-bool PipeLine::removePostprocessingStep(const std::string name) {
+template <typename T>
+bool PipeLine<T>::removePostprocessingStep(const std::string name) {
     if(this->postprocessing.empty()) {
         return false;
     }
@@ -72,7 +75,8 @@ bool PipeLine::removePostprocessingStep(const std::string name) {
 }
 
 
-bool PipeLine::removePostprocessingStep(const unsigned long index) {
+template <typename T>
+bool PipeLine<T>::removePostprocessingStep(const unsigned long index) {
     if(this->postprocessing.empty()) {
         return false;
     }
@@ -85,19 +89,22 @@ bool PipeLine::removePostprocessingStep(const unsigned long index) {
 }
 
 
-bool PipeLine::addFeatureExtractionStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+bool PipeLine<T>::addFeatureExtractionStep(const cv::Ptr<PipelineStep> step) {
     this->featureExtraction = step;
     return this->featureExtraction != nullptr;
 }
 
 
-bool PipeLine::removeFeatureExtractionStep() {
+template <typename T>
+bool PipeLine<T>::removeFeatureExtractionStep() {
     this->featureExtraction = nullptr;
     return this->featureExtraction == nullptr;
 }
 
 
-void PipeLine::showPipeline() {
+template <typename T>
+void PipeLine<T>::showPipeline() {
     for(size_t i = 0; i < this->preprocessing.size(); ++i) {
         std::cout << "Preprocessing step " << i << ": " << this->preprocessing[i]->info() << std::endl;
     }
@@ -128,60 +135,69 @@ void PipeLine::showPipeline() {
 }
 
 
-bool PipeLine::addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+bool PipeLine<T>::addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step) {
     this->dimensionalityReduction = step;
     return this->dimensionalityReduction != nullptr;
 }
 
 
-bool PipeLine::removeDimensionalityReductionStep() {
+template <typename T>
+bool PipeLine<T>::removeDimensionalityReductionStep() {
     this->dimensionalityReduction = nullptr;
     return this->dimensionalityReduction == nullptr;
 }
 
 
-bool PipeLine::addEncodingStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+bool PipeLine<T>::addEncodingStep(const cv::Ptr<PipelineStep> step) {
     this->encoding = step;
     return this->encoding != nullptr;
 }
 
 
-bool PipeLine::removeEncodingStep() {
+template <typename T>
+bool PipeLine<T>::removeEncodingStep() {
     this->encoding = nullptr;
     return this->encoding == nullptr;
 }
 
 
-bool PipeLine::addTrainingStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+bool PipeLine<T>::addTrainingStep(const cv::Ptr<PipelineStep> step) {
     this->training = step;
     return this->training != nullptr;
 }
 
 
-bool PipeLine::removeTrainingStep() {
+template <typename T>
+bool PipeLine<T>::removeTrainingStep() {
     this->training = nullptr;
     return this->training == nullptr;
 }
 
 
-bool PipeLine::addClassificationStep(const cv::Ptr<PipelineStep> step) {
+template <typename T>
+bool PipeLine<T>::addClassificationStep(const cv::Ptr<PipelineStep> step) {
     this->classification = step;
     return this->classification != nullptr;
 }
 
 
-bool PipeLine::removeClassificationStep() {
+template <typename T>
+bool PipeLine<T>::removeClassificationStep() {
     this->classification = nullptr;
     return this->classification == nullptr;
 }
 
 
-void PipeLine::train() {
+template <typename T>
+void PipeLine<T>::train() {
 
 }
 
-void PipeLine::classify() {
-
+template <typename T>
+T PipeLine<T>::classify() {
+    return nullptr;
 }
 
-}
