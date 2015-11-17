@@ -61,7 +61,7 @@ private:
 };
 
 //Includes template implementation for successful compilation
-#include "PipeLine.cpp"
+#include "PipeLine.tpp"
 
 }
 
