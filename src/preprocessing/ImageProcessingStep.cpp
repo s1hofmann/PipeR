@@ -17,13 +17,19 @@ ImageProcessingStep::ImageProcessingStep(const std::string &info,
 }
 
 
-int ImageProcessingStep::execute() {
-    std::cout << "HI!" << std::endl;
-    return 0;
-}
-
 ImageProcessingStep::~ImageProcessingStep() {
 
 }
+
+
+cv::Mat ImageProcessingStep::train() {
+    return cv::Mat();
+}
+
+
+cv::Mat ImageProcessingStep::run() {
+    return cv::Mat();
+}
+
 
 }

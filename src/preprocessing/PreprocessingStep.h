@@ -19,7 +19,8 @@ public:
 
     virtual ~PreprocessingStep();
 
-    virtual int execute() = 0;
+    virtual cv::Mat train() = 0;
+    virtual cv::Mat run() = 0;
 
 private:
 };

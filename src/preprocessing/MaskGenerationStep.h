@@ -18,7 +18,8 @@ public:
 
     virtual ~MaskGenerationStep();
 
-    virtual int execute();
+    virtual cv::Mat train();
+    virtual cv::Mat run();
 
 private:
 

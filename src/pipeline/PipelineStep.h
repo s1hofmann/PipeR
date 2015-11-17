@@ -6,6 +6,7 @@
 #pragma once
 
 #include <string>
+#include <opencv2/core/core.hpp>
 
 namespace pipe {
 
@@ -18,7 +19,8 @@ public:
 
     virtual ~PipelineStep();
 
-    virtual int execute() = 0;
+    virtual cv::Mat train() = 0;
+    virtual cv::Mat run() = 0;
 
     std::string info();
 

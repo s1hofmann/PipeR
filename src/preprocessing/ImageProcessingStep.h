@@ -17,7 +17,8 @@ public:
                         const std::string &usage = "List parameters here.",
                         const std::string &help = "Detailed method description goes here.");
 
-    virtual int execute();
+    virtual cv::Mat train();
+    virtual cv::Mat run();
 
     virtual ~ImageProcessingStep();
 

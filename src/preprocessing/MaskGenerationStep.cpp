@@ -16,13 +16,18 @@ MaskGenerationStep::MaskGenerationStep(const std::string &info,
 }
 
 
-int MaskGenerationStep::execute() {
-    return 0;
+MaskGenerationStep::~MaskGenerationStep() {
+
 }
 
 
-MaskGenerationStep::~MaskGenerationStep() {
+cv::Mat MaskGenerationStep::train() {
+    return cv::Mat();
+}
 
+
+cv::Mat MaskGenerationStep::run() {
+    return cv::Mat();
 }
 
 
