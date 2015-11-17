@@ -5,12 +5,22 @@
 
 #pragma once
 
-#include "../pipeline/PipelineStep.h"
+#include "PreprocessingStep.h"
 
 namespace pipe {
 
 
-class MaskGenerationStep : public PipelineStep {
+class MaskGenerationStep : public PreprocessingStep {
+public:
+    MaskGenerationStep(const std::string &info = "Mask generation preprocessing method",
+                       const std::string &usage = "Parameter description goes here.",
+                       const std::string &help = "Detailed description goes here.");
+
+    virtual ~MaskGenerationStep();
+
+    virtual int execute();
+
+private:
 
 };
 

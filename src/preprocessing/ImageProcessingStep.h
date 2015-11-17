@@ -5,12 +5,23 @@
 
 #pragma once
 
-#include "../pipeline/PipelineStep.h"
+#include <iostream>
+#include "PreprocessingStep.h"
 
 namespace pipe {
 
 
-class ImageProcessingStep : public PipelineStep {
+class ImageProcessingStep : public PreprocessingStep {
+public:
+    ImageProcessingStep(const std::string &info = "Image preprocessing method",
+                        const std::string &usage = "List parameters here.",
+                        const std::string &help = "Detailed method description goes here.");
+
+    virtual int execute();
+
+    virtual ~ImageProcessingStep();
+
+private:
 
 };
 

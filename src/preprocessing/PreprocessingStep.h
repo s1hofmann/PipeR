@@ -13,9 +13,11 @@ namespace pipe {
 
 class PreprocessingStep : public PipelineStep {
 public:
-    PreprocessingStep();
+    PreprocessingStep(const std::string &info = std::string(),
+                      const std::string &usage = std::string(),
+                      const std::string &help = std::string());
 
-    virtual ~PreprocessingStep() = 0;
+    virtual ~PreprocessingStep();
 
     virtual int execute() = 0;
 
