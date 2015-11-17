@@ -13,11 +13,15 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(SOURCE_FILES src/main.cpp
-                 src/pipeline/PipeLine
-                 src/pipeline/PipelineStep
-                 src/preprocessing/ImageProcessingStep
-                 src/preprocessing/MaskGenerationStep
-                 src/preprocessing/PreprocessingStep)
+        src/pipeline/PipeLine
+        src/pipeline/PipelineStep
+        src/preprocessing/ImageProcessingStep
+        src/preprocessing/MaskGenerationStep
+        src/preprocessing/PreprocessingStep
+        src/feature_extraction/FeatureExtractionStep
+        src/feature_extraction/SiftDetector
+        src/encoding/EncodingStep
+        src/encoding/VladEncoder)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Boost_LIBRARIES})
