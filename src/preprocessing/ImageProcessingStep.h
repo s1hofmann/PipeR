@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <iostream>
 #include "PreprocessingStep.h"
 
 namespace pipe {

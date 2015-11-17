@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <string>
-
 #include "../pipeline/PipelineStep.h"
 
 namespace pipe {
