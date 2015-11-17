@@ -13,13 +13,15 @@
 namespace pipe {
 
 
+template <typename T>
 class PipeLine {
 public:
     PipeLine();
     virtual ~PipeLine();
 
     void train();
-    void classify();
+
+    T classify();
 
     unsigned long addPreprocessingStep(const cv::Ptr<PipelineStep> step);
     bool removePreprocessingStep(const std::string name);
@@ -54,6 +56,8 @@ private:
     cv::Ptr<PipelineStep> encoding = nullptr;
     cv::Ptr<PipelineStep> training = nullptr;
     cv::Ptr<PipelineStep> classification = nullptr;
+
+    cv::Mat1b feMask;
 };
 
 
