@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <string>
 #include "../pipeline/PipelineStep.h"
 
 
@@ -14,10 +13,14 @@ namespace pipe {
 
 class FeatureExtractionStep : public PipelineStep {
 public:
-    FeatureExtractionStep();
-    virtual ~FeatureExtractionStep() = 0;
+    FeatureExtractionStep(const std::string &info = "Feature extraction step",
+                          const std::string &usage = "Parameters go here.",
+                          const std::string &help = "Detailed description goes here.");
 
-    virtual int execute() = 0;
+    virtual ~FeatureExtractionStep();
+
+    virtual cv::Mat train() = 0;
+    virtual cv::Mat run() = 0;
 
 private:
     std::string usage;
