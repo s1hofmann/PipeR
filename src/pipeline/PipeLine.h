@@ -13,7 +13,6 @@
 namespace pipe {
 
 
-template <typename T>
 class PipeLine {
 public:
     PipeLine();
@@ -21,7 +20,7 @@ public:
 
     void train();
 
-    T classify();
+    void classify();
 
     unsigned long addPreprocessingStep(const cv::Ptr<PipelineStep> step);
     bool removePreprocessingStep(const std::string name);

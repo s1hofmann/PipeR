@@ -180,9 +180,8 @@ void PipeLine::train() {
 
 }
 
-template <typename T>
-T PipeLine::classify() {
-    return nullptr;
+void PipeLine::classify() {
+
 }
 
 }
