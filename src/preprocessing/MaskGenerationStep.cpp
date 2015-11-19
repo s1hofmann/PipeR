@@ -7,26 +7,30 @@
 namespace pipe {
 
 
-MaskGenerationStep::MaskGenerationStep(const std::string &info,
-                                       const std::string &usage,
-                                       const std::string &help)
+MaskGenerationStep::MaskGenerationStep(const cv::Ptr<ConfigContainer> config,
+                                       const std::string &info)
         :
-        PreprocessingStep(info, usage, help) {
+        PreprocessingStep(config,
+                          info)
+{
 
 }
 
 
-MaskGenerationStep::~MaskGenerationStep() {
+MaskGenerationStep::~MaskGenerationStep()
+{
 
 }
 
 
-cv::Mat MaskGenerationStep::train() {
+cv::Mat MaskGenerationStep::train()
+{
     return cv::Mat();
 }
 
 
-cv::Mat MaskGenerationStep::run() {
+cv::Mat MaskGenerationStep::run()
+{
     return cv::Mat();
 }
 

@@ -11,16 +11,13 @@ namespace pipe {
 
 class PreprocessingStep : public PipelineStep {
 public:
-    PreprocessingStep(const std::string &info = std::string(),
-                      const std::string &usage = std::string(),
-                      const std::string &help = std::string());
+    PreprocessingStep(const cv::Ptr<ConfigContainer> config,
+                      const std::string &info = std::string());
 
     virtual ~PreprocessingStep();
 
     virtual cv::Mat train() = 0;
     virtual cv::Mat run() = 0;
-
-private:
 };
 
 

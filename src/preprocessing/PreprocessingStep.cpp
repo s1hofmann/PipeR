@@ -7,17 +7,20 @@
 namespace pipe {
 
 
-PreprocessingStep::PreprocessingStep(const std::string &info,
-                                     const std::string &usage,
-                                     const std::string &help)
+PreprocessingStep::PreprocessingStep(const cv::Ptr<ConfigContainer> config,
+                                     const std::string &info)
     :
-        PipelineStep(info, usage, help)
+        PipelineStep(config,
+                     info)
 {
 
 }
 
 
-    PreprocessingStep::~PreprocessingStep() {
+PreprocessingStep::~PreprocessingStep()
+{
 
-    }
+}
+
+
 }

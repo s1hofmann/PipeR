@@ -12,10 +12,10 @@ namespace pipe {
 
 class ImageProcessingStep : public PreprocessingStep {
 public:
-    ImageProcessingStep(const std::string &info = "Image preprocessing method",
-                        const std::string &usage = "List parameters here.",
-                        const std::string &help = "Detailed method description goes here.");
+    ImageProcessingStep(const cv::Ptr<ConfigContainer> config,
+                        const std::string &info = "Image preprocessing method");
 
+    //FIXME: Should still be pure virtual, only for debugging
     virtual cv::Mat train();
     virtual cv::Mat run();
 

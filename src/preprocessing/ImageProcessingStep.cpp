@@ -7,27 +7,30 @@
 namespace pipe {
 
 
-ImageProcessingStep::ImageProcessingStep(const std::string &info,
-                                         const std::string &usage,
-                                         const std::string &help)
+ImageProcessingStep::ImageProcessingStep(const cv::Ptr<ConfigContainer> config,
+                                         const std::string &info)
     :
-        PreprocessingStep(info, usage, help)
+        PreprocessingStep(config,
+                          info)
 {
 
 }
 
 
-ImageProcessingStep::~ImageProcessingStep() {
+ImageProcessingStep::~ImageProcessingStep()
+{
 
 }
 
 
-cv::Mat ImageProcessingStep::train() {
+cv::Mat ImageProcessingStep::train()
+{
     return cv::Mat();
 }
 
 
-cv::Mat ImageProcessingStep::run() {
+cv::Mat ImageProcessingStep::run()
+{
     return cv::Mat();
 }
 
