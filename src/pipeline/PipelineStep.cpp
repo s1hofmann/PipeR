@@ -42,7 +42,10 @@ std::string PipelineStep::info()
 
 
 std::string PipelineStep::config() const {
-    return mConfig->toString();
+    std::stringstream config;
+
+    config << mName << " config:" << std::endl << mConfig->toString();
+    return config.str();
 }
 
 
