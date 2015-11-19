@@ -60,7 +60,7 @@ double SiftConfigContainer::sigma() const
 }
 
 
-std::string SiftConfigContainer::config() const
+std::string SiftConfigContainer::toString() const
 {
     std::stringstream configString;
 

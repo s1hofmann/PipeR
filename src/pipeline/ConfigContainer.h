@@ -9,7 +9,10 @@
 
 namespace pipe {
 
-
+/**
+ * Base class for each steps config class.
+ * Every config class has te be derived from
+ */
 class ConfigContainer {
 public:
     ConfigContainer(const std::string &usage = "No usage text provided, I'm sorry.",
@@ -20,7 +23,7 @@ public:
     std::string usage() const;
     std::string help() const;
 
-    virtual std::string config() const = 0;
+    virtual std::string toString() const = 0;
 
 private:
     std::string usageText;

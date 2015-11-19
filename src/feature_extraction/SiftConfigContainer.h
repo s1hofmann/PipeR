@@ -30,7 +30,7 @@ public:
 
     double sigma() const;
 
-    virtual std::string config() const;
+    virtual std::string toString() const;
 
 private:
     int mBestFeatures;
