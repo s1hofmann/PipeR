@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "MaskGenerationStep.h"
+#include "PreprocessingStep.h"
 
 namespace pipe {
 
