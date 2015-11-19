@@ -10,6 +10,7 @@
 #include <opencv2/core/core.hpp>
 #include "PipelineStep.h"
 #include "../preprocessing/PreprocessingStep.h"
+#include "../encoding/VladEncoder.h"
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
 
@@ -29,7 +30,7 @@ public:
     bool removePreprocessingStep(const std::string name);
     bool removePreprocessingStep(const unsigned long index);
 
-    bool addFeatureExtractionStep(const cv::Ptr<PipelineStep> step);
+    bool addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step);
     bool removeFeatureExtractionStep();
 
     unsigned long addPostprocessingStep(const cv::Ptr<PipelineStep> step);
@@ -39,7 +40,7 @@ public:
     bool addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step);
     bool removeDimensionalityReductionStep();
 
-    bool addEncodingStep(const cv::Ptr<PipelineStep> step);
+    bool addEncodingStep(const cv::Ptr<EncodingStep> step);
     bool removeEncodingStep();
 
     bool addTrainingStep(const cv::Ptr<PipelineStep> step);

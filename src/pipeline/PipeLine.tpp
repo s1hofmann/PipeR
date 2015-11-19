@@ -90,7 +90,7 @@ bool PipeLine<T>::removePostprocessingStep(const unsigned long index) {
 
 
 template <typename T>
-bool PipeLine<T>::addFeatureExtractionStep(const cv::Ptr<PipelineStep> step) {
+bool PipeLine<T>::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step) {
     this->featureExtraction = step;
     return this->featureExtraction != nullptr;
 }
@@ -150,7 +150,7 @@ bool PipeLine<T>::removeDimensionalityReductionStep() {
 
 
 template <typename T>
-bool PipeLine<T>::addEncodingStep(const cv::Ptr<PipelineStep> step) {
+bool PipeLine<T>::addEncodingStep(const cv::Ptr<EncodingStep> step) {
     this->encoding = step;
     return this->encoding != nullptr;
 }
