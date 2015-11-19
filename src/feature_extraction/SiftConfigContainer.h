@@ -20,15 +20,25 @@ public:
 
     virtual ~SiftConfigContainer();
 
-    int bestFeatures() const;
+    inline int getBestFeatures() const {
+        return mBestFeatures;
+    }
 
-    int octaves() const;
+    inline int getOctaves() const {
+        return mOctaves;
+    }
 
-    double contrastThresh() const;
+    inline double getContrastThresh() const {
+        return mContrastThresh;
+    }
 
-    double edgeThresh() const;
+    inline double getEdgeThresh() const {
+        return mEdgeThresh;
+    }
 
-    double sigma() const;
+    inline double getSigma() const {
+        return mSigma;
+    }
 
     virtual std::string toString() const;
 

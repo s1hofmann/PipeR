@@ -30,45 +30,15 @@ SiftConfigContainer::~SiftConfigContainer()
 }
 
 
-int SiftConfigContainer::bestFeatures() const
-{
-    return mBestFeatures;
-}
-
-
-int SiftConfigContainer::octaves() const
-{
-    return mOctaves;
-}
-
-
-double SiftConfigContainer::contrastThresh() const
-{
-    return mContrastThresh;
-}
-
-
-double SiftConfigContainer::edgeThresh() const
-{
-    return mEdgeThresh;
-}
-
-
-double SiftConfigContainer::sigma() const
-{
-    return mSigma;
-}
-
-
 std::string SiftConfigContainer::toString() const
 {
     std::stringstream configString;
 
-    configString << "Best features: " << mBestFeatures << std::endl
-                 << "Octaves: " << mOctaves << std::endl
-                 << "Contrast threshold: " << mContrastThresh << std::endl
-                 << "Edge threshold: " << mEdgeThresh << std::endl
-                 << "Sigma: " << mSigma << std::endl;
+    configString << "Best features: " << getBestFeatures() << std::endl
+                 << "Octaves: " << getOctaves() << std::endl
+                 << "Contrast threshold: " << getContrastThresh() << std::endl
+                 << "Edge threshold: " << getEdgeThresh() << std::endl
+                 << "Sigma: " << getSigma() << std::endl;
 
     return configString.str();
 }
