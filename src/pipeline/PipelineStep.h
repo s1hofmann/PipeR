@@ -8,14 +8,15 @@
 #include <string>
 #include <opencv2/core/core.hpp>
 
+#include "ConfigContainer.h"
+
 namespace pipe {
 
 
 class PipelineStep {
 public:
-    PipelineStep(const std::string &info = std::string(),
-                 const std::string &usage = std::string(),
-                 const std::string &help = std::string());
+    PipelineStep(const cv::Ptr<ConfigContainer> config,
+                 const std::string &info = std::string());
 
     virtual ~PipelineStep();
 
@@ -28,9 +29,8 @@ public:
     std::string usage();
 
 private:
-    std::string name;
-    std::string helpText;
-    std::string usageText;
+    std::string mName;
+    cv::Ptr<ConfigContainer> mConfig;
 };
 
 

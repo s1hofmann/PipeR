@@ -13,9 +13,8 @@ namespace pipe {
 
 class FeatureExtractionStep : public PipelineStep {
 public:
-    FeatureExtractionStep(const std::string &info = "Feature extraction step",
-                          const std::string &usage = "Parameters go here.",
-                          const std::string &help = "Detailed description goes here.");
+    FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
+                          const std::string &info = "Feature extraction step");
 
     virtual ~FeatureExtractionStep();
 
@@ -23,10 +22,6 @@ public:
     virtual cv::Mat run() = 0;
 
 private:
-    std::string usage;
-    std::string helpText;
-
-    std::string name;
 };
 
 

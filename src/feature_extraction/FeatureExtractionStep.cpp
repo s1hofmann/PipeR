@@ -7,11 +7,11 @@
 namespace pipe {
 
 
-FeatureExtractionStep::FeatureExtractionStep(const std::string &info,
-                                             const std::string &usage,
-                                             const std::string &help)
+FeatureExtractionStep::FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
+                                             const std::string &info)
     :
-        PipelineStep(info, usage, help)
+        PipelineStep(config,
+                     info)
 {
 
 }

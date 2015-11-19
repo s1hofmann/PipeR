@@ -2,19 +2,20 @@
 // Created by Simon Hofmann on 17.11.15.
 //
 
+#include <iostream>
 #include "SiftDetector.h"
 
 
 namespace pipe {
 
 
-SiftDetector::SiftDetector(const std::string &info,
-                           const std::string &usage,
-                           const std::string &help)
+SiftDetector::SiftDetector(const cv::Ptr<SiftConfigContainer> config,
+                           const std::string &info)
     :
-        FeatureExtractionStep(info, usage, help)
+        FeatureExtractionStep(config,
+                              info)
 {
-
+    std::cout << config->bestFeatures() << std::endl;
 }
 
 

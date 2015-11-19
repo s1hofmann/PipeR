@@ -7,13 +7,13 @@
 namespace pipe {
 
 
-PipelineStep::PipelineStep(const std::string &info,
-                           const std::string &usage,
-                           const std::string &help)
+PipelineStep::PipelineStep(const cv::Ptr<ConfigContainer> config,
+                           const std::string &info)
+    :
+        mName(info),
+        mConfig(config)
 {
-    this->name = info;
-    this->usageText = usage;
-    this->helpText = help;
+
 }
 
 
@@ -25,19 +25,19 @@ PipelineStep::~PipelineStep()
 
 std::string PipelineStep::help()
 {
-    return this->helpText;
+    return mConfig->help();
 }
 
 
 std::string PipelineStep::usage()
 {
-    return this->usageText;
+    return mConfig->usage();
 }
 
 
 std::string PipelineStep::info()
 {
-    return this->name;
+    return mName;
 }
 
 

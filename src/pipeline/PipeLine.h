@@ -10,6 +10,8 @@
 #include <opencv2/core/core.hpp>
 #include "PipelineStep.h"
 #include "../preprocessing/PreprocessingStep.h"
+#include "../feature_extraction/SiftDetector.h"
+#include "../feature_extraction/SiftConfigContainer.h"
 
 namespace pipe {
 

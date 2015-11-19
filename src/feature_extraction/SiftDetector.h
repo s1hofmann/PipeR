@@ -6,14 +6,14 @@
 #pragma once
 
 #include "FeatureExtractionStep.h"
+#include "SiftConfigContainer.h"
 
 namespace pipe {
 
 class SiftDetector : public FeatureExtractionStep {
 public:
-    SiftDetector(const std::string &info = "SIFT feature extractor",
-                 const std::string &usage = "TODO: SIFT parameters",
-                 const std::string &help = "This feature extractor runs D. Lowes Scale Invariant Feature Transform (SIFT)");
+    SiftDetector(const cv::Ptr<SiftConfigContainer> config,
+                 const std::string &info = "SIFT feature extractor");
 
     virtual ~SiftDetector();
 
