@@ -30,6 +30,8 @@ public:
 
     double sigma() const;
 
+    virtual std::string config() const;
+
 private:
     int mBestFeatures;
     int mOctaves;

@@ -28,6 +28,8 @@ public:
     std::string help();
     std::string usage();
 
+    std::string config() const;
+
 private:
     std::string mName;
     cv::Ptr<ConfigContainer> mConfig;

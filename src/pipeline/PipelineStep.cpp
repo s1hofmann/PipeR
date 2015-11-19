@@ -41,4 +41,9 @@ std::string PipelineStep::info()
 }
 
 
+std::string PipelineStep::config() const {
+    return mConfig->config();
+}
+
+
 }
