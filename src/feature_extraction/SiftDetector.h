@@ -7,6 +7,7 @@
 
 #include "FeatureExtractionStep.h"
 #include "SiftConfigContainer.h"
+#include "../pipeline/return_codes.h"
 
 namespace pipe {
 
@@ -17,8 +18,8 @@ public:
 
     virtual ~SiftDetector();
 
-    virtual cv::Mat train();
-    virtual cv::Mat run();
+    virtual cv::Mat train(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual cv::Mat run(const cv::Mat &input, const cv::Mat &mask) const;
 };
 
 

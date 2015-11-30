@@ -18,8 +18,10 @@ public:
 
     virtual ~FeatureExtractionStep();
 
-    virtual cv::Mat train() = 0;
-    virtual cv::Mat run() = 0;
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
 
 private:
 };

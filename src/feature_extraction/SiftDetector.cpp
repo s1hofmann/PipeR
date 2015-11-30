@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <typeinfo>
 #include "SiftDetector.h"
 
 
@@ -15,23 +16,25 @@ SiftDetector::SiftDetector(const cv::Ptr<SiftConfigContainer> config,
         FeatureExtractionStep(config,
                               info)
 {
-    std::cout << config->bestFeatures() << std::endl;
-}
-
-
-SiftDetector::~SiftDetector() {
 
 }
 
 
-cv::Mat SiftDetector::train() {
-    return cv::Mat();
+SiftDetector::~SiftDetector()
+{
+
 }
 
 
-cv::Mat SiftDetector::run() {
-    return cv::Mat();
+cv::Mat SiftDetector::train(const cv::Mat &input, const cv::Mat &mask) const {
+    cv::Mat result;
+
+    cv::Ptr<SiftConfigContainer> maskConfig;
+    maskConfig = this->mConfig.dynamicCast<SiftConfigContainer>();
 }
 
 
+cv::Mat SiftDetector::run(const cv::Mat &input, const cv::Mat &mask) const {
+    return train(input, mask);
+}
 }
