@@ -16,8 +16,10 @@ public:
 
     virtual ~PreprocessingStep();
 
-    virtual cv::Mat train() = 0;
-    virtual cv::Mat run() = 0;
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
 };
 
 
@@ -28,9 +30,10 @@ public:
 
     virtual ~MaskGenerationStep();
 
-    //FIXME: Should still be pure virtual, just for debugging
-    virtual cv::Mat train();
-    virtual cv::Mat run();
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
 
 private:
 
@@ -43,8 +46,10 @@ public:
                         const std::string &info = "Image preprocessing method");
 
     //FIXME: Should still be pure virtual, only for debugging
-    virtual cv::Mat train();
-    virtual cv::Mat run();
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const;
 
     virtual ~ImageProcessingStep();
 

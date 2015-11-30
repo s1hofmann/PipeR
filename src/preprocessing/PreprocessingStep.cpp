@@ -39,13 +39,13 @@ ImageProcessingStep::~ImageProcessingStep()
 }
 
 
-cv::Mat ImageProcessingStep::train()
+cv::Mat ImageProcessingStep::train(const cv::Mat &input, const cv::Mat &mask) const
 {
     return cv::Mat();
 }
 
 
-cv::Mat ImageProcessingStep::run()
+cv::Mat ImageProcessingStep::run(const cv::Mat &input, const cv::Mat &mask) const
 {
     return cv::Mat();
 }
@@ -65,18 +65,5 @@ MaskGenerationStep::~MaskGenerationStep()
 {
 
 }
-
-
-cv::Mat MaskGenerationStep::train()
-{
-    return cv::Mat();
-}
-
-
-cv::Mat MaskGenerationStep::run()
-{
-    return cv::Mat();
-}
-
 
 }
