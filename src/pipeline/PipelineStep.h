@@ -20,8 +20,10 @@ public:
 
     virtual ~PipelineStep();
 
-    virtual cv::Mat train() = 0;
-    virtual cv::Mat run() = 0;
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
 
     std::string info();
 
@@ -30,9 +32,11 @@ public:
 
     std::string config() const;
 
+protected:
+    cv::Ptr<ConfigContainer> mConfig;
+
 private:
     std::string mName;
-    cv::Ptr<ConfigContainer> mConfig;
 };
 
 
