@@ -4,8 +4,8 @@
 
 
 template <typename T>
-PipeLine<T>::PipeLine() {
-
+PipeLine<T>::PipeLine(const bool debug) {
+    this->mDebugMode = debug;
 }
 
 
@@ -17,20 +17,20 @@ PipeLine<T>::~PipeLine() {
 
 template <typename T>
 unsigned long PipeLine<T>::addPreprocessingStep(const cv::Ptr<PreprocessingStep> step) {
-    this->preprocessing.push_back(step);
-    return this->preprocessing.size() - 1;
+    this->mPreprocessing.push_back(step);
+    return this->mPreprocessing.size() - 1;
 }
 
 
 template <typename T>
 bool PipeLine<T>::removePreprocessingStep(const std::string name) {
-    if(this->preprocessing.empty()) {
+    if(this->mPreprocessing.empty()) {
         return false;
     }
 
-    for(size_t i = 0; i < this->preprocessing.size(); ++i) {
-        if(!name.compare(this->preprocessing[i]->info())) {
-            this->preprocessing.erase(this->preprocessing.begin() + i);
+    for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
+        if(!name.compare(this->mPreprocessing[i]->info())) {
+            this->mPreprocessing.erase(this->mPreprocessing.begin() + i);
             return true;
         }
     }
@@ -40,12 +40,12 @@ bool PipeLine<T>::removePreprocessingStep(const std::string name) {
 
 template <typename T>
 bool PipeLine<T>::removePreprocessingStep(const unsigned long index) {
-    if(this->preprocessing.empty()) {
+    if(this->mPreprocessing.empty()) {
         return false;
     }
 
-    if(index < this->preprocessing.size()) {
-        this->preprocessing.erase(this->preprocessing.begin() + index);
+    if(index < this->mPreprocessing.size()) {
+        this->mPreprocessing.erase(this->mPreprocessing.begin() + index);
         return true;
     }
     return false;
@@ -54,20 +54,20 @@ bool PipeLine<T>::removePreprocessingStep(const unsigned long index) {
 
 template <typename T>
 unsigned long PipeLine<T>::addPostprocessingStep(const cv::Ptr<PipelineStep> step) {
-    this->postprocessing.push_back(step);
-    return this->postprocessing.size() - 1;
+    this->mPostprocessing.push_back(step);
+    return this->mPostprocessing.size() - 1;
 }
 
 
 template <typename T>
 bool PipeLine<T>::removePostprocessingStep(const std::string name) {
-    if(this->postprocessing.empty()) {
+    if(this->mPostprocessing.empty()) {
         return false;
     }
 
-    for(size_t i = 0; i < this->postprocessing.size(); ++i) {
-        if(!name.compare(this->postprocessing[i]->info())) {
-            this->postprocessing.erase(this->postprocessing.begin() + i);
+    for(size_t i = 0; i < this->mPostprocessing.size(); ++i) {
+        if(!name.compare(this->mPostprocessing[i]->info())) {
+            this->mPostprocessing.erase(this->mPostprocessing.begin() + i);
             return true;
         }
     }
@@ -77,12 +77,12 @@ bool PipeLine<T>::removePostprocessingStep(const std::string name) {
 
 template <typename T>
 bool PipeLine<T>::removePostprocessingStep(const unsigned long index) {
-    if(this->postprocessing.empty()) {
+    if(this->mPostprocessing.empty()) {
         return false;
     }
 
-    if(index < this->postprocessing.size()) {
-        this->postprocessing.erase(this->postprocessing.begin() + index);
+    if(index < this->mPostprocessing.size()) {
+        this->mPostprocessing.erase(this->mPostprocessing.begin() + index);
         return true;
     }
     return false;
@@ -91,113 +91,125 @@ bool PipeLine<T>::removePostprocessingStep(const unsigned long index) {
 
 template <typename T>
 bool PipeLine<T>::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step) {
-    this->featureExtraction = step;
-    return this->featureExtraction != nullptr;
+    this->mFeatureExtraction = step;
+    return this->mFeatureExtraction.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::removeFeatureExtractionStep() {
-    this->featureExtraction = nullptr;
-    return this->featureExtraction == nullptr;
+    this->mFeatureExtraction->release();
+    return this->mFeatureExtraction.empty();
 }
 
 
 template <typename T>
 void PipeLine<T>::showPipeline() {
-    for(size_t i = 0; i < this->preprocessing.size(); ++i) {
-        std::cout << "Preprocessing step " << i << ": " << this->preprocessing[i]->info() << std::endl;
+    for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
+        std::cout << "Preprocessing step " << i << ": " << this->mPreprocessing[i]->info() << std::endl;
     }
 
-    if(this->featureExtraction != nullptr) {
-        std::cout << "Feature extraction step: " << this->featureExtraction->info() << std::endl;
+    if(!this->mFeatureExtraction.empty()) {
+        std::cout << "Feature extraction step: " << this->mFeatureExtraction->info() << std::endl;
     }
 
-    for(size_t i = 0; i < this->postprocessing.size(); ++i) {
-        std::cout << "Postprocessing step " << i << ": " << this->postprocessing[i]->info() << std::endl;
+    for(size_t i = 0; i < this->mPostprocessing.size(); ++i) {
+        std::cout << "Postprocessing step " << i << ": " << this->mPostprocessing[i]->info() << std::endl;
     }
 
-    if(this->dimensionalityReduction != nullptr) {
-        std::cout << "Dimensionaltiy reduction: " << this->dimensionalityReduction->info() << std::endl;
+    if(!this->mDimensionalityReduction.empty()) {
+        std::cout << "Dimensionaltiy reduction: " << this->mDimensionalityReduction->info() << std::endl;
     }
 
-    if(this->encoding != nullptr) {
-        std::cout << "Encoding step: " << this->encoding->info() << std::endl;
+    if(!this->mEncoding.empty()) {
+        std::cout << "Encoding step: " << this->mEncoding->info() << std::endl;
     }
 
-    if(this->training != nullptr) {
-        std::cout << "Training step: " << this->training->info() << std::endl;
+    if(!this->mTraining.empty()) {
+        std::cout << "Training step: " << this->mTraining->info() << std::endl;
     }
 
-    if(this->classification != nullptr) {
-        std::cout << "Classification step: " << this->classification->info() << std::endl;
+    if(!this->mClassification.empty()) {
+        std::cout << "Classification step: " << this->mClassification->info() << std::endl;
     }
 }
 
 
 template <typename T>
 bool PipeLine<T>::addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step) {
-    this->dimensionalityReduction = step;
-    return this->dimensionalityReduction != nullptr;
+    this->mDimensionalityReduction = step;
+    return this->mDimensionalityReduction.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::removeDimensionalityReductionStep() {
-    this->dimensionalityReduction = nullptr;
-    return this->dimensionalityReduction == nullptr;
+    this->mDimensionalityReduction.release();
+    return this->mDimensionalityReduction.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::addEncodingStep(const cv::Ptr<EncodingStep> step) {
-    this->encoding = step;
-    return this->encoding != nullptr;
+    this->mEncoding = step;
+    return this->mEncoding.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::removeEncodingStep() {
-    this->encoding = nullptr;
-    return this->encoding == nullptr;
+    this->mEncoding.release();
+    return this->mEncoding.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::addTrainingStep(const cv::Ptr<PipelineStep> step) {
-    this->training = step;
-    return this->training != nullptr;
+    this->mTraining = step;
+    return this->mTraining.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::removeTrainingStep() {
-    this->training = nullptr;
-    return this->training == nullptr;
+    this->mTraining.release();
+    return this->mTraining.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::addClassificationStep(const cv::Ptr<PipelineStep> step) {
-    this->classification = step;
-    return this->classification != nullptr;
+    this->mClassification = step;
+    return this->mClassification.empty();
 }
 
 
 template <typename T>
 bool PipeLine<T>::removeClassificationStep() {
-    this->classification = nullptr;
-    return this->classification == nullptr;
+    this->mClassification.release();
+    return this->mClassification.empty();
 }
 
 
 template <typename T>
-void PipeLine<T>::train() {
+void PipeLine<T>::train(const cv::Mat &input, const cv::Mat &mask) const {
+    cv::Mat tmp;
+    if(!this->mPreprocessing.empty()) {
+        tmp = this->mPreprocessing[0]->train(input, mask);
 
+        if(this->mDebugMode) {
+            std::stringstream s;
+            s << this->mPreprocessing[0]->info() << ".png";
+            cv::imwrite(s.str(), tmp);
+        }
+    }
+
+    for(cv::Ptr<PreprocessingStep> pre : this->mPreprocessing) {
+    }
 }
 
 template <typename T>
-T PipeLine<T>::classify() {
+T PipeLine<T>::run(const cv::Mat &input, const cv::Mat &mask) const {
     return nullptr;
 }
 

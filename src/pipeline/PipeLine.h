@@ -9,7 +9,8 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include "PipelineStep.h"
-#include "../preprocessing/PreprocessingStep.h"
+#include "../preprocessing/VesselMask.h"
+#include "../preprocessing/VesselMaskConfig.h"
 #include "../encoding/VladEncoder.h"
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
@@ -19,12 +20,12 @@ namespace pipe {
 template <class T>
 class PipeLine {
 public:
-    PipeLine();
+    PipeLine(bool debug = false);
     virtual ~PipeLine();
 
-    void train();
+    void train(const cv::Mat &input, const cv::Mat &mask) const;
 
-    T classify();
+    T run(const cv::Mat &input, const cv::Mat &mask) const;
 
     unsigned long addPreprocessingStep(const cv::Ptr<PreprocessingStep> step);
     bool removePreprocessingStep(const std::string name);
@@ -52,15 +53,17 @@ public:
     void showPipeline();
 
 private:
-    std::vector<cv::Ptr<PreprocessingStep>> preprocessing;
-    cv::Ptr<PipelineStep> featureExtraction = nullptr;
-    std::vector<cv::Ptr<PipelineStep>> postprocessing;
-    cv::Ptr<PipelineStep> dimensionalityReduction = nullptr;
-    cv::Ptr<PipelineStep> encoding = nullptr;
-    cv::Ptr<PipelineStep> training = nullptr;
-    cv::Ptr<PipelineStep> classification = nullptr;
+    std::vector<cv::Ptr<PreprocessingStep>> mPreprocessing;
+    cv::Ptr<PipelineStep> mFeatureExtraction;
+    std::vector<cv::Ptr<PipelineStep>> mPostprocessing;
+    cv::Ptr<PipelineStep> mDimensionalityReduction;
+    cv::Ptr<PipelineStep> mEncoding;
+    cv::Ptr<PipelineStep> mTraining;
+    cv::Ptr<PipelineStep> mClassification;
 
     cv::Mat1b feMask;
+
+    bool mDebugMode;
 };
 
 //Includes template implementation for successful compilation
