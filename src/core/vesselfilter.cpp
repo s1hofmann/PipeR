@@ -25,7 +25,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
     if(input.channels() > 1) {
         cv::cvtColor(input, workingCopy, cv::COLOR_BGR2GRAY);
     } else {
-        workingCopy = input.clone();
+        workingCopy = input;
     }
 
     GaussianScaleSpace sp(this->octaves, this->stages, this->sigma);
