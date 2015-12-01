@@ -25,6 +25,12 @@ public:
     virtual cv::Mat run(const cv::Mat &input,
                         const cv::Mat &mask) const = 0;
 
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const = 0;
+
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const = 0;
+
     std::string info();
 
     std::string help();
@@ -34,9 +40,9 @@ public:
 
 protected:
     cv::Ptr<ConfigContainer> mConfig;
+    std::string mName;
 
 private:
-    std::string mName;
 };
 
 

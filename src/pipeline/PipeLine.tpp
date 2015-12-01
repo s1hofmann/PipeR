@@ -195,12 +195,11 @@ template <typename T>
 void PipeLine<T>::train(const cv::Mat &input, const cv::Mat &mask) const {
     cv::Mat tmp;
     if(!this->mPreprocessing.empty()) {
-        tmp = this->mPreprocessing[0]->train(input, mask);
 
         if(this->mDebugMode) {
-            std::stringstream s;
-            s << this->mPreprocessing[0]->info() << ".png";
-            cv::imwrite(s.str(), tmp);
+            tmp = this->mPreprocessing[0]->debugTrain(input, mask);
+        } else {
+            tmp = this->mPreprocessing[0]->train(input, mask);
         }
     }
 
