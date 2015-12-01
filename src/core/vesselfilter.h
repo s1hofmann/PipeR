@@ -17,17 +17,17 @@ public:
      * @param octaves: Amount of octaves for scale space
      * @param stages: Amount of substages for scale space
      */
-    VesselFilter(const double sigma = 1,
-                 const int octaves = 3,
-                 const int stages = 3);
+    VesselFilter(const double mSigma = 1,
+                 const int mOctaves = 3,
+                 const int mStages = 3);
 
     /**
-* @brief compute: Computes a combined probability map for vessels using a Gaussian scale space
-* @param input: Image to process
-* @param beta: Scale factor for blobness measure
-* @param c: Scale factor for structureness measure
-* @return: Probability map
-*/
+    * @brief compute: Computes a combined probability map for vessels using a Gaussian scale space
+    * @param input: Image to process
+    * @param beta: Scale factor for blobness measure
+    * @param c: Scale factor for structureness measure
+    * @return: Probability map
+    */
     cv::Mat compute(const cv::Mat &input,
                     const double beta = 0.5,
                     const double c = 15,
@@ -35,25 +35,25 @@ public:
 
 private:
     /**
-* @brief computeHessian: Computes hessian of input
-* @param input: Image to compute hessian for
-* @param dxx: Return parameter, second order partial derivative in x direction
-* @param dyy: Return parameter, second order partial derivative in y direction
-* @param dxy: First order partial derivative in x and y direction
-*/
+    * @brief computeHessian: Computes hessian of input
+    * @param input: Image to compute hessian for
+    * @param dxx: Return parameter, second order partial derivative in x direction
+    * @param dyy: Return parameter, second order partial derivative in y direction
+    * @param dxy: First order partial derivative in x and y direction
+    */
     void computeHessian(const cv::Mat &input,
-                        cv::Mat &dxx,
-                        cv::Mat &dyy,
+                        cv::Mat &mDxx,
+                        cv::Mat &mDyy,
                         cv::Mat &dxy) const;
 
     /**
-* @brief computeEigen: Returns both eigenvalues (value1 > value2) and the larger eigenvector.
-* @param input: Input image
-* @param value1: Return parameter, eigenvalue1
-* @param value2: Return parameter, eigenvalue2
-* @param xCoords: Return parameter, x component of larger eigenvector
-* @param yCoords: Return parameter, y component of larger eigenvector
-*/
+    * @brief computeEigen: Returns both eigenvalues (value1 > value2) and the larger eigenvector.
+    * @param input: Input image
+    * @param value1: Return parameter, eigenvalue1
+    * @param value2: Return parameter, eigenvalue2
+    * @param xCoords: Return parameter, x component of larger eigenvector
+    * @param yCoords: Return parameter, y component of larger eigenvector
+    */
     void computeEigen(const cv::Mat &input,
                       cv::Mat1f &value1,
                       cv::Mat1f &value2,
@@ -61,13 +61,13 @@ private:
                       cv::Mat1f &yCoords) const;
 
     /**
-* @brief computeVesselness: Returns a probability map which indicates probability for vessels
-* @param lambda1: Matrix holding larger eigenvalues
-* @param lambda2: Matrix holding smaller eigenvalues
-* @param c: Scaling for blobness measure
-* @param beta: Scaling for structureness measure
-* @return: Vessel probability map
-*/
+    * @brief computeVesselness: Returns a probability map which indicates probability for vessels
+    * @param lambda1: Matrix holding larger eigenvalues
+    * @param lambda2: Matrix holding smaller eigenvalues
+    * @param c: Scaling for blobness measure
+    * @param beta: Scaling for structureness measure
+    * @return: Vessel probability map
+    */
     cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                 const cv::Mat1f &lambda2,
                                 const float c,
@@ -77,12 +77,12 @@ private:
 * DATA
 */
 private:
-    double sigma;
-    int octaves;
-    int stages;
+    double mSigma;
+    int mOctaves;
+    int mStages;
 
-    cv::Mat dxx, dyy, dx, dy;
-    cv::Mat id;
+    cv::Mat mDxx, mDyy, mDx, mDy;
+    cv::Mat mId;
 };
 
 
@@ -92,13 +92,13 @@ private:
 class Frangi {
 public:
     /**
-* @brief computeVesselness Computes vessel probability based on lambda1 and lambda2, where lambda1 > lambda2
-* @param lambda1 Eigenvalue 1
-* @param lambda2 Eigenvalue 2
-* @param p1 beta value
-* @param p2 c value
-* @return Probability map indicating possible vessels
-*/
+    * @brief computeVesselness Computes vessel probability based on lambda1 and lambda2, where lambda1 > lambda2
+    * @param lambda1 Eigenvalue 1
+    * @param lambda2 Eigenvalue 2
+    * @param p1 beta value
+    * @param p2 c value
+    * @return Probability map indicating possible vessels
+    */
     static cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                        const cv::Mat1f &lambda2,
                                        const float p1,
@@ -112,13 +112,13 @@ public:
 class Sato {
 public:
     /**
-* @brief computeVesselness
-* @param lambda1
-* @param lambda2
-* @param p1
-* @param p2
-* @return
-*/
+    * @brief computeVesselness
+    * @param lambda1
+    * @param lambda2
+    * @param p1
+    * @param p2
+    * @return
+    */
     static cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                        const cv::Mat1f &lambda2,
                                        const float p1,

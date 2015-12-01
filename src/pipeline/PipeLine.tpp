@@ -16,7 +16,7 @@ PipeLine<T>::~PipeLine() {
 
 
 template <typename T>
-unsigned long PipeLine<T>::addPreprocessingStep(const cv::Ptr<PreprocessingStep> step) {
+unsigned long PipeLine<T>::addPreprocessingStep(const cv::Ptr<ImageProcessingStep> step) {
     this->mPreprocessing.push_back(step);
     return this->mPreprocessing.size() - 1;
 }

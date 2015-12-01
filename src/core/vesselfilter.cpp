@@ -7,13 +7,13 @@ namespace pipe {
 VesselFilter::VesselFilter(const double sigma,
                            const int octaves,
                            const int stages) {
-    this->sigma = sigma;
-    this->octaves = octaves;
-    this->stages = stages;
+    this->mSigma = sigma;
+    this->mOctaves = octaves;
+    this->mStages = stages;
 
-    cv::getDerivKernels(this->dxx, this->dyy, 2, 2, 3);
-    cv::getDerivKernels(this->dx, this->dy, 1, 1, 3);
-    this->id = (cv::Mat1i(3, 1) << 0, 1, 0);
+    cv::getDerivKernels(this->mDxx, this->mDyy, 2, 2, 3);
+    cv::getDerivKernels(this->mDx, this->mDy, 1, 1, 3);
+    this->mId = (cv::Mat1i(3, 1) << 0, 1, 0);
 }
 
 
@@ -28,7 +28,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
         workingCopy = input;
     }
 
-    GaussianScaleSpace sp(this->octaves, this->stages, this->sigma);
+    GaussianScaleSpace sp(this->mOctaves, this->mStages, this->mSigma);
     std::vector<cv::Mat> scales;
     sp.compute(workingCopy, scales);
 
@@ -54,7 +54,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
         cv::resize(filtered[i], filtered[i], workingCopy.size(), scale, scale, cv::INTER_NEAREST);
 
         ++st;
-        if (st % this->stages == 0) {
+        if (st % this->mStages == 0) {
             ++oct;
             st = 0;
         }
@@ -78,9 +78,9 @@ void VesselFilter::computeHessian(const cv::Mat &input,
                                   cv::Mat &dxx,
                                   cv::Mat &dyy,
                                   cv::Mat &dxy) const {
-                                                  cv::sepFilter2D(input, dxx, -1, this->dxx, this->id);
-                                                  cv::sepFilter2D(input, dyy, -1, this->id, this->dyy);
-                                                  cv::sepFilter2D(input, dxy, -1, this->dx, this->dy);
+                                                  cv::sepFilter2D(input, dxx, -1, this->mDxx, this->mId);
+                                                  cv::sepFilter2D(input, dyy, -1, this->mId, this->mDyy);
+                                                  cv::sepFilter2D(input, dxy, -1, this->mDx, this->mDy);
                                                   }
 
 

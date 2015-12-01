@@ -13,16 +13,55 @@
 
 namespace pipe {
 
+
+/**
+ * @brief The SiftDetector class
+ */
 class SiftDetector : public FeatureExtractionStep {
 public:
+    /**
+     * @brief SiftDetector
+     * @param config
+     * @param info
+     */
     SiftDetector(const cv::Ptr<SiftConfigContainer> config,
                  const std::string &info = "SIFT feature extractor");
 
+    /**
+     * @brief ~SiftDetector
+     */
     virtual ~SiftDetector();
 
-    virtual cv::Mat train(const cv::Mat &input, const cv::Mat &mask) const;
+    /**
+     * @brief train
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat train(const std::vector<cv::Mat> &input, const cv::Mat &mask) const;
+
+    /**
+     * @brief run
+     * @param input
+     * @param mask
+     * @return
+     */
     virtual cv::Mat run(const cv::Mat &input, const cv::Mat &mask) const;
-    virtual cv::Mat debugTrain(const cv::Mat &input, const cv::Mat &mask) const;
+
+    /**
+     * @brief debugTrain
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat debugTrain(const std::vector<cv::Mat> &input, const cv::Mat &mask) const;
+
+    /**
+     * @brief debugRun
+     * @param input
+     * @param mask
+     * @return
+     */
     virtual cv::Mat debugRun(const cv::Mat &input, const cv::Mat &mask) const;
 
 private:

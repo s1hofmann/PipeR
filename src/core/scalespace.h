@@ -8,60 +8,138 @@
 namespace pipe {
 
 
+/**
+ * @brief The ScaleSpace class
+ */
 class ScaleSpace {
 
 public:
-    ScaleSpace(int _n_ocataves,
-               int _n_sublevels)
-        : n_octaves(_n_ocataves),
-          n_sublevels(_n_sublevels) {}
+    /**
+     * @brief ScaleSpace
+     * @param _n_ocataves
+     * @param _n_sublevels
+     */
+    ScaleSpace(int octaves,
+               int sublevels)
+        : mOctaves(octaves),
+          mSublevels(sublevels)
+    {
 
+    }
+
+    /**
+     * @brief ~ScaleSpace
+     */
     virtual ~ScaleSpace(){}
 
+    /**
+     * @brief compute
+     * @param img
+     * @param scales
+     */
     virtual void compute(const cv::Mat & img,
                          std::vector<cv::Mat> & scales) = 0;
 
-//protected:
+    /**
+     * @brief getScaleFactor
+     * @param o
+     * @param s
+     * @return
+     */
     double getScaleFactor(int o, int s) const {
-        return std::pow(2, o + (float) s / (float) n_sublevels );
+        return std::pow(2, o + (float) s / (float) mSublevels );
     }
 
 protected:
-    int n_octaves;
-    int n_sublevels;
+    /**
+     * @brief mOctaves
+     */
+    int mOctaves;
 
+    /**
+     * @brief mSublevels
+     */
+    int mSublevels;
 };
 
+/**
+ * @brief The LinearScaleSpace class
+ */
 class LinearScaleSpace : public ScaleSpace
 {
 public:
-    LinearScaleSpace(int _n_octaves = 2,
-                     int _n_sublevels = 3)
-        : ScaleSpace(_n_octaves, _n_sublevels) {}
+    /**
+     * @brief LinearScaleSpace
+     * @param octaves
+     * @param sublevels
+     */
+    LinearScaleSpace(int octaves = 2,
+                     int sublevels = 3)
+        : ScaleSpace(octaves, sublevels)
+    {
+
+    }
+
+    /**
+     * @brief compute
+     * @param img
+     * @param scales
+     */
     void compute(const cv::Mat & img,
                  std::vector<cv::Mat> & scales);
 };
 
+
+/**
+ * @brief The GaussianScaleSpace class
+ */
 class GaussianScaleSpace : public ScaleSpace
 {
 public:
-    GaussianScaleSpace(int _n_octaves = 4,
-                       int _n_sublevels = 3,
-                       double _sigma_base = 1.6,
-                       bool _scale_octave = true,
-                       bool _scale_sublevel = false)
-        : ScaleSpace(_n_octaves, _n_sublevels),
-          sigma_base(_sigma_base),
-          scale_octave(_scale_octave),
-          scale_sublevel(_scale_sublevel)
-    {}
+    /**
+     * @brief GaussianScaleSpace
+     * @param octaves
+     * @param sublevels
+     * @param sigmaBase
+     * @param scaleOctave
+     * @param scaleSublevel
+     */
+    GaussianScaleSpace(int octaves = 4,
+                       int sublevels = 3,
+                       double sigmaBase = 1.6,
+                       bool scaleOctave = true,
+                       bool scaleSublevel = false)
+        : ScaleSpace(octaves, sublevels),
+          mSigmaBase(sigmaBase),
+          mScaleOctave(scaleOctave),
+          mScaleSublevel(scaleSublevel)
+    {
+
+    }
+
+    /**
+     * @brief compute
+     * @param img
+     * @param scales
+     */
     void compute(const cv::Mat & img,
                  std::vector<cv::Mat> & scales);
 
 private:
-    double sigma_base;
-    bool scale_octave;
-    bool scale_sublevel;
+    /**
+     * @brief mSigmaBase
+     */
+    double mSigmaBase;
+
+    /**
+     * @brief mScaleOctave
+     */
+    bool mScaleOctave;
+
+    /**
+     * @brief mScaleSublevel
+     */
+    bool mScaleSublevel;
 };
 
 

@@ -40,7 +40,8 @@ cv::Mat VesselMask::train(const cv::Mat &input, const cv::Mat &mask) const {
                                       maskConfig->getC(),
                                       mask);
     } catch (cv::Exception &exception) {
-        std::cerr << "Caught exception: " << exception.what() << std::endl;
+        std::cerr << "Caught exception in pipeline step: " << this->mName << std::endl;
+        std::cerr << "Cause: " << exception.what() << std::endl;
     }
 
     return result;
