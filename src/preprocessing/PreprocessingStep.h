@@ -20,6 +20,12 @@ public:
                           const cv::Mat &mask) const = 0;
     virtual cv::Mat run(const cv::Mat &input,
                         const cv::Mat &mask) const = 0;
+
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const = 0;
+
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const = 0;
 };
 
 
@@ -34,6 +40,12 @@ public:
                           const cv::Mat &mask) const = 0;
     virtual cv::Mat run(const cv::Mat &input,
                         const cv::Mat &mask) const = 0;
+
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const = 0;
+
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const = 0;
 
 private:
 
@@ -50,6 +62,16 @@ public:
                           const cv::Mat &mask) const;
     virtual cv::Mat run(const cv::Mat &input,
                         const cv::Mat &mask) const;
+
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const {
+
+    }
+
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const {
+
+    }
 
     virtual ~ImageProcessingStep();
 

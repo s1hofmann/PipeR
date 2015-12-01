@@ -24,6 +24,11 @@ public:
     virtual cv::Mat run(const cv::Mat &input,
                         const cv::Mat &mask) const;
 
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const;
+
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const;
 private:
 };
 
