@@ -8,20 +8,17 @@
 int main(int argc, char *argv[]) {
     cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
 
-    pipe::PipeLine<cv::Mat> pipeLine;
-
-    cv::Ptr<pipe::VesselMaskConfig> prCfg = new pipe::VesselMaskConfig();
-    cv::Ptr<pipe::PreprocessingStep> pr = new pipe::VesselMask(prCfg, "Hurr durr, I'm a sheep!");
+    pipe::PipeLine<cv::Mat> pipeLine(true);
 
     cv::Ptr<pipe::SiftConfigContainer> feCfg = new pipe::SiftConfigContainer();
-    cv::Ptr<pipe::SiftDetector> fe = new pipe::SiftDetector(feCfg, "hallo");
+    cv::Ptr<pipe::SiftDetector> fe = new pipe::SiftDetector(feCfg);
 
-    std::cout << pr->config() << std::endl;
+    cv::Ptr<pipe::MaskGenerator> mask = new pipe::VesselMask();
 
-    pipeLine.addPreprocessingStep(pr);
-
-    pipeLine.train(in, cv::Mat());
+    pipeLine.addFeatureExtractionStep(fe, mask);
     pipeLine.showPipeline();
+
+    pipeLine.train(in);
 
     return 0;
 }
