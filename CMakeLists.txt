@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.3)
 project(pipeline_framework)
 
 #OpenCV
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
+find_package(OpenCV 3.0.0 REQUIRED)
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
 #Boost
 find_package(Boost 1.58 COMPONENTS program_options REQUIRED)
@@ -20,11 +20,13 @@ set(SOURCE_FILES src/main.cpp
         src/pipeline/PipelineStep
         src/pipeline/ConfigContainer
         src/preprocessing/PreprocessingStep
-        src/preprocessing/VesselMask
-        src/preprocessing/VesselMaskConfig
+        src/preprocessing/BinarizationStep
         src/feature_extraction/FeatureExtractionStep
         src/feature_extraction/SiftDetector
-        src/feature_extraction/SiftConfigContainer src/pipeline/return_codes.h)
+        src/feature_extraction/SiftConfigContainer
+        src/pipeline/return_codes
+        src/masks/MaskGenerator
+        src/masks/VesselMask)
 #                 src/encoding/EncodingStep
 #                 src/encoding/VladEncoder)
 
