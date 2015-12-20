@@ -11,8 +11,8 @@ namespace pipe {
 ConfigContainer::ConfigContainer(const std::string &usage,
                                  const std::string &help)
     :
-        usageText(usage),
-        helpText(help)
+        mUsageText(usage),
+        mHelpText(help)
 {
 
 }
@@ -26,13 +26,13 @@ ConfigContainer::~ConfigContainer()
 
 std::string ConfigContainer::usage() const
 {
-    return usageText;
+    return mUsageText;
 }
 
 
 std::string ConfigContainer::help() const
 {
-    return helpText;
+    return mHelpText;
 }
 
 

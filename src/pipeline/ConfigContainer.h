@@ -16,19 +16,6 @@ namespace pipe {
 class ConfigContainer {
 public:
     /**
-     * @brief ConfigContainer
-     * @param usage
-     * @param help
-     */
-    ConfigContainer(const std::string &usage = "No usage text provided, I'm sorry.",
-                    const std::string &help = "No help text provided, I'm sorry.");
-
-    /**
-     * @brief ~ConfigContainer
-     */
-    virtual ~ConfigContainer();
-
-    /**
      * @brief usage
      * @return
      */
@@ -46,17 +33,30 @@ public:
      */
     virtual std::string toString() const = 0;
 
-private:
-    //TODO: Consistent variable naming
+protected:
     /**
-     * @brief usageText
+     * @brief ConfigContainer
+     * @param usage
+     * @param help
      */
-    std::string usageText;
+    ConfigContainer(const std::string &usage = "No usage text provided, I'm sorry.",
+                    const std::string &help = "No help text provided, I'm sorry.");
 
     /**
-     * @brief helpText
+     * @brief ~ConfigContainer
      */
-    std::string helpText;
+    virtual ~ConfigContainer();
+
+private:
+    /**
+     * @brief mUsageText
+     */
+    std::string mUsageText;
+
+    /**
+     * @brief mHelpText
+     */
+    std::string mHelpText;
 };
 
 
