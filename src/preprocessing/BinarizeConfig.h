@@ -1,5 +1,8 @@
-#ifndef BINARIZECONFIG_H
-#define BINARIZECONFIG_H
+#pragma once
+
+#include "../pipeline/ConfigContainer.h"
+
+namespace pipe {
 
 
 class BinarizeConfig : public ConfigContainer
@@ -8,4 +11,5 @@ public:
     BinarizeConfig();
 };
 
-#endif // BINARIZECONFIG_H
+
+}
