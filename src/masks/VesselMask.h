@@ -25,6 +25,8 @@ public:
 
     std::string toString();
 
+    std::string name();
+
 private:
     int mOctaves;
     int mStages;

@@ -18,6 +18,8 @@ public:
 
     virtual std::string toString() = 0;
 
+    virtual std::string name() = 0;
+
 protected:
     MaskGenerator(const std::string &name = "Mask generator");
 

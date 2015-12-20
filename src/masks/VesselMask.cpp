@@ -57,4 +57,10 @@ std::string VesselMask::toString() {
 }
 
 
+std::string VesselMask::name()
+{
+    return this->mName;
+}
+
+
 }

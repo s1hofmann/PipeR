@@ -315,12 +315,39 @@ bool PipeLine<T>::removeFeatureExtractionStep() {
 
 template <typename T>
 void PipeLine<T>::showPipeline() {
+    std::cout << "Preprocessing:" << std::endl;
+
     for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
-        std::cout << "Preprocessing step " << i << ": " << this->mPreprocessing[i].first->info() << std::endl;
+        std::cout << "Method " << i << ": " << std::endl << this->mPreprocessing[i].first->info() << std::endl << std::endl;
+        if(!this->mPreprocessing[i].second.empty()) {
+            std::cout << "Mask " << i << ": " << std::endl;
+            if(this->mDebugMode) {
+                std::cout << this->mPreprocessing[i].second->toString() << std::endl;
+            } else {
+                std::cout << this->mPreprocessing[i].second->name() << std::endl;
+            }
+        }
     }
 
+    if(!this->mPreprocessing.empty()) {
+        std::cout << std::endl;
+    }
+
+    std::cout << "Feature extraction:" << std::endl;
+
     if(!this->mFeatureExtraction.first.empty()) {
-        std::cout << "Feature extraction step: " << this->mFeatureExtraction.first->info() << std::endl;
+        std::cout << "Method: " << this->mFeatureExtraction.first->info() << std::endl;
+        if(this->mDebugMode) {
+            std::cout << this->mFeatureExtraction.first->config() << std::endl;
+        }
+    }
+
+    if(!this->mFeatureExtraction.second.empty()) {
+        if(this->mDebugMode) {
+            std::cout << "Mask: " << this->mFeatureExtraction.second->toString() << std::endl;
+        } else {
+            std::cout << "Mask: " << this->mFeatureExtraction.second->name() << std::endl;
+        }
     }
 
     for(size_t i = 0; i < this->mPostprocessing.size(); ++i) {
