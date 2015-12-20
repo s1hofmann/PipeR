@@ -38,7 +38,7 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat train(const std::vector<cv::Mat> &input, const cv::Mat &mask) const;
+    virtual cv::Mat train(const cv::Mat &input, const cv::Mat &mask) const;
 
     /**
      * @brief run
@@ -54,7 +54,7 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat debugTrain(const std::vector<cv::Mat> &input, const cv::Mat &mask) const;
+    virtual cv::Mat debugTrain(const cv::Mat &input, const cv::Mat &mask) const;
 
     /**
      * @brief debugRun

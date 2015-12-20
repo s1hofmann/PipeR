@@ -22,57 +22,29 @@ BinarizationStep::~BinarizationStep()
 }
 
 
-std::vector<cv::Mat> BinarizationStep::train(const std::vector<cv::Mat> &input,
-                                             const cv::Mat &mask) const
+cv::Mat BinarizationStep::train(const cv::Mat &input,
+                                const cv::Mat &mask) const
 {
 
 }
 
 
-std::vector<cv::Mat> BinarizationStep::train(const std::vector<cv::Mat> &input,
-                                             const cv::Ptr<MaskGenerator> mask) const
+cv::Mat BinarizationStep::run(const cv::Mat &input,
+                              const cv::Mat &mask) const
 {
 
 }
 
 
-std::vector<cv::Mat> BinarizationStep::run(const cv::Mat &input,
-                                           const cv::Mat &mask) const
+cv::Mat BinarizationStep::debugTrain(const cv::Mat &input,
+                                     const cv::Mat &mask) const
 {
 
 }
 
 
-std::vector<cv::Mat> BinarizationStep::run(const cv::Mat &input,
-                                           const cv::Ptr<MaskGenerator> mask) const
-{
-
-}
-
-
-std::vector<cv::Mat> BinarizationStep::debugTrain(const std::vector<cv::Mat> &input,
-                                                  const cv::Mat &mask) const
-{
-
-}
-
-
-std::vector<cv::Mat> BinarizationStep::debugTrain(const std::vector<cv::Mat> &input,
-                                                  const cv::Ptr<MaskGenerator> mask) const
-{
-
-}
-
-
-std::vector<cv::Mat> BinarizationStep::debugRun(const cv::Mat &input,
-                                                const cv::Mat &mask) const
-{
-
-}
-
-
-std::vector<cv::Mat> BinarizationStep::debugRun(const cv::Mat &input,
-                                                const cv::Ptr<MaskGenerator> mask) const
+cv::Mat BinarizationStep::debugRun(const cv::Mat &input,
+                                   const cv::Mat &mask) const
 {
 
 }

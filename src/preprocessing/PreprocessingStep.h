@@ -21,17 +21,8 @@ public:
      * @param mask
      * @return
      */
-    virtual std::vector<cv::Mat> train(const std::vector<cv::Mat> &input,
-                                       const cv::Mat &mask) const = 0;
-
-    /**
-     * @brief train
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual std::vector<cv::Mat> train(const std::vector<cv::Mat> &input,
-                                       const cv::Ptr<MaskGenerator> mask) const = 0;
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
 
     /**
      * @brief run
@@ -39,17 +30,8 @@ public:
      * @param mask
      * @return
      */
-    virtual std::vector<cv::Mat> run(const cv::Mat &input,
-                                     const cv::Mat &mask) const = 0;
-
-    /**
-     * @brief run
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual std::vector<cv::Mat> run(const cv::Mat &input,
-                                     const cv::Ptr<MaskGenerator> mask) const = 0;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
 
     /**
      * @brief debugTrain
@@ -57,17 +39,8 @@ public:
      * @param mask
      * @return
      */
-    virtual std::vector<cv::Mat> debugTrain(const std::vector<cv::Mat> &input,
-                                            const cv::Mat &mask) const = 0;
-
-    /**
-     * @brief debugTrain
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual std::vector<cv::Mat> debugTrain(const std::vector<cv::Mat> &input,
-                                            const cv::Ptr<MaskGenerator> mask) const = 0;
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const = 0;
 
     /**
      * @brief debugRun
@@ -75,17 +48,8 @@ public:
      * @param mask
      * @return
      */
-    virtual std::vector<cv::Mat> debugRun(const cv::Mat &input,
-                                          const cv::Mat &mask) const = 0;
-
-    /**
-     * @brief debugRun
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual std::vector<cv::Mat> debugRun(const cv::Mat &input,
-                                          const cv::Ptr<MaskGenerator> mask) const = 0;
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const = 0;
 
 protected:
     /**
