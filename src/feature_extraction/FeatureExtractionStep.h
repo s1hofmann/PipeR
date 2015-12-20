@@ -17,19 +17,6 @@ namespace pipe {
 class FeatureExtractionStep : public PipelineStep {
 public:
     /**
-     * @brief FeatureExtractionStep
-     * @param config
-     * @param info
-     */
-    FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
-                          const std::string &info = "Feature extraction step");
-
-    /**
-     * @brief ~FeatureExtractionStep
-     */
-    virtual ~FeatureExtractionStep();
-
-    /**
      * @brief train
      * @param input
      * @param mask
@@ -65,7 +52,19 @@ public:
     virtual cv::Mat debugRun(const cv::Mat &input,
                              const cv::Mat &mask) const = 0;
 
-private:
+protected:
+    /**
+     * @brief FeatureExtractionStep
+     * @param config
+     * @param info
+     */
+    FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
+                          const std::string &info = "Feature extraction step");
+
+    /**
+     * @brief ~FeatureExtractionStep
+     */
+    virtual ~FeatureExtractionStep();
 };
 
 
