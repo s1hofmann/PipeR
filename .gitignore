@@ -1,2 +1,4 @@
 .idea
 *.o
+CMakeLists.txt.user
+build/
