@@ -421,6 +421,8 @@ void PipeLine<T>::train(const cv::Mat &input) const {
             }
             prep = this->mPreprocessing[idx].first->train(prep, prepMask);
         }
+    } else {
+        prep = input.clone();
     }
 
     cv::Mat features;
@@ -432,10 +434,9 @@ void PipeLine<T>::train(const cv::Mat &input) const {
         } else {
             featureMask = cv::Mat::ones(prep.size(), prep.type());
         }
-        cv::Ptr<FeatureExtractionStep> fe;
         features = this->mFeatureExtraction.first->train(prep, featureMask);
     } else {
-        std::cerr << "No features generated, aborting." << std::endl;
+        std::cerr << "No features extraction method given, aborting." << std::endl;
         exit(-1);
     }
 }
