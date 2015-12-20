@@ -9,8 +9,8 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include "PipelineStep.h"
-#include "../preprocessing/VesselMask.h"
-#include "../preprocessing/VesselMaskConfig.h"
+#include "../masks/VesselMask.h"
+#include "../preprocessing/PreprocessingStep.h"
 #include "../encoding/VladEncoder.h"
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
@@ -35,7 +35,7 @@ public:
      * @brief train
      * @param mask
      */
-    void train(const std::vector<cv::Mat &input>, const cv::Mat &mask) const;
+    void train(const cv::Mat &input, const cv::Mat &mask) const;
 
     /**
      * @brief run
@@ -50,7 +50,7 @@ public:
      * @param step
      * @return
      */
-    unsigned long addPreprocessingStep(const cv::Ptr<ImageProcessingStep> step);
+    unsigned long addPreprocessingStep(const cv::Ptr<PreprocessingStep> step);
 
     /**
      * @brief removePreprocessingStep
