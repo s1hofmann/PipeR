@@ -12,8 +12,10 @@ VesselMask::VesselMask(const int octaves,
                        const int stages,
                        const double sigma,
                        const double beta,
-                       const double c)
+                       const double c,
+                       const std::string &name)
     :
+        MaskGenerator(name),
         mOctaves(octaves),
         mStages(stages),
         mSigma(sigma),

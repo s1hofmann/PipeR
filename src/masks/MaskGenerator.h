@@ -12,8 +12,6 @@ namespace pipe {
 
 class MaskGenerator {
 public:
-    MaskGenerator(const std::string &name = "Mask");
-
     virtual ~MaskGenerator();
 
     virtual cv::Mat create(const cv::Mat &input) = 0;
@@ -21,6 +19,8 @@ public:
     virtual std::string toString() = 0;
 
 protected:
+    MaskGenerator(const std::string &name = "Mask generator");
+
     std::string mName;
 };
 

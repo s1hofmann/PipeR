@@ -12,11 +12,12 @@ namespace pipe {
 
 class VesselMask : public MaskGenerator {
 public:
-    VesselMask(const int octaves,
-               const int stages,
-               const double sigma,
-               const double beta,
-               const double c);
+    VesselMask(const int octaves = 3,
+               const int stages = 3,
+               const double sigma = 1.5,
+               const double beta = 0.5,
+               const double c = 15,
+               const std::string &name = "Vessel mask generator");
 
     ~VesselMask();
 
