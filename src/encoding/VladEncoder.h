@@ -6,23 +6,58 @@
 #pragma once
 
 #include "EncodingStep.h"
+#include "VladConfig.h"
+#include "../core/clustering/kmeanscluster.h"
+
+#include "../core/encoding/vladencoder.h"
 
 namespace pl {
 
 
-class VladEncoder : public EncodingStep {
+class VladEncodingStep : public EncodingStep {
 public:
-    VladEncoder(const std::string &info = "VLAD encoding",
-                const std::string &usage = "Needed parameters: cluster centers.",
-                const std::string &help = "Vector Of Locally Aggregated Descriptors (VLAD) encoding method.");
+    VladEncodingStep(const cv::Ptr<VladConfig> config,
+                     const std::string &info = "VLAD");
 
-    virtual ~VladEncoder();
+    virtual ~VladEncodingStep();
 
-    virtual cv::Mat train();
-    virtual cv::Mat run();
+    /**
+     * @brief train
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask = cv::Mat()) const;
+
+    /**
+     * @brief run
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask = cv::Mat()) const;
+
+    /**
+     * @brief debugTrain
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask = cv::Mat()) const;
+
+    /**
+     * @brief debugRun
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask = cv::Mat()) const;
 
 private:
-
 };
 
 

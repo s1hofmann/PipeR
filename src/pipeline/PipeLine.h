@@ -17,6 +17,8 @@
 #include "../feature_extraction/SiftConfigContainer.h"
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
+#include "../encoding/VladEncoder.h"
+#include "../encoding/VladConfig.h"
 
 namespace pl {
 
@@ -186,7 +188,7 @@ private:
     /**
      * @brief mEncoding
      */
-    cv::Ptr<PipelineStep> mEncoding;
+    cv::Ptr<EncodingStep> mEncoding;
 
     /**
      * @brief mTraining
@@ -365,6 +367,9 @@ void PipeLine<T>::showPipeline() {
 
     if(!this->mEncoding.empty()) {
         std::cout << "Encoding step: " << this->mEncoding->info() << std::endl;
+        if(this->mDebugMode) {
+            std::cout << this->mEncoding->config() << std::endl;
+        }
     }
 
     if(!this->mTraining.empty()) {
@@ -493,6 +498,17 @@ void PipeLine<T>::train(const cv::Mat &input) const {
         }
     } else {
         reduced = features;
+    }
+
+    cv::Mat encoded;
+    if(!this->mEncoding.empty()) {
+        if(!this->mDebugMode) {
+            encoded = this->mEncoding->train(reduced);
+        } else {
+            encoded = this->mEncoding->debugTrain(reduced);
+        }
+    } else {
+        encoded = reduced;
     }
 }
 

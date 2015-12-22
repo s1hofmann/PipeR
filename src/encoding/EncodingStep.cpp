@@ -4,14 +4,14 @@
 
 #include "EncodingStep.h"
 
-namespace pipe {
+namespace pl {
 
 
-EncodingStep::EncodingStep(const std::string &info,
-                           const std::string &usage,
-                           const std::string &help)
-        :
-        PipelineStep(info, usage, help)
+EncodingStep::EncodingStep(const cv::Ptr<ConfigContainer> config,
+                           const std::string &info)
+    :
+        PipelineStep(config,
+                     info)
 {
 
 }

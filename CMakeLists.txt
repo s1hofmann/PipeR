@@ -18,6 +18,8 @@ set(SOURCE_FILES src/main.cpp
         src/core/clustering/kmeanscluster
         src/core/clustering/clustermethod
         src/core/dim/rpca
+        src/core/encoding/encodingmethod
+        src/core/encoding/vladencoder
         src/core/filters/vesselfilter
         src/core/utils/scalespace
         src/pipeline/PipeLine
@@ -34,9 +36,10 @@ set(SOURCE_FILES src/main.cpp
         src/dimensionality_reduction/PCAStep
         src/dimensionality_reduction/PCAConfig
         src/masks/MaskGenerator
-        src/masks/VesselMask)
-#                 src/encoding/EncodingStep
-#                 src/encoding/VladEncoder)
+        src/masks/VesselMask
+        src/encoding/EncodingStep
+        src/encoding/VladEncoder
+        src/encoding/VladConfig)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Boost_LIBRARIES})

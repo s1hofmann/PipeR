@@ -15,7 +15,7 @@ public:
     /**
      * @brief cluster: Perform clustering
      */
-    virtual void cluster(cv::Mat1f data,
+    virtual void cluster(cv::Mat data,
                          int clusters,
                          int maxIterations = 100,
                          double epsilon = 0.001) = 0;

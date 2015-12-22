@@ -1,7 +1,9 @@
 #include "kmeanscluster.h"
 
-void KMeansCluster::cluster(cv::Mat1f data, int clusters,
-                            int maxIterations, double epsilon)
+void KMeansCluster::cluster(cv::Mat data,
+                            int clusters,
+                            int maxIterations,
+                            double epsilon)
 {
     cv::Mat labels;
     cv::Mat1f means;
