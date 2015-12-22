@@ -10,101 +10,139 @@ class ProgressBar
 {
 public:
     ProgressBar(const T totalElements) {
-        this->currentProgress = -1;
-        this->currentProgressPercent = 0.0;
+        this->mCurrentProgress = -1;
+        this->mCurrentProgressPercent = 0.0;
         this->setDimensions();
-        this->totalElements = totalElements;
+        this->mTotalElements = totalElements;
+        this->mCurrentElement = 0;
         this->initialize();
         this->drawProgressBar();
     }
 
     void reset(const T totalElements) {
-        this->currentProgress = -1;
-        this->currentProgressPercent = 0.0;
+        this->mCurrentProgress = -1;
+        this->mCurrentProgressPercent = 0.0;
         this->setDimensions();
-        this->totalElements = totalElements;
+        this->mTotalElements = totalElements;
+        this->mCurrentElement = 0;
         this->initialize();
         this->drawProgressBar();
     }
 
     ProgressBar(const T totalElements, const std::string &label) {
-        this->currentProgress = -1;
-        this->currentProgressPercent = 0.0;
+        this->mCurrentProgress = -1;
+        this->mCurrentProgressPercent = 0.0;
         this->setDimensions();
-        this->totalElements = totalElements;
-        this->label = label;
+        this->mTotalElements = totalElements;
+        this->mCurrentElement = 0;
+        this->mLabel = label;
         this->initialize();
         this->drawLabel();
         this->drawProgressBar();
     }
 
     void reset(const T totalElements, const std::string &label) {
-        this->currentProgress = -1;
-        this->currentProgressPercent = 0.0;
+        this->mCurrentProgress = -1;
+        this->mCurrentProgressPercent = 0.0;
         this->setDimensions();
-        this->totalElements = totalElements;
-        this->label = label;
+        this->mTotalElements = totalElements;
+        this->mCurrentElement = 0;
+        this->mLabel = label;
         this->initialize();
         this->drawLabel();
         this->drawProgressBar();
     }
 
     void setLabel(const std::string &label) {
-        this->label = label;
+        this->mLabel = label;
+    }
+
+    void rescale(const T newSize) {
+        this->mTotalElements = newSize;
+
+        this->mProgressBarBuffer.str(std::string());
+        this->mProgressBarBuffer.clear();
+
+        this->mProgressBarBuffer << "[";
+
+        float percent = this->mCurrentElement/(float)this->mTotalElements;
+        this->mCurrentProgressPercent = std::ceil(100*percent);
+        this->mCurrentProgress = percent * this->mProgressBarWidth;
+        for(int i = 0; i < this->mCurrentProgress; ++i) {
+            this->mProgressBarBuffer << "#";
+        }
+        for(int i = mCurrentProgress; i < this->mProgressBarWidth; ++i) {
+            this->mProgressBarBuffer << " ";
+        }
+        this->mProgressBarBuffer << "]";
+
+        this->mProgressBar = this->mProgressBarBuffer.str();
+
+        this->mProgressBarBuffer.str(std::string());
+        this->mProgressBarBuffer.clear();
+        this->mProgressBarBuffer << " " << this->mCurrentProgressPercent << "%";
+        this->mProgressBarPercent = this->mProgressBarBuffer.str();
+
+        this->mProgressBarBuffer >> this->mProgressBarPercent;
+
+        this->drawProgressBar();
+        this->setDimensions();
+        --this->mCurrentProgress;
     }
 
     std::string getLabel() {
-        return this->label;
+        return this->mLabel;
     }
 
-    void update(T current) {
-        float percent = current/(float)this->totalElements;
-        this->currentProgressPercent = 100*percent;
-        int progress = percent * this->progressBarWidth;
-        if(progress > this->currentProgress) {
-            this->currentProgress = progress;
-            if(progress < this->progressBarWidth) {
-                this->progressBar.replace(progress + 1, 1, "#");
+    void update() {
+        float percent = this->mCurrentElement/(float)this->mTotalElements;
+        this->mCurrentProgressPercent = 100*percent;
+        int progress = percent * this->mProgressBarWidth;
+        if(progress > this->mCurrentProgress) {
+            ++this->mCurrentProgress;
+            if(progress < this->mProgressBarWidth) {
+                this->mProgressBar.replace(progress + 1, 1, "#");
             }
 
-            this->progressBarBuffer.str(std::string());
-            this->progressBarBuffer.clear();
-            this->progressBarBuffer << " " << this->currentProgressPercent << "%";
+            this->mProgressBarBuffer.str(std::string());
+            this->mProgressBarBuffer.clear();
+            this->mProgressBarBuffer << " " << this->mCurrentProgressPercent << "%";
 
-            this->progressBarBuffer >> this->progressBarPercent;
+            this->mProgressBarBuffer >> this->mProgressBarPercent;
 
             this->drawProgressBar();
             this->setDimensions();
         }
+        ++this->mCurrentElement;
     }
 
 private:
     void drawProgressBar() {
-        std::cout << "\r" << this->progressBar << " " << this->progressBarPercent << std::flush;
+        std::cout << "\r" << this->mProgressBar << " " << this->mProgressBarPercent << std::flush;
     }
 
     void initialize() {
-        this->progressBarBuffer.str(std::string());
-        this->progressBarBuffer.clear();
+        this->mProgressBarBuffer.str(std::string());
+        this->mProgressBarBuffer.clear();
 
-        this->progressBarBuffer << "[";
-        for(int i = 0; i < this->progressBarWidth; ++i) {
-            this->progressBarBuffer << " ";
+        this->mProgressBarBuffer << "[";
+        for(int i = 0; i < this->mProgressBarWidth; ++i) {
+            this->mProgressBarBuffer << " ";
         }
-        this->progressBarBuffer << "]";
+        this->mProgressBarBuffer << "]";
 
-        this->progressBar = this->progressBarBuffer.str();
+        this->mProgressBar = this->mProgressBarBuffer.str();
 
-        this->progressBarBuffer.str(std::string());
-        this->progressBarBuffer.clear();
-        this->progressBarBuffer << " 0%";
-        this->progressBarPercent = this->progressBarBuffer.str();
+        this->mProgressBarBuffer.str(std::string());
+        this->mProgressBarBuffer.clear();
+        this->mProgressBarBuffer << " 0%";
+        this->mProgressBarPercent = this->mProgressBarBuffer.str();
     }
 
     void drawLabel() {
-        if(!this->label.empty()) {
-            std::cout << this->label << std::endl;
-            for(int i = 0; i < this->label.size(); ++i) {
+        if(!this->mLabel.empty()) {
+            std::cout << this->mLabel << std::endl;
+            for(int i = 0; i < this->mLabel.size(); ++i) {
                 std::cout << "=";
             }
             std::cout << std::endl;
@@ -112,34 +150,35 @@ private:
     }
 
     void setDimensions() {
-        this->totalWidth = this->termInfo.getCols();
-        this->progressBarWidth = this->totalWidth - 7;
+        this->mTotalWidth = this->mTermInfo.getCols();
+        this->mProgressBarWidth = this->mTotalWidth - 7;
     }
 
     int getProgressBarWidth() {
-        return this->progressBarWidth;
+        return this->mProgressBarWidth;
     }
 
     int getTerminalWidth() {
-        return this->totalWidth;
+        return this->mTotalWidth;
     }
 
 
 //
 // DATA
 //
-    TermInfo termInfo;
+    TermInfo mTermInfo;
 
-    T totalElements;
+    T mTotalElements;
+    T mCurrentElement;
 
-    std::string label;
-    std::string progressBar;
-    std::string progressBarPercent;
-    std::stringstream progressBarBuffer;
+    std::string mLabel;
+    std::string mProgressBar;
+    std::string mProgressBarPercent;
+    std::stringstream mProgressBarBuffer;
 
-    int progressBarWidth;
-    int totalWidth;
+    int mProgressBarWidth;
+    int mTotalWidth;
 
-    int currentProgressPercent;
-    int currentProgress;
+    int mCurrentProgressPercent;
+    int mCurrentProgress;
 };
