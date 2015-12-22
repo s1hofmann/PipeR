@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-namespace pipe {
+namespace pl {
 
 
 void LinearScaleSpace::compute(const cv::Mat & img,

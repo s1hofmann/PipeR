@@ -7,7 +7,7 @@
 #include "../pipeline/PipelineStep.h"
 #include "../masks/MaskGenerator.h"
 
-namespace pipe {
+namespace pl {
 
 
 /**

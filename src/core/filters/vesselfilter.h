@@ -6,7 +6,7 @@
 #include "../utils/scalespace.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 class VesselFilter {

@@ -16,7 +16,7 @@
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
 
-namespace pipe {
+namespace pl {
 
 template <class T>
 class PipeLine {

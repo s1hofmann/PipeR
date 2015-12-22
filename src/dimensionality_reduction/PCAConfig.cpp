@@ -1,7 +1,7 @@
 #include "PCAConfig.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 PCAConfig::PCAConfig(int components,

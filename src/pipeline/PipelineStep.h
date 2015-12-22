@@ -10,7 +10,7 @@
 
 #include "ConfigContainer.h"
 
-namespace pipe {
+namespace pl {
 
 
 class PipelineStep {

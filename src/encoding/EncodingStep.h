@@ -7,7 +7,7 @@
 
 #include "../pipeline/PipelineStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 class EncodingStep : public PipelineStep {

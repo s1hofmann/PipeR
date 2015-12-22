@@ -8,12 +8,12 @@
 int main(int argc, char *argv[]) {
     cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
 
-    pipe::PipeLine<cv::Mat> pipeLine(true);
+    pl::PipeLine<cv::Mat> pipeLine(true);
 
-    cv::Ptr<pipe::SiftConfigContainer> feCfg = new pipe::SiftConfigContainer();
-    cv::Ptr<pipe::SiftDetector> fe = new pipe::SiftDetector(feCfg);
+    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
+    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
 
-    cv::Ptr<pipe::MaskGenerator> mask = new pipe::VesselMask();
+    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
 
     pipeLine.addFeatureExtractionStep(fe, mask);
     pipeLine.showPipeline();

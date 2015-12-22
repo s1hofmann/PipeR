@@ -2,7 +2,7 @@
 
 #include "../pipeline/ConfigContainer.h"
 
-namespace pipe {
+namespace pl {
 
 
 class PCAConfig : public ConfigContainer

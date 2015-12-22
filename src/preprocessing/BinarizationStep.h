@@ -7,7 +7,7 @@
 
 #include "PreprocessingStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 class BinarizationStep : public PreprocessingStep {

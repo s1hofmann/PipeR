@@ -7,7 +7,7 @@
 
 #include "EncodingStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 class VladEncoder : public EncodingStep {

@@ -11,7 +11,7 @@
 #include <opencv2/xfeatures2d/nonfree.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-namespace pipe {
+namespace pl {
 
 
 /**

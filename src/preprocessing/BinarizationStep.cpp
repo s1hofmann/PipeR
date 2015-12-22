@@ -4,7 +4,7 @@
 
 #include "BinarizationStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 BinarizationStep::BinarizationStep(const cv::Ptr<ConfigContainer> config,

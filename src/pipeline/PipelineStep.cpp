@@ -4,7 +4,7 @@
 
 #include "PipelineStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 PipelineStep::PipelineStep(const cv::Ptr<ConfigContainer> config,

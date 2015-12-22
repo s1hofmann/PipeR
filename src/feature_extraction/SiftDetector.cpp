@@ -7,7 +7,7 @@
 #include "SiftDetector.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 SiftDetector::SiftDetector(const cv::Ptr<SiftConfigContainer> config,

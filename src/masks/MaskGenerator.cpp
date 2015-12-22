@@ -4,7 +4,7 @@
 
 #include "MaskGenerator.h"
 
-namespace pipe {
+namespace pl {
 
 MaskGenerator::MaskGenerator(const std::string &name)
     :

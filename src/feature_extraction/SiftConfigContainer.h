@@ -7,7 +7,7 @@
 
 #include "../pipeline/ConfigContainer.h"
 
-namespace pipe {
+namespace pl {
 
 
 /**

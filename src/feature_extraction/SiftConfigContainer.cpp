@@ -5,7 +5,7 @@
 #include <sstream>
 #include "SiftConfigContainer.h"
 
-namespace pipe {
+namespace pl {
 
 
 SiftConfigContainer::SiftConfigContainer(int nBestFeatures,

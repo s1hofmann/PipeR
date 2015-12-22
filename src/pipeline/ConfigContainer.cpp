@@ -5,7 +5,7 @@
 #include "ConfigContainer.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 ConfigContainer::ConfigContainer(const std::string &usage,

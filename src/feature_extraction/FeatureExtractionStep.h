@@ -8,7 +8,7 @@
 #include "../pipeline/PipelineStep.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 /**

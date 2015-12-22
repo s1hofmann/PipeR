@@ -4,7 +4,7 @@
 
 #include "PreprocessingStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 PreprocessingStep::PreprocessingStep(const cv::Ptr<ConfigContainer> config,

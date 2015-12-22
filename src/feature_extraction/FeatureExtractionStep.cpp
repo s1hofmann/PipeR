@@ -4,7 +4,7 @@
 
 #include "FeatureExtractionStep.h"
 
-namespace pipe {
+namespace pl {
 
 
 FeatureExtractionStep::FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,

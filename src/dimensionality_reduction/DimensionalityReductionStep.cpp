@@ -4,7 +4,7 @@
 
 #include "DimensionalityReductionStep.h"
 
-namespace pipe {
+namespace pl {
 
 DimensionalityReductionStep::DimensionalityReductionStep(const cv::Ptr<ConfigContainer> config,
                                                          const std::string &info)

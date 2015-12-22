@@ -1,7 +1,7 @@
 #include "vesselfilter.h"
 #include <iostream>
 
-namespace pipe {
+namespace pl {
 
 
 VesselFilter::VesselFilter(const double sigma,

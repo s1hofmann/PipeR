@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace pipe {
+namespace pl {
 
 /**
  * Base class for each steps config class.

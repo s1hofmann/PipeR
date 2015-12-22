@@ -1,7 +1,7 @@
 #include "PCAStep.h"
 
 
-namespace pipe {
+namespace pl {
 
 
 PCAStep::PCAStep(const cv::Ptr<PCAConfig> config,
@@ -17,15 +17,35 @@ PCAStep::PCAStep(const cv::Ptr<PCAConfig> config,
 cv::Mat PCAStep::train(const cv::Mat &input,
                        const cv::Mat &mask) const
 {
-    this->mConfig.dynamicCast<PCAConfig>()->getEpsilon();
-    //TODO: PCA fit
+    int components = this->mConfig.dynamicCast<PCAConfig>()->getComponents();
+    double epsilon = this->mConfig.dynamicCast<PCAConfig>()->getEpsilon();
+    bool whitening = this->mConfig.dynamicCast<PCAConfig>()->getWhitening();
+    std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
+
+    RPCA rpca(components,
+              whitening,
+              epsilon);
+
+    rpca.fit(input);
+
+    rpca.dump(path);
+
+    cv::Mat result;
+
+    return result;
 }
 
 
 cv::Mat PCAStep::run(const cv::Mat &input,
                      const cv::Mat &mask) const
 {
-    //TODO PCA transform
+    std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
+
+    RPCA rpca(path);
+
+    cv::Mat result;
+
+    return result;
 }
 
 

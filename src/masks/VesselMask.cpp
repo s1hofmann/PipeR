@@ -4,7 +4,7 @@
 
 #include "VesselMask.h"
 
-namespace pipe {
+namespace pl {
 
 
 VesselMask::VesselMask(const int octaves,

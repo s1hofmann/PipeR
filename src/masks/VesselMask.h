@@ -8,7 +8,7 @@
 #include "MaskGenerator.h"
 #include "../core/filters/vesselfilter.h"
 
-namespace pipe {
+namespace pl {
 
 
 class VesselMask : public MaskGenerator {
