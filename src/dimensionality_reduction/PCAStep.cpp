@@ -30,7 +30,9 @@ cv::Mat PCAStep::train(const cv::Mat &input,
 
     rpca.dump(path);
 
-    cv::Mat result;
+    cv::Mat1f result;
+    rpca.transform(input,
+                   result);
 
     return result;
 }
@@ -43,7 +45,9 @@ cv::Mat PCAStep::run(const cv::Mat &input,
 
     RPCA rpca(path);
 
-    cv::Mat result;
+    cv::Mat1f result;
+    rpca.transform(input,
+                   result);
 
     return result;
 }
@@ -52,16 +56,16 @@ cv::Mat PCAStep::run(const cv::Mat &input,
 cv::Mat PCAStep::debugTrain(const cv::Mat &input,
                             const cv::Mat &mask) const
 {
-    this->train(input,
-                mask);
+    return this->train(input,
+                       mask);
 }
 
 
 cv::Mat PCAStep::debugRun(const cv::Mat &input,
                           const cv::Mat &mask) const
 {
-    this->run(input,
-              mask);
+    return this->run(input,
+                     mask);
 }
 
 

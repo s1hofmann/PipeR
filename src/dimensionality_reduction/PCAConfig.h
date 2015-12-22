@@ -9,7 +9,7 @@ class PCAConfig : public ConfigContainer
 {
 public:
     PCAConfig(const int components,
-              const double epsilon,
+              const double epsilon = 0.001,
               const bool whiten = true,
               const std::string &path = "./pca.yml");
 
@@ -21,7 +21,7 @@ public:
 
     std::string getPath() const;
 
-    virtual std::string toString();
+    virtual std::string toString() const;
 
 private:
     int mComponents;

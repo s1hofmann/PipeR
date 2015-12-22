@@ -15,6 +15,8 @@
 #include "../encoding/VladEncoder.h"
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
+#include "../dimensionality_reduction/PCAStep.h"
+#include "../dimensionality_reduction/PCAConfig.h"
 
 namespace pl {
 
@@ -439,14 +441,22 @@ void PipeLine<T>::train(const cv::Mat &input) const {
         } else {
             prepMask = cv::Mat::ones(input.size(), input.type());
         }
-        prep = this->mPreprocessing[0].first->train(input, prepMask);
+        if(!this->mDebugMode) {
+            prep = this->mPreprocessing[0].first->train(input, prepMask);
+        } else {
+            prep = this->mPreprocessing[0].first->debugTrain(input, prepMask);
+        }
         for(size_t idx = 0; idx < this->mPreprocessing.size(); ++idx) {
             if(!this->mPreprocessing[idx].second.empty()) {
                 prepMask = this->mPreprocessing[idx].second->create(prep);
             } else {
                 prepMask = cv::Mat::ones(prep.size(), prep.type());
             }
-            prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+            if(!this->mDebugMode) {
+                prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+            } else {
+                prep = this->mPreprocessing[idx].first->debugTrain(prep, prepMask);
+            }
         }
     } else {
         prep = input.clone();
@@ -461,10 +471,25 @@ void PipeLine<T>::train(const cv::Mat &input) const {
         } else {
             featureMask = cv::Mat::ones(prep.size(), prep.type());
         }
-        features = this->mFeatureExtraction.first->train(prep, featureMask);
+        if(!this->mDebugMode) {
+            features = this->mFeatureExtraction.first->train(prep, featureMask);
+        } else {
+            features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
+        }
     } else {
         std::cerr << "No features extraction method given, aborting." << std::endl;
         exit(-1);
+    }
+
+    cv::Mat reduced;
+    if(!this->mDimensionalityReduction.empty()) {
+        if(!this->mDebugMode) {
+            reduced = this->mDimensionalityReduction->train(features);
+        } else {
+            reduced = this->mDimensionalityReduction->debugTrain(features);
+        }
+    } else {
+        reduced = features;
     }
 }
 

@@ -15,7 +15,11 @@ int main(int argc, char *argv[]) {
 
     cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
 
+    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
+    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg, "huhu");
+
     pipeLine.addFeatureExtractionStep(fe, mask);
+    pipeLine.addDimensionalityReductionStep(pca);
     pipeLine.showPipeline();
 
     pipeLine.train(in);

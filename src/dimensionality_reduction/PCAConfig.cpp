@@ -4,14 +4,16 @@
 namespace pl {
 
 
-PCAConfig::PCAConfig(int components,
-                     double epsilon,
-                     bool whiten, const std::__cxx11::string &path)
+PCAConfig::PCAConfig(const int components,
+                     const double epsilon,
+                     const bool whiten,
+                     const std::string &path)
     :
         ConfigContainer(),
         mComponents(components),
         mEpsilon(epsilon),
-        mWhitening(whiten)
+        mWhitening(whiten),
+        mPath(path)
 {
 
 }
@@ -41,9 +43,9 @@ std::string PCAConfig::getPath() const
 }
 
 
-std::string PCAConfig::toString()
+std::string PCAConfig::toString() const
 {
-
+    return "I'm not yet implemented!";
 }
 
 
