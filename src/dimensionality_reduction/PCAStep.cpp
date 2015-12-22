@@ -14,27 +14,34 @@ PCAStep::PCAStep(const cv::Ptr<PCAConfig> config,
 }
 
 
-cv::Mat PCAStep::train(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat PCAStep::train(const cv::Mat &input,
+                       const cv::Mat &mask) const
 {
+    this->mConfig.dynamicCast<PCAConfig>()->getEpsilon();
     //TODO: PCA fit
 }
 
 
-cv::Mat PCAStep::run(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat PCAStep::run(const cv::Mat &input,
+                     const cv::Mat &mask) const
 {
     //TODO PCA transform
 }
 
 
-cv::Mat PCAStep::debugTrain(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat PCAStep::debugTrain(const cv::Mat &input,
+                            const cv::Mat &mask) const
 {
-    this->train();
+    this->train(input,
+                mask);
 }
 
 
-cv::Mat PCAStep::debugRun(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat PCAStep::debugRun(const cv::Mat &input,
+                          const cv::Mat &mask) const
 {
-    this->run();
+    this->run(input,
+              mask);
 }
 
 

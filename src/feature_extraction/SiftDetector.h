@@ -38,7 +38,8 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat train(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask = cv::Mat()) const;
 
     /**
      * @brief run
@@ -46,7 +47,8 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat run(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask = cv::Mat()) const;
 
     /**
      * @brief debugTrain
@@ -54,7 +56,8 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat debugTrain(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask = cv::Mat()) const;
 
     /**
      * @brief debugRun
@@ -62,7 +65,8 @@ public:
      * @param mask
      * @return
      */
-    virtual cv::Mat debugRun(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask = cv::Mat()) const;
 
 private:
 };
