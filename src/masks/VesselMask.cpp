@@ -3,7 +3,6 @@
 //
 
 #include "VesselMask.h"
-#include "../core/vesselfilter.h"
 
 namespace pipe {
 

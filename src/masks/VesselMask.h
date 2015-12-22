@@ -6,6 +6,7 @@
 #pragma once
 
 #include "MaskGenerator.h"
+#include "../core/filters/vesselfilter.h"
 
 namespace pipe {
 

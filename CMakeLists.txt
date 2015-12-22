@@ -14,8 +14,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(SOURCE_FILES src/main.cpp
-        src/core/vesselfilter
-        src/core/scalespace
+        src/core/clustering/dbscan
+        src/core/clustering/kmeanscluster
+        src/core/clustering/clustermethod
+        src/core/filters/vesselfilter
+        src/core/utils/scalespace
         src/pipeline/PipeLine
         src/pipeline/PipelineStep
         src/pipeline/ConfigContainer
