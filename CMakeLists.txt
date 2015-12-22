@@ -13,6 +13,14 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+
+# Find the QtWidgets library
+find_package(Qt5Core)
+
 set(SOURCE_FILES src/main.cpp
         src/core/clustering/dbscan
         src/core/clustering/kmeanscluster
@@ -22,6 +30,9 @@ set(SOURCE_FILES src/main.cpp
         src/core/encoding/vladencoder
         src/core/filters/vesselfilter
         src/core/utils/scalespace
+        src/core/utils/progressbar
+        src/core/utils/terminfo
+        src/loading/ImageLoader
         src/pipeline/PipeLine
         src/pipeline/PipelineStep
         src/pipeline/ConfigContainer
@@ -42,4 +53,4 @@ set(SOURCE_FILES src/main.cpp
         src/encoding/VladConfig)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Boost_LIBRARIES} Qt5::Core)

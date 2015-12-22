@@ -8,17 +8,19 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+
 #include <opencv2/core/core.hpp>
+
 #include "PipelineStep.h"
-#include "../masks/VesselMask.h"
-#include "../preprocessing/BinarizationStep.h"
-#include "../encoding/VladEncoder.h"
-#include "../feature_extraction/SiftDetector.h"
-#include "../feature_extraction/SiftConfigContainer.h"
+
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
 #include "../encoding/VladEncoder.h"
 #include "../encoding/VladConfig.h"
+#include "../feature_extraction/SiftDetector.h"
+#include "../feature_extraction/SiftConfigContainer.h"
+#include "../masks/VesselMask.h"
+#include "../preprocessing/BinarizationStep.h"
 
 namespace pl {
 
