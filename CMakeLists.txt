@@ -17,17 +17,22 @@ set(SOURCE_FILES src/main.cpp
         src/core/clustering/dbscan
         src/core/clustering/kmeanscluster
         src/core/clustering/clustermethod
+        src/core/dim/rpca
         src/core/filters/vesselfilter
         src/core/utils/scalespace
         src/pipeline/PipeLine
         src/pipeline/PipelineStep
         src/pipeline/ConfigContainer
+        src/pipeline/globals
+        src/pipeline/return_codes
         src/preprocessing/PreprocessingStep
         src/preprocessing/BinarizationStep
         src/feature_extraction/FeatureExtractionStep
         src/feature_extraction/SiftDetector
         src/feature_extraction/SiftConfigContainer
-        src/pipeline/return_codes
+        src/dimensionality_reduction/DimensionalityReductionStep
+        src/dimensionality_reduction/PCAStep
+        src/dimensionality_reduction/PCAConfig
         src/masks/MaskGenerator
         src/masks/VesselMask)
 #                 src/encoding/EncodingStep
