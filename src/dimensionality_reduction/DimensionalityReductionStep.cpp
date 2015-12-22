@@ -6,5 +6,19 @@
 
 namespace pipe {
 
+DimensionalityReductionStep::DimensionalityReductionStep(const cv::Ptr<ConfigContainer> config,
+                                                         const std::string &info)
+    :
+        PipelineStep(config,
+                     info)
+{
+
+}
+
+DimensionalityReductionStep::~DimensionalityReductionStep()
+{
+
+}
+
 
 }

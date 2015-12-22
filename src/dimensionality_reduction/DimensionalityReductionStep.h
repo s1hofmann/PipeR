@@ -11,7 +11,48 @@ namespace pipe {
 
 
 class DimensionalityReductionStep : public PipelineStep {
+public:
+    /**
+     * @brief train
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat train(const cv::Mat &input,
+                          const cv::Mat &mask) const = 0;
 
+    /**
+     * @brief run
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat run(const cv::Mat &input,
+                        const cv::Mat &mask) const = 0;
+
+    /**
+     * @brief debugTrain
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat debugTrain(const cv::Mat &input,
+                               const cv::Mat &mask) const = 0;
+
+    /**
+     * @brief debugRun
+     * @param input
+     * @param mask
+     * @return
+     */
+    virtual cv::Mat debugRun(const cv::Mat &input,
+                             const cv::Mat &mask) const = 0;
+
+protected:
+    DimensionalityReductionStep(const cv::Ptr<ConfigContainer> config,
+                                const std::string &info = "Dimensionality Reduction");
+
+    virtual ~DimensionalityReductionStep();
 };
 
 

@@ -1,11 +1,30 @@
-#ifndef PCACONFIG_H
-#define PCACONFIG_H
+#pragma once
+
+#include "../pipeline/ConfigContainer.h"
+
+namespace pipe {
 
 
-class PCAConfig
+class PCAConfig : public ConfigContainer
 {
 public:
-    PCAConfig();
+    PCAConfig(int components, double epsilon, bool whiten);
+
+    int getComponents();
+
+    double getEpsilon();
+
+    bool getWhitening();
+
+    virtual std::string toString();
+
+private:
+    int mComponents;
+
+    double mEpsilon;
+
+    bool mWhitening;
 };
 
-#endif // PCACONFIG_H
+
+}
