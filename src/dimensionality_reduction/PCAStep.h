@@ -13,7 +13,7 @@ class PCAStep : public DimensionalityReductionStep
 {
 public:
     PCAStep(const cv::Ptr<PCAConfig> config,
-            const std::string &info = "PCA Dimensionality Reduction");
+            const std::string &info = "PCA");
 
     /**
      * @brief train

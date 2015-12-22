@@ -45,7 +45,14 @@ std::string PCAConfig::getPath() const
 
 std::string PCAConfig::toString() const
 {
-    return "I'm not yet implemented!";
+    std::stringstream configString;
+
+    configString << "No. of components: " << mComponents << std::endl;
+    configString << "Regularization threshold: " << mEpsilon << std::endl;
+    configString << "Whitening: " << mWhitening << std::endl;
+    configString << "Filename: " << mPath << std::endl;
+
+    return configString.str();
 }
 
 

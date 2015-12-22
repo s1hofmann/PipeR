@@ -110,7 +110,7 @@ public:
      * @param step
      * @return
      */
-    bool addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step);
+    bool addDimensionalityReductionStep(const cv::Ptr<DimensionalityReductionStep> step);
 
     /**
      * @brief removeDimensionalityReductionStep
@@ -181,7 +181,7 @@ private:
     /**
      * @brief mDimensionalityReduction
      */
-    cv::Ptr<PipelineStep> mDimensionalityReduction;
+    cv::Ptr<DimensionalityReductionStep> mDimensionalityReduction;
 
     /**
      * @brief mEncoding
@@ -358,6 +358,9 @@ void PipeLine<T>::showPipeline() {
 
     if(!this->mDimensionalityReduction.empty()) {
         std::cout << "Dimensionaltiy reduction: " << this->mDimensionalityReduction->info() << std::endl;
+        if(this->mDebugMode) {
+            std::cout << this->mDimensionalityReduction->config() << std::endl;
+        }
     }
 
     if(!this->mEncoding.empty()) {
@@ -375,7 +378,7 @@ void PipeLine<T>::showPipeline() {
 
 
 template <typename T>
-bool PipeLine<T>::addDimensionalityReductionStep(const cv::Ptr<PipelineStep> step) {
+bool PipeLine<T>::addDimensionalityReductionStep(const cv::Ptr<DimensionalityReductionStep> step) {
     this->mDimensionalityReduction = step;
     return this->mDimensionalityReduction.empty();
 }

@@ -2,6 +2,9 @@
 
 #include "../pipeline/ConfigContainer.h"
 
+#include <sstream>
+#include <iostream>
+
 namespace pl {
 
 
