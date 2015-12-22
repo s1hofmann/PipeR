@@ -18,8 +18,13 @@ int main(int argc, char *argv[]) {
     cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
     cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
 
+    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
+    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
+    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
+
     pipeLine.addFeatureExtractionStep(fe, mask);
     pipeLine.addDimensionalityReductionStep(pca);
+    pipeLine.addEncodingStep(vlad);
     pipeLine.showPipeline();
 
     pipeLine.train(in);
