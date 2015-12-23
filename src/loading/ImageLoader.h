@@ -20,6 +20,7 @@
 #include <qt/QtCore/QFileInfoList>
 #include <qt/QtCore/QString>
 #include <qt/QtCore/QDir>
+#include <qt/QtCore/QTextStream>
 
 namespace pl {
 
