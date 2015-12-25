@@ -6,28 +6,37 @@
 #include "pipeline/PipeLine.h"
 
 int main(int argc, char *argv[]) {
-    cv::Mat in = cv::imread(argv[1], CV_LOAD_IMAGE_UNCHANGED);
+    pl::FileReader<pl::BIN> loader;
 
-    pl::PipeLine<cv::Mat> pipeLine(true);
+//    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = loader.getFilesFromLabelFile(argv[1]);
+//    std::cout << filesWithLabels.first.size() << std::endl;
 
-    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
-    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
+//    std::pair<std::vector<cv::Mat>, std::vector<int>> imagesWithLabels = loader.loadImagesFromLabelFile(argv[1]);
 
-    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
+//    std::cout << imagesWithLabels.first.size() << std::endl;
 
-    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
-    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
+//    pl::PipeLine<cv::Mat> pipeLine(true);
 
-    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
-    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
-    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
+//    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
+//    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
+//    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
 
-    pipeLine.addFeatureExtractionStep(fe, mask);
-    pipeLine.addDimensionalityReductionStep(pca);
-    pipeLine.addEncodingStep(vlad);
-    pipeLine.showPipeline();
+//    pipeLine.addFeatureExtractionStep(fe, mask);
 
-    pipeLine.train(in);
+//    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
+//    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
+
+//    pipeLine.addDimensionalityReductionStep(pca);
+
+//    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
+//    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
+//    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
+
+//    pipeLine.addEncodingStep(vlad);
+
+//    pipeLine.showPipeline();
+
+//    pipeLine.train(in);
 
     return 0;
 }

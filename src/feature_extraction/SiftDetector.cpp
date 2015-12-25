@@ -59,6 +59,7 @@ cv::Mat SiftDetector::run(const cv::Mat &input, const cv::Mat &mask) const {
 
 
 cv::Mat SiftDetector::debugTrain(const cv::Mat &input, const cv::Mat &mask) const {
+    std::cout << "Debug mode" << std::endl;
     return this->train(input, mask);
 }
 

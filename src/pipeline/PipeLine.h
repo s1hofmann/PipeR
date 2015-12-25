@@ -19,6 +19,8 @@
 #include "../encoding/VladConfig.h"
 #include "../feature_extraction/SiftDetector.h"
 #include "../feature_extraction/SiftConfigContainer.h"
+#include "../io/FileReader.h"
+#include "../io/FileWriter.h"
 #include "../masks/VesselMask.h"
 #include "../preprocessing/BinarizationStep.h"
 

@@ -32,7 +32,15 @@ set(SOURCE_FILES src/main.cpp
         src/core/utils/scalespace
         src/core/utils/progressbar
         src/core/utils/terminfo
-        src/loading/ImageLoader
+        src/io/FileReader
+        src/io/FileWriter
+        src/io/IOImpl
+        src/io/FileReader
+        src/io/FileWriter
+        src/io/FileUtil
+        src/io/bin
+        src/io/png
+        src/io/yml
         src/pipeline/PipeLine
         src/pipeline/PipelineStep
         src/pipeline/ConfigContainer

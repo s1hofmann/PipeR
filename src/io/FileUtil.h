@@ -1,19 +1,13 @@
-//
-// Created by Simon Hofmann on 13.12.15.
-//
-
-
 #pragma once
 
 #include <vector>
-#include <utility>
 #include <string>
+#include <utility>
 #include <iostream>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "../core/utils/progressbar.h"
 
 #include <qt/QtCore/QFile>
 #include <qt/QtCore/QFileInfo>
@@ -22,14 +16,17 @@
 #include <qt/QtCore/QDir>
 #include <qt/QtCore/QTextStream>
 
+#include "../core/utils/progressbar.h"
+
 namespace pl {
 
 
-class ImageLoader {
+class FileUtil
+{
 public:
-    ImageLoader();
+    FileUtil();
 
-    virtual ~ImageLoader();
+    virtual ~FileUtil();
 
     std::vector<cv::Mat> loadImages(const std::string &path);
 
@@ -39,7 +36,7 @@ public:
 
     std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile);
 private:
-    std::vector<std::string> examineDirectory(const std::string &path);
+    std::vector<std::string> examineDirectory(const std::string &pathName) const;
 };
 
 

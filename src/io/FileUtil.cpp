@@ -1,22 +1,19 @@
-//
-// Created by Simon Hofmann on 13.12.15.
-//
+#include "FileUtil.h"
 
-#include "ImageLoader.h"
+namespace pl {
 
-pl::ImageLoader::ImageLoader()
+
+FileUtil::FileUtil()
 {
 
 }
 
-
-pl::ImageLoader::~ImageLoader()
+FileUtil::~FileUtil()
 {
 
 }
 
-
-std::vector<cv::Mat> pl::ImageLoader::loadImages(const std::string &path)
+std::vector<cv::Mat> FileUtil::loadImages(const std::string &path)
 {
     std::vector<std::string> fileList = examineDirectory(path);
     std::vector<cv::Mat> imageList;
@@ -42,7 +39,7 @@ std::vector<cv::Mat> pl::ImageLoader::loadImages(const std::string &path)
 }
 
 
-std::vector<std::string> pl::ImageLoader::getFiles(const std::string &path)
+std::vector<std::string> FileUtil::getFiles(const std::string &path)
 {
     std::vector<std::string> files = examineDirectory(path);
     ProgressBar<long> pb(files.size() - 1, "Fetching files...");
@@ -54,7 +51,7 @@ std::vector<std::string> pl::ImageLoader::getFiles(const std::string &path)
 }
 
 
-std::pair<std::vector<std::string>, std::vector<int>> pl::ImageLoader::getFilesFromLabelFile(const std::string &labelFile)
+std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile)
 {
     QFile f(QString::fromStdString(labelFile));
 
@@ -82,7 +79,7 @@ std::pair<std::vector<std::string>, std::vector<int>> pl::ImageLoader::getFilesF
 }
 
 
-std::pair<std::vector<cv::Mat>, std::vector<int>> pl::ImageLoader::loadImagesFromLabelFile(const std::string &labelFile)
+std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = this->getFilesFromLabelFile(labelFile);
 
@@ -109,10 +106,9 @@ std::pair<std::vector<cv::Mat>, std::vector<int>> pl::ImageLoader::loadImagesFro
     }
 }
 
-
-std::vector<std::string> pl::ImageLoader::examineDirectory(const std::string &path)
+std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName) const
 {
-    QDir dir(QString::fromStdString(path));
+    QDir dir(QString::fromStdString(pathName));
     std::vector<std::string> returnFiles;
 
     if(dir.exists()) {
@@ -133,4 +129,7 @@ std::vector<std::string> pl::ImageLoader::examineDirectory(const std::string &pa
         std::cerr << "Directory does not exist, aborting." << std::endl;
         return std::vector<std::string>();
     }
+}
+
+
 }
