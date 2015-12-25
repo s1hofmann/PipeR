@@ -35,6 +35,7 @@ public:
     std::vector<std::string> getFiles(const std::string &path);
 
     std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile);
+
 private:
     std::vector<std::string> examineDirectory(const std::string &pathName) const;
 };

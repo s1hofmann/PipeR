@@ -22,7 +22,7 @@ public:
 
     bool write(const cv::Mat &output,
                const std::string &path,
-               const std::string &fileName)
+               const std::string &fileName) const
     {
         T writer;
         return writer.write(output,

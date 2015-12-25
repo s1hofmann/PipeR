@@ -32,7 +32,7 @@ public:
 
     virtual ~FileReader() {}
 
-    virtual cv::Mat read(const std::string &input)
+    virtual cv::Mat read(const std::string &input) const
     {
         T reader;
 
