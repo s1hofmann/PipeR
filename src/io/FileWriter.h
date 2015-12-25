@@ -5,7 +5,7 @@
 
 #include "IOImpl.h"
 #include "bin.h"
-#include "png.h"
+#include "img.h"
 #include "yml.h"
 
 

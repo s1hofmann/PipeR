@@ -1,10 +1,10 @@
-#include "png.h"
+#include "img.h"
 
 
 namespace pl {
 
 
-PNG::PNG()
+IMG::IMG()
     :
         IOImpl()
 {
@@ -12,13 +12,13 @@ PNG::PNG()
 }
 
 
-PNG::~PNG()
+IMG::~IMG()
 {
 
 }
 
 
-bool PNG::write(const cv::Mat &output,
+bool IMG::write(const cv::Mat &output,
                 const std::string &outPath,
                 const std::string &fileName) const
 {
@@ -34,16 +34,9 @@ bool PNG::write(const cv::Mat &output,
     QDir d(QString::fromStdString(outPath));
     QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
 
-    // png compression level
     std::vector<int> parameters;
-#if CV_MAJOR_VERSION >= 3
-    parameters.push_back(cv::IMWRITE_PNG_COMPRESSION);
-#else
-    parameters.push_back(CV_IMWRITE_PNG_COMPRESSION);
-#endif
-    parameters.push_back(9); // highest compression
 
-    if(!cv::imwrite(absFile.toStdString(), output, parameters) ){
+    if(!cv::imwrite(absFile.toStdString(), output)) {
         std::cerr << "Failed to write " << absFile.toStdString() << "." << std::endl;
         return false;
     }
@@ -52,7 +45,7 @@ bool PNG::write(const cv::Mat &output,
 }
 
 
-cv::Mat PNG::read(const std::string &input) const
+cv::Mat IMG::read(const std::string &input) const
 {
     if(input.empty()) {
         std::cerr << "No filename given, aborting." << std::endl;

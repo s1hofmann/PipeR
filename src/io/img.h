@@ -11,11 +11,11 @@
 namespace pl {
 
 
-class PNG : public IOImpl
+class IMG : public IOImpl
 {
 public:
-    PNG();
-    virtual ~PNG();
+    IMG();
+    virtual ~IMG();
 
     // IOImpl interface
     bool write(const cv::Mat &output,
