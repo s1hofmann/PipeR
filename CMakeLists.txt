@@ -39,6 +39,7 @@ set(SOURCE_FILES src/main.cpp
         src/io/FileWriter
         src/io/FileUtil
         src/io/bin
+        src/io/csv
         src/io/img
         src/io/yml
         src/pipeline/PipeLine
