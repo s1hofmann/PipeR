@@ -1,3 +1,7 @@
+//
+// Created by Simon Hofmann on 25.12.15.
+//
+
 #include "bin.h"
 
 
