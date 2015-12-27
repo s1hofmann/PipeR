@@ -30,6 +30,9 @@ add_subdirectory(src/core/filters)
 include_directories ("${PROJECT_SOURCE_DIR}/core/utils")
 add_subdirectory(src/core/utils)
 
+include_directories ("${PROJECT_SOURCE_DIR}/core/vlfeat")
+add_subdirectory(src/core/vlfeat)
+
 include_directories ("${PROJECT_SOURCE_DIR}/io")
 add_subdirectory(src/io)
 
@@ -65,4 +68,5 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       encoding
                                       feature_extraction
                                       masks
-                                      preprocessing)
+                                      preprocessing
+                                      vlfeat)
