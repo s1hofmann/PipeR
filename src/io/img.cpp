@@ -56,7 +56,13 @@ cv::Mat IMG::read(const std::string &input) const
         return cv::Mat();
     }
 
-    return cv::imread(input, CV_LOAD_IMAGE_UNCHANGED);
+    cv::Mat img = cv::imread(input, CV_LOAD_IMAGE_UNCHANGED);
+
+    if(img.empty()) {
+        std::cerr << "WARNING, " << input << " is an empty image." << std::endl;
+    }
+
+    return img;
 }
 
 
