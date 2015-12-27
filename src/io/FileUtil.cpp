@@ -18,11 +18,13 @@ std::vector<cv::Mat> FileUtil::loadImages(const std::string &path)
     std::vector<std::string> fileList = examineDirectory(path);
     std::vector<cv::Mat> imageList;
 
+    FileReader<IMG> reader;
+
     ProgressBar<long> pb(fileList.size(), "Loading images...");
 
     for(size_t idx = 0; idx < fileList.size(); ++idx) {
         try {
-            cv::Mat image = cv::imread(fileList[idx], CV_LOAD_IMAGE_UNCHANGED);
+            cv::Mat image = reader.read(fileList[idx]);
             if(!image.empty()) {
                 imageList.push_back(image);
             }
@@ -81,6 +83,7 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
 
 std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
+    FileReader<IMG> reader;
     std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = this->getFilesFromLabelFile(labelFile);
 
     try {
@@ -91,7 +94,7 @@ std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelF
             QFileInfo qf(QString::fromStdString(labelFile));
             QDir baseDir = qf.absoluteDir();
             QString imageFile(baseDir.absoluteFilePath(QString::fromStdString(filesWithLabels.first[idx])));
-            cv::Mat image = cv::imread(imageFile.toStdString(), CV_LOAD_IMAGE_UNCHANGED);
+            cv::Mat image = reader.read(imageFile.toStdString());
 
             if(!image.empty()) {
                 loadedImages.push_back(image);

@@ -16,6 +16,8 @@
 #include <qt/QtCore/QDir>
 #include <qt/QtCore/QTextStream>
 
+#include "FileReader.h"
+
 #include "../core/utils/progressbar.h"
 
 namespace pl {
