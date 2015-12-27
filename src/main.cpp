@@ -6,7 +6,14 @@
 #include "pipeline/PipeLine.h"
 
 int main(int argc, char *argv[]) {
-    pl::FileReader<pl::BIN> loader;
+    pl::FileReader<pl::IMG> loader;
+    pl::FileWriter<pl::IMG> writer;
+
+    cv::Mat img = loader.read("/home/sim0n/fe_mask.png");
+
+    std::cout << img.rows << " " << img.cols << std::endl;
+
+    writer.write(img, "/home/sim0n/", "writer_test.png");
 
 //    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = loader.getFilesFromLabelFile(argv[1]);
 //    std::cout << filesWithLabels.first.size() << std::endl;

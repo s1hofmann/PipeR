@@ -1,0 +1,1 @@
+add_library(dimensionality_reduction_core rpca)

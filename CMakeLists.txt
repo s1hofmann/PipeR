@@ -13,53 +13,56 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
+set(SOURCE_FILES src/main.cpp)
 
-# Find the QtWidgets library
-find_package(Qt5Core)
+include_directories ("${PROJECT_SOURCE_DIR}/core/clustering")
+add_subdirectory(src/core/clustering)
 
-set(SOURCE_FILES src/main.cpp
-        src/core/clustering/dbscan
-        src/core/clustering/kmeanscluster
-        src/core/clustering/clustermethod
-        src/core/dim/rpca
-        src/core/encoding/encodingmethod
-        src/core/encoding/vladencoder
-        src/core/filters/vesselfilter
-        src/core/utils/scalespace
-        src/core/utils/progressbar
-        src/core/utils/terminfo
-        src/io/FileReader
-        src/io/FileWriter
-        src/io/IOImpl
-        src/io/FileReader
-        src/io/FileWriter
-        src/io/FileUtil
-        src/io/bin
-        src/io/csv
-        src/io/img
-        src/io/yml
-        src/pipeline/PipeLine
-        src/pipeline/PipelineStep
-        src/pipeline/ConfigContainer
-        src/pipeline/globals
-        src/pipeline/return_codes
-        src/preprocessing/PreprocessingStep
-        src/preprocessing/BinarizationStep
-        src/feature_extraction/FeatureExtractionStep
-        src/feature_extraction/SiftDetector
-        src/feature_extraction/SiftConfigContainer
-        src/dimensionality_reduction/DimensionalityReductionStep
-        src/dimensionality_reduction/PCAStep
-        src/dimensionality_reduction/PCAConfig
-        src/masks/MaskGenerator
-        src/masks/VesselMask
-        src/encoding/EncodingStep
-        src/encoding/VladEncoder
-        src/encoding/VladConfig)
+include_directories ("${PROJECT_SOURCE_DIR}/core/dim")
+add_subdirectory(src/core/dim)
+
+include_directories ("${PROJECT_SOURCE_DIR}/core/encoding")
+add_subdirectory(src/core/encoding)
+
+include_directories ("${PROJECT_SOURCE_DIR}/core/filters")
+add_subdirectory(src/core/filters)
+
+include_directories ("${PROJECT_SOURCE_DIR}/core/utils")
+add_subdirectory(src/core/utils)
+
+include_directories ("${PROJECT_SOURCE_DIR}/io")
+add_subdirectory(src/io)
+
+include_directories ("${PROJECT_SOURCE_DIR}/pipeline")
+add_subdirectory(src/pipeline)
+
+include_directories ("${PROJECT_SOURCE_DIR}/dimensionality_reduction")
+add_subdirectory(src/dimensionality_reduction)
+
+include_directories ("${PROJECT_SOURCE_DIR}/encoding")
+add_subdirectory(src/encoding)
+
+include_directories ("${PROJECT_SOURCE_DIR}/feature_extraction")
+add_subdirectory(src/feature_extraction)
+
+include_directories ("${PROJECT_SOURCE_DIR}/masks")
+add_subdirectory(src/masks)
+
+include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
+add_subdirectory(src/preprocessing)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Boost_LIBRARIES} Qt5::Core)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
+                                      ${Boost_LIBRARIES}
+                                      clustering_core
+                                      dimensionality_reduction_core
+                                      encoding_core
+                                      filters_core
+                                      utils_core
+                                      io
+                                      pipeline
+                                      dimensionality_reduction
+                                      encoding
+                                      feature_extraction
+                                      masks
+                                      preprocessing)
