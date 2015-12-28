@@ -51,6 +51,9 @@ add_subdirectory(src/feature_extraction)
 include_directories ("${PROJECT_SOURCE_DIR}/masks")
 add_subdirectory(src/masks)
 
+include_directories ("${PROJECT_SOURCE_DIR}/ml")
+add_subdirectory(src/ml)
+
 include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
 add_subdirectory(src/preprocessing)
 
@@ -68,5 +71,6 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       encoding
                                       feature_extraction
                                       masks
+                                      ml
                                       preprocessing
                                       vlfeat)

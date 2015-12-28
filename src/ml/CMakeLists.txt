@@ -1,2 +1,1 @@
-add_library(clustering_core dbscan
-                            kmeanscluster)
+add_library(ml MLStep)
