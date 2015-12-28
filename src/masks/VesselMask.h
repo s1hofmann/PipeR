@@ -6,7 +6,7 @@
 #pragma once
 
 #include "MaskGenerator.h"
-#include "../core/filters/vesselfilter.h"
+#include "../core/masks/vesselfilter.h"
 
 namespace pl {
 

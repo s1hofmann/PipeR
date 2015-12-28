@@ -1,1 +1,0 @@
-add_library(filters_core vesselfilter)
