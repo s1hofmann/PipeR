@@ -15,17 +15,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(SOURCE_FILES src/main.cpp)
 
+# Pipeline options
+option (DIMENSIONALITY_REDUCTION
+        "Enable dimensionality reduction?" ON)
+
+option (ENCODING
+        "Enable encoding?" ON)
+
+option (PREPROCESSING
+        "Enable preprocessing?" ON)
+
+option (POSTPROCESSING
+        "Enable postprocessing?" ON)
+
+option (MASKS
+        "Enable masks?" ON)
+
 include_directories ("${PROJECT_SOURCE_DIR}/core/clustering")
 add_subdirectory(src/core/clustering)
 
-include_directories ("${PROJECT_SOURCE_DIR}/core/dim")
-add_subdirectory(src/core/dim)
-
-include_directories ("${PROJECT_SOURCE_DIR}/core/encoding")
-add_subdirectory(src/core/encoding)
-
-include_directories ("${PROJECT_SOURCE_DIR}/core/filters")
-add_subdirectory(src/core/filters)
 
 include_directories ("${PROJECT_SOURCE_DIR}/core/utils")
 add_subdirectory(src/core/utils)
@@ -39,38 +47,53 @@ add_subdirectory(src/io)
 include_directories ("${PROJECT_SOURCE_DIR}/pipeline")
 add_subdirectory(src/pipeline)
 
-include_directories ("${PROJECT_SOURCE_DIR}/dimensionality_reduction")
-add_subdirectory(src/dimensionality_reduction)
+if(DIMENSIONALITY_REDUCTION)
+    include_directories ("${PROJECT_SOURCE_DIR}/core/dim")
+    add_subdirectory(src/core/dim)
+    set (EXTRA_LIBS ${EXTRA_LIBS} dimensionality_reduction_core)
+    include_directories ("${PROJECT_SOURCE_DIR}/dimensionality_reduction")
+    add_subdirectory(src/dimensionality_reduction)
+    set (EXTRA_LIBS ${EXTRA_LIBS} dimensionality_reduction)
+endif(DIMENSIONALITY_REDUCTION)
 
-include_directories ("${PROJECT_SOURCE_DIR}/encoding")
-add_subdirectory(src/encoding)
+if(ENCODING)
+    include_directories ("${PROJECT_SOURCE_DIR}/core/encoding")
+    add_subdirectory(src/core/encoding)
+    set (EXTRA_LIBS ${EXTRA_LIBS} encoding_core)
+    include_directories ("${PROJECT_SOURCE_DIR}/encoding")
+    add_subdirectory(src/encoding)
+    set (EXTRA_LIBS ${EXTRA_LIBS} encoding)
+endif(ENCODING)
 
 include_directories ("${PROJECT_SOURCE_DIR}/feature_extraction")
 add_subdirectory(src/feature_extraction)
 
-include_directories ("${PROJECT_SOURCE_DIR}/masks")
-add_subdirectory(src/masks)
+if(MASKS)
+    include_directories ("${PROJECT_SOURCE_DIR}/core/masks")
+    add_subdirectory(src/core/masks)
+    set (EXTRA_LIBS ${EXTRA_LIBS} masks_core)
+    include_directories ("${PROJECT_SOURCE_DIR}/masks")
+    add_subdirectory(src/masks)
+    set (EXTRA_LIBS ${EXTRA_LIBS} masks)
+endif(MASKS)
 
 include_directories ("${PROJECT_SOURCE_DIR}/ml")
 add_subdirectory(src/ml)
 
-include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
-add_subdirectory(src/preprocessing)
+if(PREPROCESSING)
+    include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
+    add_subdirectory(src/preprocessing)
+    set (EXTRA_LIBS ${EXTRA_LIBS} preprocessing)
+endif(PREPROCESSING)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       ${Boost_LIBRARIES}
                                       clustering_core
-                                      dimensionality_reduction_core
-                                      encoding_core
-                                      filters_core
                                       utils_core
                                       io
                                       pipeline
-                                      dimensionality_reduction
-                                      encoding
                                       feature_extraction
-                                      masks
                                       ml
-                                      preprocessing
-                                      vlfeat)
+                                      vlfeat
+                                      ${EXTRA_LIBS})
