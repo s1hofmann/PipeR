@@ -22,7 +22,7 @@ public:
      * @return
      */
     virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &mask = cv::Mat()) const = 0;
+                          const cv::Mat &param = cv::Mat()) const = 0;
 
     /**
      * @brief run
@@ -31,7 +31,7 @@ public:
      * @return
      */
     virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &mask = cv::Mat()) const = 0;
+                        const cv::Mat &param = cv::Mat()) const = 0;
 
     /**
      * @brief debugTrain
@@ -40,7 +40,7 @@ public:
      * @return
      */
     virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &mask = cv::Mat()) const = 0;
+                               const cv::Mat &param= cv::Mat()) const = 0;
 
     /**
      * @brief debugRun
@@ -49,7 +49,7 @@ public:
      * @return
      */
     virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &mask = cv::Mat()) const = 0;
+                             const cv::Mat &param = cv::Mat()) const = 0;
 
     /**
      * @brief info

@@ -25,7 +25,7 @@ SiftDetector::~SiftDetector()
 }
 
 
-cv::Mat SiftDetector::train(const cv::Mat &input, const cv::Mat &mask) const {
+cv::Mat SiftDetector::train(const cv::Mat &input, const cv::Mat &param) const {
     cv::Mat workingCopy;
 
     if(input.channels() > 1) {
@@ -53,19 +53,19 @@ cv::Mat SiftDetector::train(const cv::Mat &input, const cv::Mat &mask) const {
 }
 
 
-cv::Mat SiftDetector::run(const cv::Mat &input, const cv::Mat &mask) const {
-    return this->train(input, mask);
+cv::Mat SiftDetector::run(const cv::Mat &input, const cv::Mat &param) const {
+    return this->train(input, param);
 }
 
 
-cv::Mat SiftDetector::debugTrain(const cv::Mat &input, const cv::Mat &mask) const {
+cv::Mat SiftDetector::debugTrain(const cv::Mat &input, const cv::Mat &param) const {
     std::cout << "Debug mode" << std::endl;
-    return this->train(input, mask);
+    return this->train(input, param);
 }
 
 
-cv::Mat SiftDetector::debugRun(const cv::Mat &input, const cv::Mat &mask) const {
-    return this->debugTrain(input, mask);
+cv::Mat SiftDetector::debugRun(const cv::Mat &input, const cv::Mat &param) const {
+    return this->debugTrain(input, param);
 }
 
 

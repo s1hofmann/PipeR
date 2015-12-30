@@ -7,12 +7,32 @@
 
 #include "../pipeline/PipelineStep.h"
 
+#include <opencv2/core/core.hpp>
+
 
 namespace pl {
 
 
-class MLStep {
+class MLStep : public PipelineStep {
+public:
+    // PipelineStep interface
+    cv::Mat train(const cv::Mat &input,
+                  const cv::Mat &mask = cv::Mat()) const = 0;
 
+    cv::Mat run(const cv::Mat &input,
+                const cv::Mat &mask = cv::Mat()) const = 0;
+
+    cv::Mat debugTrain(const cv::Mat &input,
+                       const cv::Mat &mask = cv::Mat()) const = 0;
+
+    cv::Mat debugRun(const cv::Mat &input,
+                     const cv::Mat &mask = cv::Mat()) const = 0;
+
+protected:
+    MLStep(const cv::Ptr<ConfigContainer> config,
+           const std::string &info = "Machine Learning step");
+
+    virtual ~MLStep();
 };
 
 

@@ -24,7 +24,7 @@ VladEncodingStep::~VladEncodingStep()
 
 
 cv::Mat VladEncodingStep::train(const cv::Mat &input,
-                                const cv::Mat &mask) const
+                                const cv::Mat &param) const
 {
     int clusters = this->mConfig.dynamicCast<VladConfig>()->getClusters();
     int maxIterations = this->mConfig.dynamicCast<VladConfig>()->getIterations();
@@ -50,23 +50,23 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
 
 
 cv::Mat VladEncodingStep::run(const cv::Mat &input,
-                              const cv::Mat &mask) const
+                              const cv::Mat &param) const
 {
 
 }
 
 
 cv::Mat VladEncodingStep::debugTrain(const cv::Mat &input,
-                                     const cv::Mat &mask) const
+                                     const cv::Mat &param) const
 {
     std::cout << "Debug mode" << std::endl;
     return this->train(input,
-                       mask);
+                       param);
 }
 
 
 cv::Mat VladEncodingStep::debugRun(const cv::Mat &input,
-                                   const cv::Mat &mask) const
+                                   const cv::Mat &param) const
 {
 
 }
