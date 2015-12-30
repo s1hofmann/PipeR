@@ -64,6 +64,13 @@ cv::Mat SGDStep::train(const cv::Mat &input,
     if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
 
     solver->train();
+    
+    cv::Mat1d model = solver->getModelMat();
+    
+    
+    if(!model.empty()) {
+        this->save()
+    }
 }
 
 
