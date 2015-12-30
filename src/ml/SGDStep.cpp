@@ -18,25 +18,25 @@ SGDStep::~SGDStep()
 }
 
 
-cv::Mat SGDStep::train(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat SGDStep::train(const cv::Mat &input, const cv::Mat &param) const
 {
 
 }
 
 
-cv::Mat SGDStep::run(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat SGDStep::run(const cv::Mat &input, const cv::Mat &param) const
 {
 
 }
 
 
-cv::Mat SGDStep::debugTrain(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat SGDStep::debugTrain(const cv::Mat &input, const cv::Mat &param) const
 {
 
 }
 
 
-cv::Mat SGDStep::debugRun(const cv::Mat &input, const cv::Mat &mask) const
+cv::Mat SGDStep::debugRun(const cv::Mat &input, const cv::Mat &param) const
 {
 
 }

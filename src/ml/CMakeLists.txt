@@ -1,1 +1,2 @@
-add_library(ml MLStep)
+add_library(ml MLStep
+               SGDStep)
