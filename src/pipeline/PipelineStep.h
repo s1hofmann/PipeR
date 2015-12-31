@@ -6,6 +6,7 @@
 #pragma once
 
 #include <string>
+#include <iostream>
 #include <opencv2/core/core.hpp>
 
 #include "ConfigContainer.h"
@@ -98,6 +99,24 @@ protected:
      * @brief mName
      */
     std::string mName;
+
+    /**
+     * @brief log
+     * @param text
+     */
+    virtual void log(const std::string &text) const;
+
+    /**
+     * @brief warning
+     * @param text
+     */
+    virtual void warning(const std::string &text) const;
+
+    /**
+     * @brief debug
+     * @param text
+     */
+    virtual void debug(const std::string &text) const;
 
 private:
 };
