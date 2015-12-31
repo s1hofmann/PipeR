@@ -49,34 +49,4 @@ std::string PipelineStep::config() const {
 }
 
 
-void PipelineStep::log(const std::string &text) const
-{
-    std::stringstream s;
-
-    s << "LOG: " << this->mName << ": " << text;
-
-    std::cout << s.str() << std::endl;
-}
-
-
-void PipelineStep::warning(const std::__cxx11::string &text) const
-{
-    std::stringstream s;
-
-    s << "WARNING: " << this->mName << ": " << text;
-
-    std::cout << s.str() << std::endl;
-}
-
-
-void PipelineStep::debug(const std::__cxx11::string &text) const
-{
-    std::stringstream s;
-
-    s << "DEBUG: " << this->mName << ": " << text;
-
-    std::cout << s.str() << std::endl;
-}
-
-
 }
