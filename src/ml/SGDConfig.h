@@ -10,7 +10,8 @@ namespace pl {
 class SGDConfig : public ConfigContainer
 {
 public:
-    SGDConfig(const double lambda = 0.01,
+    SGDConfig(const std::string &classifierFile = "./trainedClassifier.yml",
+              const double lambda = 0.01,
               const double bias = 0.0,
               const double learningRate = 0.001,
               const double multiplier = 1,
@@ -44,6 +45,9 @@ public:
     vl_size maxIterations() const;
     void setMaxIterations(const vl_size &maxIterations);
 
+    std::string classifierFile() const;
+    void setClassifierFile(const std::string &classifierFile);
+
 private:
     double mLambda;
     double mLearningRate;
@@ -55,6 +59,8 @@ private:
 
     vl_size mIterations;
     vl_size mMaxIterations;
+
+    std::string mClassifierFile;
 };
 
 

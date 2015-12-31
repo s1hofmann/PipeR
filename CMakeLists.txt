@@ -34,7 +34,6 @@ option (MASKS
 include_directories ("${PROJECT_SOURCE_DIR}/core/clustering")
 add_subdirectory(src/core/clustering)
 
-
 include_directories ("${PROJECT_SOURCE_DIR}/core/utils")
 add_subdirectory(src/core/utils)
 

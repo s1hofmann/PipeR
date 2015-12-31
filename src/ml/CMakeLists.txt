@@ -1,2 +1,3 @@
 add_library(ml MLStep
-               SGDStep)
+               SGDStep
+               SGDConfig)

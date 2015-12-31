@@ -55,8 +55,8 @@ cv::Mat SGDStep::train(const cv::Mat &input,
                                                                             lambda);
 
     if(!model.empty()) { solver->setModel(model); }
-
     if(bias > 0) { solver->setBias(bias); }
+
     if(learningRate > 0) { solver->setBiasLearningRate(learningRate); }
     if(epsilon > 0) { solver->setEpsilon(epsilon); }
     if(multiplier > 0) { solver->setBiasMultiplier(multiplier); }
@@ -64,13 +64,25 @@ cv::Mat SGDStep::train(const cv::Mat &input,
     if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
 
     solver->train();
+
+    //Updated classifier data
+    model = solver->getModelMat();
+    bias = solver->getBias();
+
+    if(!model.empty()) {
+        std::string fileName = this->mConfig.dynamicCast<SGDConfig>()->classifierFile();
+        this->save(fileName,
+                   model,
+                   bias);
+    }
 }
 
 
 cv::Mat SGDStep::run(const cv::Mat &input,
                      const cv::Mat &param) const
 {
-    cv::Mat1d model, bias;
+    std::string inputFile = this->mConfig.dynamicCast<SGDConfig>()->classifierFile();
+    std::pair<cv::Mat1d, double> classifierData = this->load(inputFile);
 }
 
 
@@ -85,7 +97,7 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
     cv::Mat1d dInput;
     cv::Mat1d dParam;
     if(!input.type() == CV_64FC1) {
-        std::cout << "Incompatible type of input data, converting." << std::endl;
+        debug("Incompatible type of input data, converting.");
         input.convertTo(dInput, CV_64FC1);
     } else {
         dInput = input;
@@ -133,7 +145,7 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
 }
 
 
-cv::Mat1d SGDStep::load(const std::string &fileName)
+std::pair<cv::Mat1d, double> SGDStep::load(const std::string &fileName) const
 {
     cv::FileStorage fs(fileName, cv::FileStorage::READ);
 
@@ -144,24 +156,21 @@ cv::Mat1d SGDStep::load(const std::string &fileName)
         exit(-1);
     }
 
-    cv::Mat1d model, bias;
+    cv::Mat1d model;
+    double bias;
 
     fs["model"] >> model;
     fs["bias"] >> bias;
 
-    cv::Mat1d result;
-
-    cv::hconcat(model, bias, result);
-
     fs.release();
 
-    return result;
+    return std::make_pair(model, bias);
 }
 
 
 void SGDStep::save(const std::string &fileName,
                    const cv::Mat1d &model,
-                   const cv::Mat1d &bias)
+                   const double bias) const
 {
     cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
 

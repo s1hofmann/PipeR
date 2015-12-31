@@ -4,7 +4,7 @@
 namespace pl {
 
 
-SGDConfig::SGDConfig(const double lambda,
+SGDConfig::SGDConfig(const std::__cxx11::string &outputFile, const double lambda,
                      const double bias,
                      const double learningRate,
                      const double multiplier,
@@ -14,6 +14,7 @@ SGDConfig::SGDConfig(const double lambda,
     :
         ConfigContainer("SGD configuration",
                         "Not done yet..."),
+        mClassifierFile(outputFile),
         mLambda(lambda),
         mBias(bias),
         mLearningRate(learningRate),
@@ -125,6 +126,18 @@ vl_size SGDConfig::maxIterations() const
 void SGDConfig::setMaxIterations(const vl_size &maxIterations)
 {
     mMaxIterations = maxIterations;
+}
+
+
+std::string SGDConfig::classifierFile() const
+{
+    return mClassifierFile;
+}
+
+
+void SGDConfig::setClassifierFile(const std::string &classifierFile)
+{
+    mClassifierFile = classifierFile;
 }
 
 
