@@ -2,11 +2,15 @@
 
 
 VlFeatWrapper::SGDSolver::SGDSolver(cv::Mat1d &data,
-        cv::Mat1d &labels,
-        double lambda)
-    : SVMSolver(VlSvmSolverSgd, data, labels, lambda)
-{
+                                    cv::Mat1d &labels,
+                                    double lambda)
+    :
+        SVMSolver(VlSvmSolverSgd,
+                  data,
+                  labels,
+                  lambda) {
 }
+
 
 void VlFeatWrapper::SGDSolver::setBiasLearningRate(const double rate)
 {
@@ -14,10 +18,12 @@ void VlFeatWrapper::SGDSolver::setBiasLearningRate(const double rate)
     vl_svm_set_bias_learning_rate(this->svm, rate);
 }
 
+
 double VlFeatWrapper::SGDSolver::getBiasLearningRate() const
 {
     return vl_svm_get_bias_learning_rate(this->svm);
 }
+
 
 void VlFeatWrapper::SGDSolver::setModel(const cv::Mat &model)
 {
@@ -31,6 +37,7 @@ void VlFeatWrapper::SGDSolver::setModel(const cv::Mat &model)
         vl_svm_set_model(this->svm, reinterpret_cast<double*>(model.data));
     }
 }
+
 
 void VlFeatWrapper::SGDSolver::setBias(const double bias)
 {
