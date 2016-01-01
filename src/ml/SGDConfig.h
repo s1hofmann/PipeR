@@ -48,6 +48,9 @@ public:
     std::string classifierFile() const;
     void setClassifierFile(const std::string &classifierFile);
 
+    // ConfigContainer interface
+    virtual std::string toString() const;
+
 private:
     double mLambda;
     double mLearningRate;

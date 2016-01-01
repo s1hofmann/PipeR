@@ -104,20 +104,26 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
     }
 
     if(!param.type() == CV_64FC1) {
-        std::cerr << "Incompatible type of parameter data, converting." << std::endl;
+        debug("Incompatible type of parameter data, converting.");
         param.convertTo(dParam, CV_64FC1);
     } else {
         dParam = param;
     }
 
     double lambda = this->mConfig.dynamicCast<SGDConfig>()->lambda();
-    std::cout << "Lambda: " << lambda << std::endl;
+    debug(("Lambda:", lambda));
     double learningRate = this->mConfig.dynamicCast<SGDConfig>()->learningRate();
+    debug(("Learning rate:", learningRate));
     double epsilon = this->mConfig.dynamicCast<SGDConfig>()->epsilon();
+    debug(("Epsilon:", epsilon));
     double multiplier = this->mConfig.dynamicCast<SGDConfig>()->multiplier();
+    debug(("Multiplier:", multiplier));
     double bias = this->mConfig.dynamicCast<SGDConfig>()->bias();
+    debug(("Bias:", bias));
     vl_size iterations = this->mConfig.dynamicCast<SGDConfig>()->iterations();
+    debug(("Iterations:", iterations));
     vl_size maxIterations = this->mConfig.dynamicCast<SGDConfig>()->maxIterations();
+    debug(("Max. iterations:", maxIterations));
 
     cv::Mat1d model = this->mConfig.dynamicCast<SGDConfig>()->model();
 

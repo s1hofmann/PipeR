@@ -141,4 +141,22 @@ void SGDConfig::setClassifierFile(const std::string &classifierFile)
 }
 
 
+std::string SGDConfig::toString() const
+{
+    std::stringstream configString;
+
+    configString << "Classifier file: " << classifierFile()<< std::endl
+                 << "Lambda: " << lambda() << std::endl
+                 << "Learning rate: " << learningRate() << std::endl
+                 << "Epsilon: " << epsilon() << std::endl
+                 << "Bias: " << bias() << std::endl
+                 << "Bias multiplier: " << multiplier() << std::endl
+                 << "Iterations: " << iterations() << std::endl
+                 << "Max. iterations: " << maxIterations() << std::endl
+                 << "Model dimensions: " << mModel.rows << "x" << mModel.cols << std::endl;
+
+    return configString.str();
+}
+
+
 }
