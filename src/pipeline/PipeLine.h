@@ -21,8 +21,11 @@
 #include "../feature_extraction/SiftConfigContainer.h"
 #include "../io/FileReader.h"
 #include "../io/FileWriter.h"
+#include "../io/FileUtil.h"
 #include "../masks/VesselMask.h"
 #include "../preprocessing/BinarizationStep.h"
+#include "../ml/SGDConfig.h"
+#include "../ml/SGDStep.h"
 
 namespace pl {
 
@@ -44,7 +47,7 @@ public:
      * @brief train
      * @param mask
      */
-    void train(const cv::Mat &input) const;
+    void train(const cv::Mat &input, const cv::Mat &labels) const;
 
     /**
      * @brief run
@@ -155,7 +158,7 @@ public:
      * @param step
      * @return
      */
-    bool addClassificationStep(const cv::Ptr<PipelineStep> step);
+    bool addClassificationStep(const cv::Ptr<MLStep> step);
 
     /**
      * @brief removeClassificationStep
@@ -429,7 +432,7 @@ bool PipeLine<T>::removeTrainingStep() {
 
 
 template <typename T>
-bool PipeLine<T>::addClassificationStep(const cv::Ptr<PipelineStep> step) {
+bool PipeLine<T>::addClassificationStep(const cv::Ptr<MLStep> step) {
     this->mClassification = step;
     return this->mClassification.empty();
 }
@@ -443,7 +446,8 @@ bool PipeLine<T>::removeClassificationStep() {
 
 
 template <typename T>
-void PipeLine<T>::train(const cv::Mat &input) const {
+void PipeLine<T>::train(const cv::Mat &input,
+                        const cv::Mat &labels) const {
     cv::Mat prep;
     cv::Mat prepMask;
 
