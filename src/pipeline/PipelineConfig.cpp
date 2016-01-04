@@ -53,15 +53,5 @@ void PipelineConfig::setDescriptorDir(const std::string &descriptorDir)
     mDescriptorDir = descriptorDir;
 }
 
-std::string PipelineConfig::getDescriptorDir() const
-{
-    return descriptorDir;
-}
-
-void PipelineConfig::setDescriptorDir(const std::string &value)
-{
-    descriptorDir = value;
-}
-
 
 }
