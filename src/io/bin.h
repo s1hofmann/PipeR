@@ -17,9 +17,9 @@ public:
     virtual ~BIN();
 
     // IOImpl interface
-    virtual bool write(const cv::Mat &output,
-                       const std::string &outPath,
-                       const std::string &fileName) const;
+    virtual unsigned long write(const cv::Mat &output,
+                                const std::string &outPath,
+                                const std::string &fileName) const;
 
     virtual cv::Mat read(const std::string &input) const;
 };

@@ -21,17 +21,18 @@ YML::~YML()
 }
 
 
-bool YML::write(const cv::Mat &output,
-                const std::string &outPath,
-                const std::string &fileName) const
+unsigned long YML::write(const cv::Mat &output,
+                         const std::string &outPath,
+                         const std::string &fileName) const
 {
+    if(output.empty()) {
+        throw new std::invalid_argument("Empty output object given.\n");
+    }
     if(outPath.empty()) {
-        std::cerr << "No output path given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("Empty output object given.\n");
     }
     if(fileName.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("No filename given.\n");
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -41,10 +42,9 @@ bool YML::write(const cv::Mat &output,
         cv::FileStorage fs(absFile.toStdString(), cv::FileStorage::WRITE);
         fs << "descriptors" << output;
         fs.release();
-        return true;
+        return output.rows * output.cols * output.channels();
     } catch (cv::Exception &e) {
-        std::cerr << e.what() << std::endl;
-        return false;
+        throw e;
     }
 }
 
@@ -52,8 +52,7 @@ bool YML::write(const cv::Mat &output,
 cv::Mat YML::read(const std::string &input) const
 {
     if(input.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return cv::Mat();
+        throw new std::invalid_argument("No filename given.\n");
     }
 
     cv::Mat descr;

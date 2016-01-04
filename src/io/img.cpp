@@ -22,17 +22,18 @@ IMG::~IMG()
 }
 
 
-bool IMG::write(const cv::Mat &output,
+unsigned long IMG::write(const cv::Mat &output,
                 const std::string &outPath,
                 const std::string &fileName) const
 {
+    if(output.empty()) {
+        throw new std::invalid_argument("Empty output object given.\n");
+    }
     if(outPath.empty()) {
-        std::cerr << "No output path given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("No output path given.\n");
     }
     if(fileName.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("No filename given.\n");
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -40,26 +41,26 @@ bool IMG::write(const cv::Mat &output,
 
     std::vector<int> parameters;
 
-    if(!cv::imwrite(absFile.toStdString(), output)) {
-        std::cerr << "Failed to write " << absFile.toStdString() << "." << std::endl;
-        return false;
+    if(cv::imwrite(absFile.toStdString(), output)) {
+        return output.rows * output.cols * output.channels();
+    } else {
+        std::stringstream s;
+        s << "Failed to write " << absFile.toStdString() << "." << std::endl;
+        throw new std::runtime_error(s.str());
     }
-
-    return true;
 }
 
 
 cv::Mat IMG::read(const std::string &input) const
 {
     if(input.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return cv::Mat();
+        throw new std::invalid_argument("No filename given.\n");
     }
 
     cv::Mat img = cv::imread(input, CV_LOAD_IMAGE_UNCHANGED);
 
     if(img.empty()) {
-        std::cerr << "WARNING, " << input << " is an empty image." << std::endl;
+        warning(input, "is and empty image.");
     }
 
     return img;

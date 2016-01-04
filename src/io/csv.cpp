@@ -22,17 +22,18 @@ CSV::~CSV()
 }
 
 
-bool CSV::write(const cv::Mat &output,
-                const std::string &outPath,
-                const std::string &fileName) const
+unsigned long CSV::write(const cv::Mat &output,
+                         const std::string &outPath,
+                         const std::string &fileName) const
 {
+    if(output.empty()) {
+        throw new std::invalid_argument("Empty output object given.\n");
+    }
     if(outPath.empty()) {
-        std::cerr << "No output path given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("No output path given.\n");
     }
     if(fileName.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return false;
+        throw new std::invalid_argument("No filename given.\n");
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -40,23 +41,32 @@ bool CSV::write(const cv::Mat &output,
 
     QFile file(absFile);
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text) ) {
-        std::cerr << "Unable to open file " << absFile.toStdString() << std::endl;
-        return false;
+        std::stringstream s;
+        s << "Unable to open file " << absFile.toStdString() << "." << std::endl;
+        throw new std::runtime_error(s.str());
     }
 
     QTextStream file_stream(&file);
+
+    unsigned long count = 0;
+
     for(int y = 0; y < output.rows; y++ ) {
         for(int x = 0; x < output.cols; x++ ) {
-            if(output.type() == CV_32FC1)
+            if(output.type() == CV_32FC1) {
                 file_stream << (float)output.at<float>(y,x);
-            else if(output.type() == CV_64FC1 )
+                ++count;
+            } else if(output.type() == CV_64FC1 ) {
                 file_stream << (double)output.at<double>(y,x);
-            else if(output.type() == CV_32SC1 )
+                ++count;
+            } else if(output.type() == CV_32SC1 ) {
                 file_stream << (int)output.at<int>(y,x);
-            else if(output.type() == CV_8UC1 )
+                ++count;
+            } else if(output.type() == CV_8UC1 ) {
                 file_stream << (uchar)output.at<uchar>(y,x);
-            else
-                std::cerr << "Format not supported." << std::endl;
+                ++count;
+            } else {
+                throw new std::runtime_error("Format not supported.\n");
+            }
             if(x != output.cols - 1) {
                 file_stream << ",";
             }
@@ -65,20 +75,21 @@ bool CSV::write(const cv::Mat &output,
     }
     file.close();
 
-    return true;
+    return count;
 }
 
 
 cv::Mat CSV::read(const std::string &input) const
 {
     if(input.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return cv::Mat();
+        std::invalid_argument("No filename given.\n");
     }
 
     QFile file(QString::fromStdString(input));
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-       return cv::Mat();
+        std::stringstream s;
+        s << "Unable to open file " << input << "." << std::endl;
+        throw new std::runtime_error(s.str());
     }
 
     QTextStream file_stream(&file);
@@ -94,15 +105,18 @@ cv::Mat CSV::read(const std::string &input) const
        foreach(QString v, val_str){
            bool ok;
            vals.push_back(v.toFloat(&ok));
-           assert(ok);
+           if(!ok) {
+               throw new std::runtime_error("Error while parsing CSV data.\n");
+           }
            col++;
        }
        if((vals.size() % col) != 0) {
-           std::cerr << "Error, wrong dimension!" << std::endl;
-           std::cerr << "Is: " << vals.size() << " Should be: " << col << std::endl;
+           std::stringstream s;
+           s << "Size error!" << std::endl << "Is: " << vals.size() << " Should be: " << col << std::endl;
+           throw new std::runtime_error(s.str());
        }
        if(cols != 0 && cols != col) {
-           std::cerr << "Error, columns missaligned." << std::endl;
+           throw new std::runtime_error("Size error! Data missaligned.\n");
        }
        cols = col;
        rows++;

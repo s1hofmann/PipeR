@@ -22,9 +22,9 @@ public:
     IOImpl();
     virtual ~IOImpl();
 
-    virtual bool write(const cv::Mat &output,
-                       const std::string &outPath,
-                       const std::string &fileName) const = 0;
+    virtual unsigned long write(const cv::Mat &output,
+                                const std::string &outPath,
+                                const std::string &fileName) const = 0;
 
     virtual cv::Mat read(const std::string &input) const = 0;
 };

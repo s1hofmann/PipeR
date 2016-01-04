@@ -22,27 +22,24 @@ BIN::~BIN()
 }
 
 
-bool BIN::write(const cv::Mat &output,
-                const std::string &outPath,
-                const std::string &fileName) const
+unsigned long BIN::write(const cv::Mat &output,
+                         const std::string &outPath,
+                         const std::string &fileName) const
 {
-    CV_Assert(output.channels() == 1);
-    CV_Assert(output.isContinuous());
+    if(output.empty()) { throw new std::invalid_argument("Output object empty.\n"); }
+    if(outPath.empty()) { throw new std::invalid_argument("Output path missing.\n"); }
+    if(fileName.empty()) { throw new std::invalid_argument("File name missing.\n"); }
 
-    if(outPath.empty()) {
-        std::cerr << "No output path given, aborting." << std::endl;
-        return false;
-    }
-    if(fileName.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return false;
-    }
+    if(output.channels() != 1) { throw new std::invalid_argument("Output data has multiple channels, currently not supported.\n"); }
+    if(!output.isContinuous()) { throw new std::invalid_argument("Output data is not continuous.\n"); }
 
     QDir d(QString::fromStdString(outPath));
     QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
     QFile file(absFile);
     if(!file.open(QIODevice::WriteOnly | QIODevice::QIODevice::Unbuffered)) {
-        std::cerr << "Unable to open file " << absFile.toStdString() << std::endl;
+        std::stringstream s;
+        s << "Unable to open file " << absFile.toStdString() << "." << std::endl;
+        throw new std::runtime_error(s.str());
         return false;
     }
 
@@ -87,19 +84,21 @@ bool BIN::write(const cv::Mat &output,
     file.write((char*)output.data,
                dataSize*output.rows*output.cols);
     file.close();
+
+    return dataSize*output.rows*output.cols;
 }
 
 
 cv::Mat BIN::read(const std::string &input) const
 {
     if(input.empty()) {
-        std::cerr << "No filename given, aborting." << std::endl;
-        return cv::Mat();
+        throw new std::invalid_argument("No filename given.");
     }
     QFile file(QString::fromStdString(input));
     if(!file.open(QIODevice::ReadOnly | QIODevice::QIODevice::Unbuffered)) {
-        std::cerr << "Unable to open file " << input << std::endl;
-        return cv::Mat();
+        std::stringstream s;
+        s << "Unable to open file " << input << "." << std::endl;
+        throw new std::runtime_error(s.str());
     }
 
     char dtype;
@@ -108,7 +107,9 @@ cv::Mat BIN::read(const std::string &input) const
     file.read((char *)&rows, sizeof(int));
     file.read((char *)&cols, sizeof(int));
     file.read((char *)&chans, sizeof(int));
-    CV_Assert(chans == 1);
+    if(chans != 1) {
+        throw new std::runtime_error("Wrong channel size.\n");
+    }
 
     int dataSize;
 
