@@ -12,6 +12,8 @@
 #include <qt/QtCore/QDir>
 #include <qt/QtCore/QTextStream>
 
+#include "../pipeline/globals.h"
+
 namespace pl {
 
 class IOImpl
