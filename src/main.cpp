@@ -6,44 +6,43 @@
 #include "pipeline/PipeLine.h"
 
 int main(int argc, char *argv[]) {
-    pl::FileReader<pl::IMG> loader;
-    pl::FileWriter<pl::IMG> writer;
+    pl::FileUtil fileUtil;
+    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fileUtil.getFilesFromLabelFile(argv[1]);
+    std::cout << filesWithLabels.first.size() << std::endl;
 
-    cv::Mat img = loader.read("/home/sim0n/fe_mask.png");
+    cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig;
+    pipeCfg->setDescriptorDir("/home/sim0n/descriptors");
+    pipeCfg->setDescriptorLabelFile("/home/sim0n/labels.dat");
+    pipeCfg->setDimensionalityReductionPath("/home/sim0n/pca.yml");
+    pipeCfg->setDimensionalityReductionSubset(150000);
 
-    std::cout << img.rows << " " << img.cols << std::endl;
+    pl::PipeLine<cv::Mat> pipeLine(pipeCfg, true);
 
-    writer.write(img, "/home/sim0n/", "writer_test.png");
+    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
+    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
+    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
 
-//    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = loader.getFilesFromLabelFile(argv[1]);
-//    std::cout << filesWithLabels.first.size() << std::endl;
+    pipeLine.addFeatureExtractionStep(fe, mask);
 
-//    std::pair<std::vector<cv::Mat>, std::vector<int>> imagesWithLabels = loader.loadImagesFromLabelFile(argv[1]);
+    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
+    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
 
-//    std::cout << imagesWithLabels.first.size() << std::endl;
+    pipeLine.addDimensionalityReductionStep(pca);
 
-//    pl::PipeLine<cv::Mat> pipeLine(true);
+    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
+    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
+    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
 
-//    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
-//    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
-//    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
+    pipeLine.addEncodingStep(vlad);
 
-//    pipeLine.addFeatureExtractionStep(fe, mask);
+    cv::Ptr<pl::SGDConfig> sgdCfg = new pl::SGDConfig();
+    cv::Ptr<pl::SGDStep> sgd = new pl::SGDStep(sgdCfg);
 
-//    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
-//    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
+    pipeLine.addClassificationStep(sgd);
 
-//    pipeLine.addDimensionalityReductionStep(pca);
+    pipeLine.showPipeline();
 
-//    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
-//    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
-//    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
-
-//    pipeLine.addEncodingStep(vlad);
-
-//    pipeLine.showPipeline();
-
-//    pipeLine.train(in);
+    pipeLine.train(filesWithLabels.first, filesWithLabels.second);
 
     return 0;
 }
