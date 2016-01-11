@@ -15,17 +15,17 @@ public:
     PipelineConfig();
     virtual ~PipelineConfig();
 
-    std::string pca() const;
-    void setPca(const std::string &pca);
-
-    std::vector<std::string> vocabs() const;
-    void setVocabs(const std::vector<std::string> &vocabs);
+    std::string descriptorDir() const;
+    void setDescriptorDir(const std::string &descriptorDir);
 
     std::string descriptorLabelFile() const;
     void setDescriptorLabelFile(const std::string &descriptorLabelFile);
 
-    std::string descriptorDir() const;
-    void setDescriptorDir(const std::string &descriptorDir);
+    std::string dimensionalityReductionPath() const;
+    void setDimensionalityReductionPath(const std::string &dimensionalityReductionPath);
+
+    int dimensionalityReductionSubset() const;
+    void setDimensionalityReductionSubset(int dimensionalityReductionSubset);
 
 private:
     /**
@@ -44,9 +44,17 @@ private:
     std::vector<std::string> mVocabs;
 
     /**
-     * @brief pca
+     * @brief mDimensionalityReductionPath
      */
-    std::string mPca;
+    std::string mDimensionalityReductionPath;
+
+    /**
+     * @brief mDimensionalityReductionSubset
+     */
+    int mDimensionalityReductionSubset;
+
+    // ConfigContainer interface
+    virtual std::string toString() const;
 };
 
 
