@@ -2,6 +2,7 @@
 
 #include <opencv2/core/core.hpp>
 #include <string>
+#include <type_traits>
 
 #include "IOImpl.h"
 #include "bin.h"

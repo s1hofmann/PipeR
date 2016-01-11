@@ -81,6 +81,95 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
 }
 
 
+bool FileUtil::saveImage(const cv::Mat &image,
+                         const std::string &outputPath,
+                         const std::string &imageFileName) const
+{
+    FileWriter<IMG> imageWriter;
+
+    return imageWriter.write(image,
+                             outputPath,
+                             imageFileName);
+}
+
+
+cv::Mat FileUtil::loadImage(const std::string &fileName) const
+{
+    FileReader<IMG> imageReader;
+
+    return imageReader.read(fileName);
+}
+
+
+bool FileUtil::saveBinary(const cv::Mat &data,
+                          const std::string &outputPath,
+                          const std::string &fileName) const
+{
+    FileWriter<BIN> binaryWriter;
+
+    return binaryWriter.write(data,
+                              outputPath,
+                              fileName);
+}
+
+
+bool FileUtil::saveYML(const cv::Mat &data,
+                       const std::string &outputPath,
+                       const std::string &fileName) const
+{
+    FileWriter<YML> ymlWriter;
+
+    return ymlWriter.write(data,
+                           outputPath,
+                           fileName);
+}
+
+
+bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
+                                       const int label,
+                                       const std::string &outputPath,
+                                       const std::string &descriptorFileName,
+                                       const std::string &labelFileName) const
+{
+    FileWriter<BIN> writer;
+
+    if(!descriptor.empty()) {
+        QDir outputDir(QString::fromStdString(outputPath));
+        if(outputDir.exists()) {
+            //Assembles a new descriptor filename given its corresponding images filename
+            QFileInfo labelFileInfo(outputDir, QString::fromStdString(labelFileName));
+
+            if(writer.write(descriptor, outputPath, descriptorFileName)) {
+                if(appendDescriptor(outputPath,
+                                    labelFileName,
+                                    descriptorFileName,
+                                    label)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            error("Output directory doesn't exist, aborting.");
+            return false;
+        }
+    } else {
+        error("Empty output object given, aborting.");
+        return false;
+    }
+}
+
+
+bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
+                              const std::string &outputPath,
+                              const std::string &fileName) const
+{
+
+}
+
+
 std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     FileReader<IMG> reader;
@@ -132,6 +221,44 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName)
     } else {
         std::cerr << "Directory does not exist, aborting." << std::endl;
         return std::vector<std::string>();
+    }
+}
+
+
+bool FileUtil::appendDescriptor(const std::string &labelFilePath,
+                                const std::string &labelFileName,
+                                const std::string &fileName,
+                                const int label) const
+{
+    QDir outputDir(QString::fromStdString(labelFilePath));
+    if(outputDir.exists()) {
+        QFileInfo labelFileInfo(outputDir, QString::fromStdString(labelFileName));
+        QFile fileHandler(labelFileInfo.absoluteFilePath());
+
+        if(!fileHandler.exists()) {
+            //If the file doesn't exist yet, it'll be created
+            if(fileHandler.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                fileHandler.close();
+            } else {
+                error("Unable to create labelfile.");
+                return false;
+            }
+        }
+
+        if(!fileHandler.open(QIODevice::Append | QIODevice::Text)) {
+            error("Unable to open labelfile.");
+            return false;
+        }
+
+        QTextStream out(&fileHandler);
+        out << QString::fromStdString(fileName) << " " << label << "\n";
+
+        fileHandler.close();
+
+        return true;
+    } else {
+        error("Output directory doesn't exist, aborting.");
+        return false;
     }
 }
 

@@ -9,6 +9,7 @@
 #include <utility>
 #include <string>
 #include <iostream>
+#include <type_traits>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
