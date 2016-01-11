@@ -1,3 +1,5 @@
 add_library(utils_core progressbar
                        scalespace
-                       terminfo)
+                       terminfo
+                       Shuffler
+                       Range)
