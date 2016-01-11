@@ -12,6 +12,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "PipelineStep.h"
+#include "PipelineConfig.h"
 
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
@@ -36,7 +37,8 @@ public:
      * @brief PipeLine
      * @param debug
      */
-    PipeLine(bool debug = false);
+    PipeLine(cv::Ptr<PipelineConfig> config,
+             bool debug = false);
 
     /**
      * @brief ~PipeLine
@@ -47,7 +49,8 @@ public:
      * @brief train
      * @param mask
      */
-    void train(const cv::Mat &input, const cv::Mat &labels) const;
+    void train(const std::vector<std::string> &input,
+               const std::vector<int> &labels) const;
 
     /**
      * @brief run
@@ -145,7 +148,7 @@ public:
      * @param step
      * @return
      */
-    bool addTrainingStep(const cv::Ptr<PipelineStep> step);
+    bool addTrainingStep(const cv::Ptr<MLStep> step);
 
     /**
      * @brief removeTrainingStep
@@ -207,6 +210,13 @@ private:
      */
     cv::Ptr<PipelineStep> mClassification;
 
+
+    /**
+     * @brief mPipelineConfig
+     */
+    cv::Ptr<PipelineConfig> mPipelineConfig;
+
+
     /**
      * @brief mDebugMode
      */
@@ -215,7 +225,7 @@ private:
 
 
 template <typename T>
-PipeLine<T>::PipeLine(const bool debug) {
+PipeLine<T>::PipeLine(cv::Ptr<PipelineConfig> config, const bool debug) {
     this->mDebugMode = debug;
 }
 
@@ -418,7 +428,7 @@ bool PipeLine<T>::removeEncodingStep() {
 
 
 template <typename T>
-bool PipeLine<T>::addTrainingStep(const cv::Ptr<PipelineStep> step) {
+bool PipeLine<T>::addTrainingStep(const cv::Ptr<MLStep> step) {
     this->mTraining = step;
     return this->mTraining.empty();
 }
@@ -446,66 +456,90 @@ bool PipeLine<T>::removeClassificationStep() {
 
 
 template <typename T>
-void PipeLine<T>::train(const cv::Mat &input,
-                        const cv::Mat &labels) const {
-    cv::Mat prep;
-    cv::Mat prepMask;
+void PipeLine<T>::train(const std::vector<std::string> &input,
+                        const std::vector<int> &labels) const {
+    FileUtil fileUtil;
 
-    if(!this->mPreprocessing.empty()) {
-        if(!this->mPreprocessing[0].second.empty()) {
-            prepMask = this->mPreprocessing[0].second->create(input);
-        } else {
-            prepMask = cv::Mat::ones(input.size(), input.type());
+    ProgressBar<long> pb(input.size(), "Creating descriptors...");
+
+    //cv::Mat object to store all created descriptors
+    cv::Mat allFeatures;
+
+    for(std::string inputFile : input) {
+        //Load image file
+        cv::Mat inputMat = fileUtil.loadImage(inputFile);
+
+        //Skip empty images
+        if(inputMat.empty()) {
+            pb.update();
+            continue;
         }
-        if(!this->mDebugMode) {
-            prep = this->mPreprocessing[0].first->train(input, prepMask);
-        } else {
-            prep = this->mPreprocessing[0].first->debugTrain(input, prepMask);
-        }
-        for(size_t idx = 0; idx < this->mPreprocessing.size(); ++idx) {
-            if(!this->mPreprocessing[idx].second.empty()) {
-                prepMask = this->mPreprocessing[idx].second->create(prep);
+
+        cv::Mat prep;
+        cv::Mat prepMask;
+
+        if(!this->mPreprocessing.empty()) {
+            if(!this->mPreprocessing[0].second.empty()) {
+                prepMask = this->mPreprocessing[0].second->create(inputMat);
             } else {
-                prepMask = cv::Mat::ones(prep.size(), prep.type());
+                prepMask = cv::Mat::ones(inputMat.size(), inputMat.type());
             }
             if(!this->mDebugMode) {
-                prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+                prep = this->mPreprocessing[0].first->train(inputMat, prepMask);
             } else {
-                prep = this->mPreprocessing[idx].first->debugTrain(prep, prepMask);
+                prep = this->mPreprocessing[0].first->debugTrain(inputMat, prepMask);
             }
-        }
-    } else {
-        prep = input.clone();
-    }
-
-    cv::Mat features;
-    cv::Mat featureMask;
-
-    if(!this->mFeatureExtraction.first.empty()) {
-        if(!this->mFeatureExtraction.second.empty()) {
-            featureMask = this->mFeatureExtraction.second->create(prep);
+            for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+                if(!this->mPreprocessing[idx].second.empty()) {
+                    prepMask = this->mPreprocessing[idx].second->create(prep);
+                } else {
+                    prepMask = cv::Mat::ones(prep.size(), prep.type());
+                }
+                if(!this->mDebugMode) {
+                    prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+                } else {
+                    prep = this->mPreprocessing[idx].first->debugTrain(prep, prepMask);
+                }
+            }
         } else {
-            featureMask = cv::Mat::ones(prep.size(), prep.type());
+            prep = inputMat.clone();
         }
-        if(!this->mDebugMode) {
-            features = this->mFeatureExtraction.first->train(prep, featureMask);
+
+        cv::Mat features;
+        cv::Mat featureMask;
+
+        if(!this->mFeatureExtraction.first.empty()) {
+            if(!this->mFeatureExtraction.second.empty()) {
+                featureMask = this->mFeatureExtraction.second->create(prep);
+            } else {
+                featureMask = cv::Mat::ones(prep.size(), prep.type());
+            }
+            if(!this->mDebugMode) {
+                features = this->mFeatureExtraction.first->train(prep, featureMask);
+            } else {
+                features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
+            }
+            if(features.cols == allFeatures.cols || allFeatures.cols == 0) {
+                //TODO
+                allFeatures.push_back(features);
+            }
         } else {
-            features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
+            std::cerr << "No features extraction method given, aborting." << std::endl;
+            exit(-1);
         }
-    } else {
-        std::cerr << "No features extraction method given, aborting." << std::endl;
-        exit(-1);
+
+        pb.update();
     }
 
     cv::Mat reduced;
     if(!this->mDimensionalityReduction.empty()) {
         if(!this->mDebugMode) {
-            reduced = this->mDimensionalityReduction->train(features);
+            reduced = this->mDimensionalityReduction->train(allFeatures);
         } else {
-            reduced = this->mDimensionalityReduction->debugTrain(features);
+            reduced = this->mDimensionalityReduction->debugTrain(allFeatures);
         }
     } else {
-        reduced = features;
+        reduced = allFeatures;
     }
 
     cv::Mat encoded;
