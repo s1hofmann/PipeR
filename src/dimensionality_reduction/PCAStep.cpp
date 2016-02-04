@@ -4,11 +4,9 @@
 namespace pl {
 
 
-PCAStep::PCAStep(const cv::Ptr<PCAConfig> config,
-                 const std::string &info)
+PCAStep::PCAStep(const cv::Ptr<PCAConfig> config)
     :
-        DimensionalityReductionStep(config,
-                                    info)
+        DimensionalityReductionStep(config)
 {
 
 }
@@ -22,13 +20,15 @@ cv::Mat PCAStep::train(const cv::Mat &input,
     bool whitening = this->mConfig.dynamicCast<PCAConfig>()->getWhitening();
     std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
 
+    std::string outputFile = FileUtil::buildPath(path, "pca", "yml");
+
     RPCA rpca(components,
               whitening,
               epsilon);
 
     rpca.fit(input);
 
-    rpca.dump(path);
+    rpca.dump(outputFile);
 
     cv::Mat1f result;
     rpca.transform(input,

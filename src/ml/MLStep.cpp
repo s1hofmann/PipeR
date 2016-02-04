@@ -6,13 +6,36 @@
 
 namespace pl {
 
-MLStep::MLStep(const cv::Ptr<ConfigContainer> config,
-               const std::string &info)
+MLStep::MLStep(const cv::Ptr<ConfigContainer> config)
     :
-        PipelineStep(config,
-                     info)
+        PipelineStep(config)
 {
 
+}
+
+cv::Mat1d MLStep::calculateWeights(const cv::Mat1d &labels) const
+{
+    //Count positive and negative samples
+    double posCnt = std::count(labels.begin(), labels.end(), 1);
+    double negCnt = std::count(labels.begin(), labels.end(), -1);
+
+    //Compute reciprocal weights
+    double posWeight = (posCnt > 0) ? 1.0/posCnt : 1;
+    double negWeight = (negCnt > 0) ? 1.0/negCnt : 1;
+
+    //Construct weight matrix
+    size_t elems = std::max(labels.cols, labels.rows);
+    cv::Mat1d weights(labels.size());
+
+    for(size_t idx = 0; idx < elems; ++idx) {
+        if(labels.at<int>(idx) == 1) {
+            weights.at<double>(idx) = posWeight;
+        } else if(labels.at<int>(idx) == -1) {
+            weights.at<double>(idx) = negWeight;
+        }
+    }
+
+    return weights;
 }
 
 MLStep::~MLStep()

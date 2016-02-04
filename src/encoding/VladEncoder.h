@@ -7,17 +7,18 @@
 
 #include "EncodingStep.h"
 #include "VladConfig.h"
-#include "../core/clustering/kmeanscluster.h"
 
+#include "../core/clustering/kmeanscluster.h"
 #include "../core/encoding/vladencoder.h"
+
+#include "../io/FileUtil.h"
 
 namespace pl {
 
 
 class VladEncodingStep : public EncodingStep {
 public:
-    VladEncodingStep(const cv::Ptr<VladConfig> config,
-                     const std::string &info = "VLAD");
+    VladEncodingStep(const cv::Ptr<VladConfig> config);
 
     virtual ~VladEncodingStep();
 

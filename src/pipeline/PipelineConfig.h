@@ -12,7 +12,7 @@ namespace pl {
 class PipelineConfig : public ConfigContainer
 {
 public:
-    PipelineConfig();
+    PipelineConfig(const std::string &identifier);
     virtual ~PipelineConfig();
 
     std::string descriptorDir() const;
@@ -21,13 +21,12 @@ public:
     std::string descriptorLabelFile() const;
     void setDescriptorLabelFile(const std::string &descriptorLabelFile);
 
-    std::string dimensionalityReductionPath() const;
-    void setDimensionalityReductionPath(const std::string &dimensionalityReductionPath);
-
-    int dimensionalityReductionSubset() const;
-    void setDimensionalityReductionSubset(int dimensionalityReductionSubset);
-
 private:
+    /**
+     * @brief mIdentifier: Identifier string (preparation for config parsing from file)
+     */
+    std::string mIdentifier;
+
     /**
      * @brief descriptorDir
      */
@@ -42,16 +41,6 @@ private:
      * @brief vocabs
      */
     std::vector<std::string> mVocabs;
-
-    /**
-     * @brief mDimensionalityReductionPath
-     */
-    std::string mDimensionalityReductionPath;
-
-    /**
-     * @brief mDimensionalityReductionSubset
-     */
-    int mDimensionalityReductionSubset;
 
     // ConfigContainer interface
     virtual std::string toString() const;

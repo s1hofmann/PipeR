@@ -23,7 +23,8 @@ public:
      * @param edgeThreshold
      * @param sigma
      */
-    SiftConfigContainer(int nBestFeatures = 0,
+    SiftConfigContainer(const std::string &identifier,
+                        int nBestFeatures = 0,
                         int nOctaveLayers = 3,
                         double contrastThreshold = 0.04,
                         double edgeThreshold = 10,

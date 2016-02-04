@@ -29,8 +29,9 @@ public:
                      const cv::Mat &mask = cv::Mat()) const = 0;
 
 protected:
-    MLStep(const cv::Ptr<ConfigContainer> config,
-           const std::string &info = "Machine Learning step");
+    MLStep(const cv::Ptr<ConfigContainer> config);
+
+    cv::Mat1d calculateWeights(const cv::Mat1d &labels) const;
 
     virtual ~MLStep();
 };

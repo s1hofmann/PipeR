@@ -24,8 +24,7 @@ public:
      * @param config
      * @param info
      */
-    SiftDetector(const cv::Ptr<SiftConfigContainer> config,
-                 const std::string &info = "SIFT feature extractor");
+    SiftDetector(const cv::Ptr<SiftConfigContainer> config);
 
     /**
      * @brief ~SiftDetector

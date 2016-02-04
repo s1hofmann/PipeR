@@ -7,10 +7,8 @@
 namespace pl {
 
 
-PipelineStep::PipelineStep(const cv::Ptr<ConfigContainer> config,
-                           const std::string &info)
+PipelineStep::PipelineStep(const cv::Ptr<ConfigContainer> config)
     :
-        mName(info),
         mConfig(config)
 {
 
@@ -37,15 +35,12 @@ std::string PipelineStep::usage()
 
 std::string PipelineStep::info()
 {
-    return mName;
+    return mConfig->identifier();
 }
 
 
 std::string PipelineStep::config() const {
-    std::stringstream config;
-
-    config << mName << " config:" << std::endl << mConfig->toString();
-    return config.str();
+    return mConfig->toString();
 }
 
 

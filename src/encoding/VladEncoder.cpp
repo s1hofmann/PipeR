@@ -7,11 +7,9 @@
 namespace pl {
 
 
-VladEncodingStep::VladEncodingStep(const cv::Ptr<VladConfig> config,
-                         const std::string &info)
+VladEncodingStep::VladEncodingStep(const cv::Ptr<VladConfig> config)
     :
-        EncodingStep(config,
-                     info)
+        EncodingStep(config)
 {
 
 }
@@ -28,24 +26,46 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
 {
     int clusters = this->mConfig.dynamicCast<VladConfig>()->getClusters();
     int maxIterations = this->mConfig.dynamicCast<VladConfig>()->getIterations();
+    int vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabCount();
     double epsilon = this->mConfig.dynamicCast<VladConfig>()->getEpsilon();
     std::string path = this->mConfig.dynamicCast<VladConfig>()->getPath();
 
-    KMeansCluster kmeans;
-    kmeans.cluster(input,
-                   clusters,
-                   maxIterations,
-                   epsilon);
+    if(vocabs < 1) {
+        warning("Vocabs < 1, skipping encoding.");
+        return input;
+    }
 
-    kmeans.dump(path);
+    for(size_t runs = 0; runs < vocabs; ++runs) {
+        std::string outputFile = FileUtil::buildPath(path, "cluster", "yml", std::to_string(runs));
+
+        KMeansCluster kmeans;
+        kmeans.cluster(input,
+                       clusters,
+                       maxIterations,
+                       epsilon);
+
+        kmeans.dump(outputFile);
+    }
 
     std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
 
-    VladEncoder vlad;
-    vlad.setNormStrategy(normalization);
-    vlad.loadData(path);
+    cv::Mat encoded;
+    for(size_t runs = 0; runs < vocabs; ++runs) {
+        std::string inputFile = FileUtil::buildPath(path, "cluster", "yml", std::to_string(runs));
 
-    return vlad.encode(input);
+        VladEncoder vlad;
+        vlad.setNormStrategy(normalization);
+        vlad.loadData(inputFile);
+
+        if(encoded.empty()) {
+            encoded = vlad.encode(input);
+        } else {
+            cv::Mat enc = vlad.encode(input);
+            cv::hconcat(encoded, enc, encoded);
+        }
+    }
+
+    return encoded;
 }
 
 

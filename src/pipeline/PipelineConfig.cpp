@@ -3,9 +3,9 @@
 namespace pl {
 
 
-PipelineConfig::PipelineConfig()
+PipelineConfig::PipelineConfig(const std::string &identifier)
     :
-        mDimensionalityReductionSubset(150000)
+        ConfigContainer(identifier)
 {
 }
 
@@ -37,30 +37,6 @@ std::string PipelineConfig::descriptorLabelFile() const
 void PipelineConfig::setDescriptorLabelFile(const std::string &descriptorLabelFile)
 {
     mDescriptorLabelFile = descriptorLabelFile;
-}
-
-
-std::string PipelineConfig::dimensionalityReductionPath() const
-{
-    return mDimensionalityReductionPath;
-}
-
-
-void PipelineConfig::setDimensionalityReductionPath(const std::string &dimensionalityReductionPath)
-{
-    mDimensionalityReductionPath = dimensionalityReductionPath;
-}
-
-
-int PipelineConfig::dimensionalityReductionSubset() const
-{
-    return mDimensionalityReductionSubset;
-}
-
-
-void PipelineConfig::setDimensionalityReductionSubset(int dimensionalityReductionSubset)
-{
-    mDimensionalityReductionSubset = dimensionalityReductionSubset;
 }
 
 

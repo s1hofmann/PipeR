@@ -11,23 +11,27 @@ namespace pl {
 class VladConfig : public ConfigContainer
 {
 public:
-    VladConfig(const std::vector<normStrategy> &normalization,
+    VladConfig(const std::string &identifier,
+               const std::vector<normStrategy> &normalization,
                const int clusters,
                const int iterations = 100,
                const double epsilon = 0.001,
-               const std::string &path = "./means.yml");
+               const int vocabs = 1,
+               const std::string &path = ".");
 
     virtual ~VladConfig();
 
-    std::vector<normStrategy> getNormStrategies();
+    std::vector<normStrategy> getNormStrategies() const;
 
-    std::string getPath();
+    std::string getPath() const;
 
-    int getClusters();
+    int getClusters() const;
 
-    int getIterations();
+    int getIterations() const;
 
-    double getEpsilon();
+    int getVocabCount() const;
+
+    double getEpsilon() const;
 
     virtual std::string toString() const;
 
@@ -36,6 +40,7 @@ private:
     std::string mPath;
     int mClusters;
     int mIterations;
+    int mVocabs;
     double mEpsilon;
 };
 

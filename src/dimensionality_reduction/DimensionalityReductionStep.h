@@ -49,8 +49,7 @@ public:
                              const cv::Mat &param = cv::Mat()) const = 0;
 
 protected:
-    DimensionalityReductionStep(const cv::Ptr<ConfigContainer> config,
-                                const std::string &info = "Dimensionality Reduction");
+    DimensionalityReductionStep(const cv::Ptr<ConfigContainer> config);
 
     virtual ~DimensionalityReductionStep();
 };

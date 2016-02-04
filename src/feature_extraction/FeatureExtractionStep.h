@@ -58,8 +58,7 @@ protected:
      * @param config
      * @param info
      */
-    FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
-                          const std::string &info = "Feature extraction step");
+    FeatureExtractionStep(const cv::Ptr<ConfigContainer> config);
 
     /**
      * @brief ~FeatureExtractionStep

@@ -30,6 +30,18 @@ void VlFeatWrapper::SVMSolver::setEpsilon(double epsilon)
     vl_svm_set_epsilon(this->svm, epsilon);
 }
 
+void VlFeatWrapper::SVMSolver::setWeights(cv::Mat &weights)
+{
+    cv::Mat1d m;
+    if(weights.type() != CV_64F) {
+        weights.convertTo(m, CV_64F);
+    } else {
+        m = weights;
+    }
+    CV_Assert(m.isContinuous());
+    vl_svm_set_weights(this->svm, reinterpret_cast<double*>(m.data));
+}
+
 double VlFeatWrapper::SVMSolver::getEpsilon() const
 {
     return vl_svm_get_epsilon(this->svm);
@@ -114,6 +126,11 @@ VlSvmStatistics const * VlFeatWrapper::SVMSolver::getStatistics() const
 double const * VlFeatWrapper::SVMSolver::getWeights() const
 {
     return vl_svm_get_weights(this->svm);
+}
+
+cv::Mat1d VlFeatWrapper::SVMSolver::getWeightMat() const
+{
+    return cv::Mat1d(1, getModelDimension(), const_cast<double*>(getWeights()));
 }
 
 cv::Mat1d VlFeatWrapper::SVMSolver::predict(cv::Mat1d features) const

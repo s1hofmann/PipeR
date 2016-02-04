@@ -13,6 +13,7 @@
 
 #include "PipelineStep.h"
 #include "PipelineConfig.h"
+#include "globals.h"
 
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
@@ -201,14 +202,9 @@ private:
     cv::Ptr<EncodingStep> mEncoding;
 
     /**
-     * @brief mTraining
-     */
-    cv::Ptr<PipelineStep> mTraining;
-
-    /**
      * @brief mClassification
      */
-    cv::Ptr<PipelineStep> mClassification;
+    cv::Ptr<MLStep> mClassification;
 
 
     /**
@@ -338,14 +334,18 @@ template <typename T>
 void PipeLine<T>::showPipeline() {
     std::cout << "Preprocessing:" << std::endl;
 
-    for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
-        std::cout << "Method " << i << ": " << std::endl << this->mPreprocessing[i].first->info() << std::endl << std::endl;
-        if(!this->mPreprocessing[i].second.empty()) {
-            std::cout << "Mask " << i << ": " << std::endl;
-            if(this->mDebugMode) {
-                std::cout << this->mPreprocessing[i].second->toString() << std::endl;
-            } else {
-                std::cout << this->mPreprocessing[i].second->name() << std::endl;
+    if(this->mPreprocessing.empty()) {
+        std::cout << "Skip." << std::endl << std::endl;
+    } else {
+        for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
+            std::cout << "Method " << i << ": " << std::endl << this->mPreprocessing[i].first->info() << std::endl << std::endl;
+            if(!this->mPreprocessing[i].second.empty()) {
+                std::cout << "Mask " << i << ": " << std::endl;
+                if(this->mDebugMode) {
+                    std::cout << this->mPreprocessing[i].second->toString() << std::endl;
+                } else {
+                    std::cout << this->mPreprocessing[i].second->name() << std::endl;
+                }
             }
         }
     }
@@ -365,14 +365,14 @@ void PipeLine<T>::showPipeline() {
 
     if(!this->mFeatureExtraction.second.empty()) {
         if(this->mDebugMode) {
-            std::cout << "Mask: " << this->mFeatureExtraction.second->toString() << std::endl;
+            std::cout << this->mFeatureExtraction.second->toString() << std::endl;
         } else {
-            std::cout << "Mask: " << this->mFeatureExtraction.second->name() << std::endl;
+            std::cout << this->mFeatureExtraction.second->name() << std::endl;
         }
     }
 
     for(size_t i = 0; i < this->mPostprocessing.size(); ++i) {
-        std::cout << "Postprocessing step " << i << ": " << this->mPostprocessing[i]->info() << std::endl;
+        std::cout << "Postprocessing: " << i << ": " << this->mPostprocessing[i]->info() << std::endl;
     }
 
     if(!this->mDimensionalityReduction.empty()) {
@@ -389,12 +389,11 @@ void PipeLine<T>::showPipeline() {
         }
     }
 
-    if(!this->mTraining.empty()) {
-        std::cout << "Training step: " << this->mTraining->info() << std::endl;
-    }
-
     if(!this->mClassification.empty()) {
         std::cout << "Classification step: " << this->mClassification->info() << std::endl;
+        if(this->mDebugMode) {
+            std::cout << this->mClassification->config() << std::endl;
+        }
     }
 }
 
@@ -424,20 +423,6 @@ template <typename T>
 bool PipeLine<T>::removeEncodingStep() {
     this->mEncoding.release();
     return this->mEncoding.empty();
-}
-
-
-template <typename T>
-bool PipeLine<T>::addTrainingStep(const cv::Ptr<MLStep> step) {
-    this->mTraining = step;
-    return this->mTraining.empty();
-}
-
-
-template <typename T>
-bool PipeLine<T>::removeTrainingStep() {
-    this->mTraining.release();
-    return this->mTraining.empty();
 }
 
 
@@ -520,8 +505,9 @@ void PipeLine<T>::train(const std::vector<std::string> &input,
                 features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
             }
             if(features.cols == allFeatures.cols || allFeatures.cols == 0) {
-                //TODO
                 allFeatures.push_back(features);
+            } else {
+                error("Features don't match, skipping.");
             }
         } else {
             std::cerr << "No features extraction method given, aborting." << std::endl;

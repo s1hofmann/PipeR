@@ -7,11 +7,9 @@
 namespace pl {
 
 
-EncodingStep::EncodingStep(const cv::Ptr<ConfigContainer> config,
-                           const std::string &info)
+EncodingStep::EncodingStep(const cv::Ptr<ConfigContainer> config)
     :
-        PipelineStep(config,
-                     info)
+        PipelineStep(config)
 {
 
 }

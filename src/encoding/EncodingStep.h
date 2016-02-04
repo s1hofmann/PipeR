@@ -50,15 +50,9 @@ public:
                              const cv::Mat &param = cv::Mat()) const = 0;
 
 protected:
-    EncodingStep(const cv::Ptr<ConfigContainer> config,
-                 const std::string &info = "Feature encoding step");
+    EncodingStep(const cv::Ptr<ConfigContainer> config);
 
     virtual ~EncodingStep();
-
-    std::string usage;
-    std::string helpText;
-
-    std::string name;
 };
 
 

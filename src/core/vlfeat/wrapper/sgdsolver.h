@@ -36,6 +36,8 @@ public:
      * @param bias: New value
      */
     void setBias(const double bias);
+
+    //TODO wrap setWeights
 };
 
 }

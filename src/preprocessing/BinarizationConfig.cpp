@@ -4,7 +4,10 @@
 namespace pl {
 
 
-BinarizationConfig::BinarizationConfig(std::string &methodName)
+BinarizationConfig::BinarizationConfig(const std::string &identifier,
+                                       const std::string &methodName)
+    :
+        ConfigContainer(identifier)
 {
 
 }

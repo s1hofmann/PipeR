@@ -4,11 +4,9 @@
 namespace pl {
 
 
-SGDStep::SGDStep(const cv::Ptr<SGDConfig> config,
-                 const std::string &info)
+SGDStep::SGDStep(const cv::Ptr<SGDConfig> config)
     :
-        MLStep(config,
-               info)
+        MLStep(config)
 {
 }
 
@@ -40,6 +38,7 @@ cv::Mat SGDStep::train(const cv::Mat &input,
         dParam = param;
     }
 
+    cv::Mat1d weights = calculateWeights(param);
     double lambda = this->mConfig.dynamicCast<SGDConfig>()->lambda();
     double learningRate = this->mConfig.dynamicCast<SGDConfig>()->learningRate();
     double epsilon = this->mConfig.dynamicCast<SGDConfig>()->epsilon();
@@ -62,6 +61,7 @@ cv::Mat SGDStep::train(const cv::Mat &input,
     if(multiplier > 0) { solver->setBiasMultiplier(multiplier); }
     if(iterations > 0) { solver->setStartIterationCount(iterations); }
     if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
+    if(!weights.empty()) { solver->setWeights(weights); }
 
     solver->train();
 

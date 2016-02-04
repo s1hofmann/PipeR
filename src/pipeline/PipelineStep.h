@@ -84,8 +84,7 @@ protected:
      * @param config
      * @param info
      */
-    PipelineStep(const cv::Ptr<ConfigContainer> config,
-                 const std::string &info = std::string());
+    PipelineStep(const cv::Ptr<ConfigContainer> config);
 
     /**
      * @brief ~PipelineStep
@@ -96,11 +95,6 @@ protected:
      * @brief mConfig
      */
     cv::Ptr<ConfigContainer> mConfig;
-
-    /**
-     * @brief mName
-     */
-    std::string mName;
 
 private:
 };

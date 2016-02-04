@@ -169,6 +169,54 @@ bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
 
 }
 
+std::string FileUtil::getFilename(const std::string &path)
+{
+    QFileInfo info(QString::fromStdString(path));
+
+    if(info.exists()) {
+        return info.completeBaseName().toStdString();
+    } else {
+        warning("File ", path , " doesn't exist!");
+        return std::string();
+    }
+}
+
+std::string FileUtil::getPath(const std::string &path)
+{
+    QFileInfo info(QString::fromStdString(path));
+
+    if(info.exists()) {
+        return info.absolutePath().toStdString();
+    } else {
+        warning("File ", path , " doesn't exist!");
+        return std::string();
+    }
+}
+
+std::string FileUtil::getExtension(const std::string &path)
+{
+    QFileInfo info(QString::fromStdString(path));
+
+    if(info.exists()) {
+        return info.completeSuffix().toStdString();
+    } else {
+        warning("File ", path , " doesn't exist!");
+        return std::string();
+    }
+}
+
+std::string FileUtil::buildPath(const std::string &path,
+                                const std::string &fileName,
+                                const std::string &extension,
+                                const std::string &suffix)
+{
+    std::stringstream s;
+    s << fileName << "_" << suffix << "." << extension;
+
+    QFileInfo info(QDir(QString::fromStdString(path)), QString::fromStdString(s.str()));
+
+    return info.absoluteFilePath().toStdString();
+}
 
 std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {

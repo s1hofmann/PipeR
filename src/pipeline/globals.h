@@ -8,7 +8,13 @@
   *
   */
 
+//FIXME Handle this via cmake options
 #define USE_TBB 1
+
+#if USE_TBB
+#include <tbb/parallel_for.h>
+#endif
+
 
 /**
   * Variadic template functions for debug / warning / log output

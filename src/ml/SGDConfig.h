@@ -10,7 +10,8 @@ namespace pl {
 class SGDConfig : public ConfigContainer
 {
 public:
-    SGDConfig(const std::string &classifierFile = "./trainedClassifier.yml",
+    SGDConfig(const std::string &identifier,
+              const std::string &classifierFile = "./trainedClassifier.yml",
               const double lambda = 0.01,
               const double bias = 0.0,
               const double learningRate = 0.001,

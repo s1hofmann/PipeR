@@ -15,7 +15,7 @@ class VesselMask : public MaskGenerator {
 public:
     VesselMask(const int octaves = 3,
                const int stages = 3,
-               const double sigma = 1.5,
+               const double sigma = 1,
                const double beta = 0.5,
                const double c = 15,
                const std::string &name = "Vessel mask generator");

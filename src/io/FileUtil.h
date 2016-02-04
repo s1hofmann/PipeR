@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <iostream>
 
@@ -20,6 +21,7 @@
 #include "FileWriter.h"
 
 #include "../core/utils/progressbar.h"
+#include "../pipeline/globals.h"
 
 namespace pl {
 
@@ -119,6 +121,17 @@ public:
     bool saveDescriptor(const cv::Mat &descriptor,
                         const std::string &outputPath,
                         const std::string &fileName) const;
+
+    static std::string getFilename(const std::string &path);
+
+    static std::string getPath(const std::string &path);
+
+    static std::string getExtension(const std::string &path);
+
+    static std::string buildPath(const std::string &path,
+                                 const std::string &fileName,
+                                 const std::string &extension,
+                                 const std::string &suffix = "");
 
 private:
     /**

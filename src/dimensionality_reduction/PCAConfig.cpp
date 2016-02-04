@@ -4,12 +4,13 @@
 namespace pl {
 
 
-PCAConfig::PCAConfig(const int components,
+PCAConfig::PCAConfig(const std::string &identifier,
+                     const int components,
                      const double epsilon,
                      const bool whiten,
                      const std::string &path)
     :
-        ConfigContainer(),
+        ConfigContainer(identifier),
         mComponents(components),
         mEpsilon(epsilon),
         mWhitening(whiten),

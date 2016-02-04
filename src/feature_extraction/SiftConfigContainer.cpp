@@ -8,13 +8,16 @@
 namespace pl {
 
 
-SiftConfigContainer::SiftConfigContainer(int nBestFeatures,
+SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
+                                         int nBestFeatures,
                                          int nOctaveLayers,
                                          double contrastThreshold,
                                          double edgeThreshold,
                                          double sigma)
     :
-        ConfigContainer("Parameter description", "Help text"),
+        ConfigContainer(identifier,
+                        "Parameter description",
+                        "Help text"),
         mBestFeatures(nBestFeatures),
         mOctaves(nOctaveLayers),
         mContrastThresh(contrastThreshold),

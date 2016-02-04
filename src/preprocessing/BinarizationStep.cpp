@@ -7,11 +7,9 @@
 namespace pl {
 
 
-BinarizationStep::BinarizationStep(const cv::Ptr<ConfigContainer> config,
-                                   const std::string &info)
+BinarizationStep::BinarizationStep(const cv::Ptr<ConfigContainer> config)
     :
-        PreprocessingStep(config,
-                          info)
+        PreprocessingStep(config)
 {
 }
 

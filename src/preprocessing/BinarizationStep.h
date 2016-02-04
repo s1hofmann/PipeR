@@ -13,8 +13,7 @@ namespace pl {
 
 class BinarizationStep : public PreprocessingStep {
 public:
-    BinarizationStep(const cv::Ptr<ConfigContainer> config,
-                     const std::string &info = "Binarization preprocessing step");
+    BinarizationStep(const cv::Ptr<ConfigContainer> config);
 
     virtual ~BinarizationStep();
 

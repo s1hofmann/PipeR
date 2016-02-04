@@ -36,7 +36,11 @@ cv::Mat VesselMask::create(const cv::Mat &input)
                               mOctaves,
                               mStages);
 
-    return vesselFilter.compute(input, mBeta, mC);
+    cv::Mat result = vesselFilter.compute(input, mBeta, mC);
+    cv::Mat1b mask = cv::Mat1b::zeros(input.size());
+    mask.setTo(1, result > 0.5);
+
+    return mask;
 }
 
 

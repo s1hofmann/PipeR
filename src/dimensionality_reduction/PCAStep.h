@@ -4,6 +4,8 @@
 #include "PCAConfig.h"
 #include "../core/dim/rpca.h"
 
+#include "../io/FileUtil.h"
+
 #include <opencv2/core/core.hpp>
 
 namespace pl {
@@ -12,8 +14,7 @@ namespace pl {
 class PCAStep : public DimensionalityReductionStep
 {
 public:
-    PCAStep(const cv::Ptr<PCAConfig> config,
-            const std::string &info = "PCA");
+    PCAStep(const cv::Ptr<PCAConfig> config);
 
     /**
      * @brief train

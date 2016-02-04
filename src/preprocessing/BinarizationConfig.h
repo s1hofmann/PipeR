@@ -8,7 +8,8 @@ namespace pl {
 class BinarizationConfig : public ConfigContainer
 {
 public:
-    BinarizationConfig(std::string &methodName);
+    BinarizationConfig(const std::string &identifier,
+                       const std::string &methodName = "su");
     virtual ~BinarizationConfig();
 };
 

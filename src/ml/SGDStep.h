@@ -15,8 +15,7 @@ namespace pl {
 class SGDStep : public MLStep
 {
 public:
-    SGDStep(const cv::Ptr<SGDConfig> config,
-            const std::string &info = "SGD solver");
+    SGDStep(const cv::Ptr<SGDConfig> config);
 
     virtual ~SGDStep();
 

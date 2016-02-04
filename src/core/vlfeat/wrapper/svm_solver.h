@@ -23,6 +23,8 @@ public:
      */
     void setEpsilon(double epsilon);
 
+    void setWeights(cv::Mat &weights);
+
     /**
      * @brief getEpsilon: Get the convergence threshold.
      * @return: Convergence threshold as double.
@@ -130,6 +132,12 @@ public:
      * @return
      */
     double const * getWeights() const;
+
+    /**
+     * @brief getWeightMat: Return weights as \link{cv::Mat1d} object
+     * @return
+     */
+    cv::Mat1d getWeightMat() const;
 
     /**
      * @brief predict: Make a prediction based on a trained model.

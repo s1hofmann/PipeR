@@ -28,6 +28,12 @@ public:
     std::string help() const;
 
     /**
+     * @brief identifier
+     * @return
+     */
+    std::string identifier() const;
+
+    /**
      * @brief toString
      * @return
      */
@@ -39,7 +45,8 @@ protected:
      * @param usage
      * @param help
      */
-    ConfigContainer(const std::string &usage = "No usage text provided, I'm sorry.",
+    ConfigContainer(const std::string &identifier,
+                    const std::string &usage = "No usage text provided, I'm sorry.",
                     const std::string &help = "No help text provided, I'm sorry.");
 
     /**
@@ -57,6 +64,11 @@ private:
      * @brief mHelpText
      */
     std::string mHelpText;
+
+    /**
+     * @brief mIdentifier
+     */
+    std::string mIdentifier;
 };
 
 

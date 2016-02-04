@@ -57,8 +57,7 @@ protected:
      * @param config
      * @param info
      */
-    PreprocessingStep(const cv::Ptr<ConfigContainer> config,
-                      const std::string &info = "Preprocessing step");
+    PreprocessingStep(const cv::Ptr<ConfigContainer> config);
 
     /**
      * @brief ~PreprocessingStep

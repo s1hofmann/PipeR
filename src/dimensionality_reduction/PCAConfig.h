@@ -11,10 +11,11 @@ namespace pl {
 class PCAConfig : public ConfigContainer
 {
 public:
-    PCAConfig(const int components,
+    PCAConfig(const std::string &identifier,
+              const int components,
               const double epsilon = 0.001,
               const bool whiten = true,
-              const std::string &path = "./pca.yml");
+              const std::string &path = ".");
 
     int getComponents() const;
 

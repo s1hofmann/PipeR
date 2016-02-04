@@ -3,17 +3,20 @@
 namespace pl {
 
 
-VladConfig::VladConfig(const std::vector<normStrategy> &normalization,
+VladConfig::VladConfig(const std::string &identifier,
+                       const std::vector<normStrategy> &normalization,
                        const int clusters,
                        const int iterations,
                        const double epsilon,
+                       const int vocabs,
                        const std::string &path)
     :
-        ConfigContainer(),
+        ConfigContainer(identifier),
         mNormStrategies(normalization),
         mClusters(clusters),
         mIterations(iterations),
         mEpsilon(epsilon),
+        mVocabs(vocabs),
         mPath(path)
 {
 
@@ -26,31 +29,35 @@ VladConfig::~VladConfig()
 }
 
 
-std::vector<normStrategy> VladConfig::getNormStrategies()
+std::vector<normStrategy> VladConfig::getNormStrategies() const
 {
     return this->mNormStrategies;
 }
 
 
-std::string VladConfig::getPath()
+std::string VladConfig::getPath() const
 {
     return this->mPath;
 }
 
 
-int VladConfig::getClusters()
+int VladConfig::getClusters() const
 {
     return this->mClusters;
 }
 
 
-int VladConfig::getIterations()
+int VladConfig::getIterations() const
 {
     return this->mIterations;
 }
 
+int VladConfig::getVocabCount() const
+{
+    return this->mVocabs;
+}
 
-double VladConfig::getEpsilon()
+double VladConfig::getEpsilon() const
 {
     return this->mEpsilon;
 }
@@ -75,7 +82,7 @@ std::string VladConfig::toString() const
             configString << "NORM_SSR";
             break;
         default:
-            configString << "Unknown normalization method.";
+            configString << "Unknown normalization method";
             break;
         }
         if(idx < mNormStrategies.size() - 1) {

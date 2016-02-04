@@ -10,32 +10,26 @@ int main(int argc, char *argv[]) {
     std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fileUtil.getFilesFromLabelFile(argv[1]);
     std::cout << filesWithLabels.first.size() << std::endl;
 
-    cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig;
+    cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
     pipeCfg->setDescriptorDir("/home/sim0n/descriptors");
     pipeCfg->setDescriptorLabelFile("/home/sim0n/labels.dat");
-    pipeCfg->setDimensionalityReductionPath("/home/sim0n/pca.yml");
-    pipeCfg->setDimensionalityReductionSubset(150000);
 
     pl::PipeLine<cv::Mat> pipeLine(pipeCfg, true);
 
-    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer();
-    cv::Ptr<pl::SiftDetector> fe = new pl::SiftDetector(feCfg);
-    cv::Ptr<pl::MaskGenerator> mask = new pl::VesselMask();
+    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");
 
-    pipeLine.addFeatureExtractionStep(fe, mask);
+    pipeLine.addFeatureExtractionStep(new pl::SiftDetector(feCfg), new pl::VesselMask());
 
-    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig(64, 0.001, true);
-    cv::Ptr<pl::PCAStep> pca = new pl::PCAStep(pcaCfg);
+    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig("pca", 64, 0.001, true);
 
-    pipeLine.addDimensionalityReductionStep(pca);
+    pipeLine.addDimensionalityReductionStep(new pl::PCAStep(pcaCfg));
 
     std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
-    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig(norms, 64);
-    cv::Ptr<pl::VladEncodingStep> vlad = new pl::VladEncodingStep(vladCfg);
+    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig("vlad", norms, 64);
 
-    pipeLine.addEncodingStep(vlad);
+    pipeLine.addEncodingStep(new pl::VladEncodingStep(vladCfg));
 
-    cv::Ptr<pl::SGDConfig> sgdCfg = new pl::SGDConfig();
+    cv::Ptr<pl::SGDConfig> sgdCfg = new pl::SGDConfig("sgd");
     cv::Ptr<pl::SGDStep> sgd = new pl::SGDStep(sgdCfg);
 
     pipeLine.addClassificationStep(sgd);

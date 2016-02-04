@@ -7,11 +7,9 @@
 namespace pl {
 
 
-FeatureExtractionStep::FeatureExtractionStep(const cv::Ptr<ConfigContainer> config,
-                                             const std::string &info)
+FeatureExtractionStep::FeatureExtractionStep(const cv::Ptr<ConfigContainer> config)
     :
-        PipelineStep(config,
-                     info)
+        PipelineStep(config)
 {
 
 }
