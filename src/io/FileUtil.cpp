@@ -83,7 +83,7 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
 
 bool FileUtil::saveImage(const cv::Mat &image,
                          const std::string &outputPath,
-                         const std::string &imageFileName) const
+                         const std::string &imageFileName)
 {
     FileWriter<IMG> imageWriter;
 
@@ -93,7 +93,7 @@ bool FileUtil::saveImage(const cv::Mat &image,
 }
 
 
-cv::Mat FileUtil::loadImage(const std::string &fileName) const
+cv::Mat FileUtil::loadImage(const std::string &fileName)
 {
     FileReader<IMG> imageReader;
 
@@ -103,7 +103,7 @@ cv::Mat FileUtil::loadImage(const std::string &fileName) const
 
 bool FileUtil::saveBinary(const cv::Mat &data,
                           const std::string &outputPath,
-                          const std::string &fileName) const
+                          const std::string &fileName)
 {
     FileWriter<BIN> binaryWriter;
 
@@ -115,7 +115,7 @@ bool FileUtil::saveBinary(const cv::Mat &data,
 
 bool FileUtil::saveYML(const cv::Mat &data,
                        const std::string &outputPath,
-                       const std::string &fileName) const
+                       const std::string &fileName)
 {
     FileWriter<YML> ymlWriter;
 
@@ -129,7 +129,7 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
                                        const int label,
                                        const std::string &outputPath,
                                        const std::string &descriptorFileName,
-                                       const std::string &labelFileName) const
+                                       const std::string &labelFileName)
 {
     FileWriter<BIN> writer;
 
@@ -164,7 +164,7 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
 
 bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
                               const std::string &outputPath,
-                              const std::string &fileName) const
+                              const std::string &fileName)
 {
 
 }
@@ -221,7 +221,7 @@ std::string FileUtil::buildPath(const std::string &path,
 std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     FileReader<IMG> reader;
-    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = this->getFilesFromLabelFile(labelFile);
+    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = getFilesFromLabelFile(labelFile);
 
     try {
         std::vector<cv::Mat> loadedImages;
@@ -247,7 +247,7 @@ std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelF
 }
 
 
-std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName) const
+std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName)
 {
     QDir dir(QString::fromStdString(pathName));
     std::vector<std::string> returnFiles;
@@ -276,7 +276,7 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName)
 bool FileUtil::appendDescriptor(const std::string &labelFilePath,
                                 const std::string &labelFileName,
                                 const std::string &fileName,
-                                const int label) const
+                                const int label)
 {
     QDir outputDir(QString::fromStdString(labelFilePath));
     if(outputDir.exists()) {
