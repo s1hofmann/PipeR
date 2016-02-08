@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-namespace puhma {
-
 
 DbScan::DbScan()
 {
@@ -201,5 +199,3 @@ std::vector<std::set<int>> DbScan::cluster(const cv::Mat1f &data,
     return this->clusters;
 }
 
-
-}

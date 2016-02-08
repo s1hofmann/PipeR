@@ -5,8 +5,6 @@
 #include <unordered_map>
 #include <opencv2/core/core.hpp>
 
-namespace puhma {
-
 
 class DbScan
 {
@@ -49,5 +47,3 @@ private:
     std::unordered_map<int, int> alreadyAssigned;
 };
 
-
-}
