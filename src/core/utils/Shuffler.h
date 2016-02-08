@@ -18,6 +18,11 @@ public:
                         const cv::Mat &labels,
                         cv::Mat &shuffledDescriptors,
                         cv::Mat &shuffledLabels);
+
+    static void shuffle(const std::vector<std::string> &files,
+                        const std::vector<int> &labels,
+                        std::vector<std::string> &shuffledFiles,
+                        std::vector<int> &shuffledLabels);
 };
 
 
