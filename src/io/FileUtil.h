@@ -34,38 +34,38 @@ public:
     virtual ~FileUtil();
 
     /**
-     * @brief loadImages Returns an \link{std::vector} of \link{cv::Mat} objects containing all images in a given folder.
+     * @brief loadImages Returns an std::vector of cv::Mat objects containing all images in a given folder.
      * @param path Folder to load images from
-     * @return \link{std::vector}<\link{cv::Mat}>
+     * @return std::vector<cv::Mat>
      */
     static std::vector<cv::Mat> loadImages(const std::string &path);
 
     /**
-     * @brief loadImagesFromLabelFile Returns a \link{std::pair} of \link{std::vector}<\link{cv::Mat}> and \link{std::vector}<int>} read from a labelfile
+     * @brief loadImagesFromLabelFile Returns a std::pair of std::vector<cv::Mat> and std::vector<int> read from a labelfile
      * @param labelFile Labelfile to read data from
-     * @return \link{std::pair}<\link{std::vector}<\link{cv::Mat}>, \link{std::vector}<int>>
+     * @return std::pair<std::vector<cv::Mat>, std::vector<int>>
      */
     static std::pair<std::vector<cv::Mat>, std::vector<int>> loadImagesFromLabelFile(const std::string &labelFile);
 
     /**
-     * @brief getFiles Returns an \link{std::vector} of \link{std::string} objects containing all files in a given folder.
+     * @brief getFiles Returns an std::vector of std::string objects containing all files in a given folder.
      * @param path Folder to get files from
-     * @return \link{std::vector}<\link{std::string}>
+     * @return std::vector<std::string>
      */
     static std::vector<std::string> getFiles(const std::string &path);
 
     /**
-     * @brief getFilesFromLabelFile Returns a \link{std::pair} of \link{std::vector}<\link{std::string}> and \link{std::vector}<int>, holding filenames and corresponding labels read from a given labelfile
+     * @brief getFilesFromLabelFile Returns a std::pair of std::vector<std::string> and std::vector<int>, holding filenames and corresponding labels read from a given labelfile
      * @param labelFile File to read data from
-     * @return \link{std::pair}<\link{std::vector}<\link{std::string}>, \link{std::vector}<int>>
+     * @return std::pair<std::vector<std::string>, std::vector<int>>
      */
     static std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile);
 
     /**
-     * @brief saveImage Utility function to save a \link{cv::Mat} as image
-     * @param image \link{cv::Mat} to save
-     * @param outputPath \link{std::string} containing the output path
-     * @param imageFileName \link{std::string} containing the filename
+     * @brief saveImage Utility function to save a cv::Mat as image
+     * @param image cv::Mat to save
+     * @param outputPath std::string containing the output path
+     * @param imageFileName std::string containing the filename
      * @return boolean value if file was written or not
      */
     static bool saveImage(const cv::Mat &image,
@@ -73,17 +73,17 @@ public:
                           const std::string &imageFileName);
 
     /**
-     * @brief loadImage Utility function to load an image into a \link{cv::Mat} object
-     * @param fileName \link{std::string} containing the absolute path to the file
-     * @return Success: \link{cv::Mat} object containing the image\n Failure: Empty \link{cv::Mat}
+     * @brief loadImage Utility function to load an image into a cv::Mat object
+     * @param fileName std::string containing the absolute path to the file
+     * @return Success: cv::Mat object containing the image\n Failure: Empty cv::Mat
      */
     static cv::Mat loadImage(const std::string &fileName);
 
     /**
-     * @brief saveBinary Utility function to save a \link{cv::Mat} in binary format
-     * @param data \link{cv::Mat} to save
-     * @param outputPath \link{std::string} containing the output path
-     * @param imageFileName \link{std::string} containing the filename
+     * @brief saveBinary Utility function to save a cv::Mat in binary format
+     * @param data cv::Mat to save
+     * @param outputPath std::string containing the output path
+     * @param imageFileName std::string containing the filename
      * @return boolean value if file was written or not
      */
     static bool saveBinary(const cv::Mat &data,
@@ -91,10 +91,10 @@ public:
                            const std::string &fileName);
 
     /**
-     * @brief saveYML Utility function to save a \link{cv::Mat} in YML format
-     * @param data \link{cv::Mat} to save
-     * @param outputPath \link{std::string} containing the output path
-     * @param imageFileName \link{std::string} containing the filename
+     * @brief saveYML Utility function to save a cv::Mat in YML format
+     * @param data cv::Mat to save
+     * @param outputPath std::string containing the output path
+     * @param imageFileName std::string containing the filename
      * @return boolean value if file was written or not
      */
     static bool saveYML(const cv::Mat &data,
@@ -103,11 +103,11 @@ public:
 
     /**
      * @brief saveDescriptorWithLabel Utility function which saves a descriptor in binary format and appends its label to a labelfile
-     * @param descriptor \link{cv::Mat} to save
+     * @param descriptor cv::Mat to save
      * @param label Corresponding label
-     * @param outputPath \link{std::string} containing the output path
-     * @param descriptorFileName \link{std::string} containing the filename to save
-     * @param labelFileName \link{std::string} containing the absolute path to the label file
+     * @param outputPath std::string containing the output path
+     * @param descriptorFileName std::string containing the filename to save
+     * @param labelFileName std::string containing the absolute path to the label file
      * @return boolean value if descriptor was written or not
      */
     static bool saveDescriptorWithLabel(const cv::Mat &descriptor,
@@ -118,9 +118,9 @@ public:
 
     /**
      * @brief saveDescriptor Utility function which saves a descriptor in binary format
-     * @param descriptor \link{cv::Mat} to save
-     * @param outputPath \link{std::string} containing the output path
-     * @param fileName \link{std::string} containing the filename to save
+     * @param descriptor cv::Mat to save
+     * @param outputPath std::string containing the output path
+     * @param fileName std::string containing the filename to save
      * @return boolean value if descriptor was written or not
      */
     static bool saveDescriptor(const cv::Mat &descriptor,
@@ -128,33 +128,46 @@ public:
                                const std::string &fileName);
 
     /**
+     * @brief loadDescriptors Utility function which loads maxDescriptors from a given set of files
+     * @param fileNames std::vector<std::string> containing the descriptor filenames
+     * @param maxDescriptors Max descriptors to load
+     * @param random Randomly load descriptors
+     * @param seed Seed for PRNG, if -1 is passed, the current time will be used
+     * @return cv::Mat containing all descriptors
+     */
+    static cv::Mat loadDescriptors(const std::vector<std::string> &fileNames,
+                                   const int maxDescriptors,
+                                   bool random = true,
+                                   int seed = -1);
+
+    /**
      * @brief getFilename Utility function which returns the filename from a passed absolute file path
-     * @param path \link{std::string} containing the full file path to extract the filename from
-     * @return  Sucess: \link{std::string} containing the filename\n Failure: Empty \link{std::string}
+     * @param path std::stringfull file path to extract the filename from
+     * @return  Sucess: std::string containing the filename\n Failure: Empty std::string
      */
     static std::string getFilename(const std::string &path);
 
     /**
      * @brief getPath Utility function which returns the path from a passed absolute file path
-     * @param path \link{std::string} containing the full file path to extract the path from
-     * @return  Sucess: \link{std::string} containing the path\n Failure: Empty \link{std::string}
+     * @param path std::string containing the full file path to extract the path from
+     * @return  Sucess: std::string containing the path\n Failure: Empty std::string
      */
     static std::string getPath(const std::string &path);
 
     /**
      * @brief getExtension Utility function which returns the file extension from a passed absolute file path
-     * @param path \link{std::string} containing the full file path to extract the file extension from
-     * @return  Sucess: \link{std::string} containing the extension\n Failure: Empty \link{std::string}
+     * @param path std::string containing the full file path to extract the file extension from
+     * @return  Sucess: std::string containing the extension\n Failure: Empty std::string
      */
     static std::string getExtension(const std::string &path);
 
     /**
      * @brief buildPath Assembles an absolute file path given path, filename, extension and optional suffix
-     * @param path \link{std::string} containing the base path
-     * @param fileName \link{std::string} containing the filename
-     * @param extension \link{std::string} containing the file extension
-     * @param suffix Optional \link{std::string} containing a suffix.\n Will be inserted between filename and extension, separated by an underscore
-     * @return \link{std::string} containing the absolute file path
+     * @param path std::string containing the base path
+     * @param fileName std::string containing the filename
+     * @param extension std::string containing the file extension
+     * @param suffix Optional std::string containing a suffix.\n Will be inserted between filename and extension, separated by an underscore
+     * @return std::string containing the absolute file path
      */
     static std::string buildPath(const std::string &path,
                                  const std::string &fileName,
@@ -164,16 +177,16 @@ public:
 private:
     /**
      * @brief examineDirectory Examines the contents of a directory and returns them as \link{std::vector}<\link{std::string}>
-     * @param pathName \link{std::string} containing the directory to examine
-     * @return \link{std::vector}<\link{std::string}> containing the folder contents
+     * @param pathName std::string containing the directory to examine
+     * @return std::vector<std::string> containing the folder contents
      */
     static std::vector<std::string> examineDirectory(const std::string &pathName);
 
     /**
      * @brief appendDescriptor Appends a descriptor to a given labelfile
-     * @param labelFilePath \link{std::string} containing the path to the labelfile
-     * @param labelFileName \link{std::string} containing the labelfiles filename
-     * @param fileName \link{std::string} containing the descriptor filename
+     * @param labelFilePath std::string containing the path to the labelfile
+     * @param labelFileName std::string containing the labelfiles filename
+     * @param fileName std::string containing the descriptor filename
      * @param label Descriptor label
      * @return boolean value if the file was written or not
      */

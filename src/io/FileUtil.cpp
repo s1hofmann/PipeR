@@ -136,9 +136,6 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
     if(!descriptor.empty()) {
         QDir outputDir(QString::fromStdString(outputPath));
         if(outputDir.exists()) {
-            //Assembles a new descriptor filename given its corresponding images filename
-            QFileInfo labelFileInfo(outputDir, QString::fromStdString(labelFileName));
-
             if(writer.write(descriptor, outputPath, descriptorFileName)) {
                 if(appendDescriptor(outputPath,
                                     labelFileName,
@@ -166,7 +163,24 @@ bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
                               const std::string &outputPath,
                               const std::string &fileName)
 {
+    FileWriter<BIN> writer;
 
+    if(!descriptor.empty()) {
+        QDir outputDir(QString::fromStdString(outputPath));
+        if(outputDir.exists()) {
+            if(writer.write(descriptor, outputPath, fileName)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            error("Output directory doesn't exist, aborting.");
+            return false;
+        }
+    } else {
+        error("Empty output object given, aborting.");
+        return false;
+    }
 }
 
 std::string FileUtil::getFilename(const std::string &path)
