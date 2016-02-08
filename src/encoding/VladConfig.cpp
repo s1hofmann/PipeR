@@ -14,9 +14,9 @@ VladConfig::VladConfig(const std::string &identifier,
         ConfigContainer(identifier),
         mNormStrategies(normalization),
         mClusters(clusters),
+        mVocabs(vocabs),
         mIterations(iterations),
         mEpsilon(epsilon),
-        mVocabs(vocabs),
         mPath(path)
 {
 
@@ -92,6 +92,7 @@ std::string VladConfig::toString() const
     configString << std::endl;
 
     configString << "No. of clusters: " << mClusters << std::endl;
+    configString << "No. of vocabularies: " << mVocabs << std::endl;
     configString << "Max. iterations: " << mIterations << std::endl;
     configString << "Epsilon: " << mEpsilon << std::endl;
     configString << "Path: " << mPath << std::endl;

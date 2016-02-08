@@ -30,11 +30,6 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
     double epsilon = this->mConfig.dynamicCast<VladConfig>()->getEpsilon();
     std::string path = this->mConfig.dynamicCast<VladConfig>()->getPath();
 
-    if(vocabs < 1) {
-        warning("Vocabs < 1, skipping encoding.");
-        return input;
-    }
-
     for(size_t runs = 0; runs < vocabs; ++runs) {
         std::string outputFile = FileUtil::buildPath(path, "cluster", "yml", std::to_string(runs));
 
@@ -72,7 +67,28 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
 cv::Mat VladEncodingStep::run(const cv::Mat &input,
                               const cv::Mat &param) const
 {
+    int vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabCount();
+    std::string path = this->mConfig.dynamicCast<VladConfig>()->getPath();
 
+    std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
+
+    cv::Mat encoded;
+    for(size_t runs = 0; runs < vocabs; ++runs) {
+        std::string inputFile = FileUtil::buildPath(path, "cluster", "yml", std::to_string(runs));
+
+        VladEncoder vlad;
+        vlad.setNormStrategy(normalization);
+        vlad.loadData(inputFile);
+
+        if(encoded.empty()) {
+            encoded = vlad.encode(input);
+        } else {
+            cv::Mat enc = vlad.encode(input);
+            cv::hconcat(encoded, enc, encoded);
+        }
+    }
+
+    return encoded;
 }
 
 
