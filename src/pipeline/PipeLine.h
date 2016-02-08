@@ -443,16 +443,19 @@ bool PipeLine<T>::removeClassificationStep() {
 template <typename T>
 void PipeLine<T>::train(const std::vector<std::string> &input,
                         const std::vector<int> &labels) const {
-    FileUtil fileUtil;
+    if(input.size() != labels.size()) {
+        error("Data and labels missmatch, aborting!");
+        exit(-1);
+    }
 
     ProgressBar<long> pb(input.size(), "Creating descriptors...");
 
     //cv::Mat object to store all created descriptors
     cv::Mat allFeatures;
 
-    for(std::string inputFile : input) {
+    for(size_t idx = 0; idx < input.size(); ++idx) {
         //Load image file
-        cv::Mat inputMat = fileUtil.loadImage(inputFile);
+        cv::Mat inputMat = FileUtil::loadImage(input[idx]);
 
         //Skip empty images
         if(inputMat.empty()) {
@@ -496,6 +499,9 @@ void PipeLine<T>::train(const std::vector<std::string> &input,
         if(!this->mFeatureExtraction.first.empty()) {
             if(!this->mFeatureExtraction.second.empty()) {
                 featureMask = this->mFeatureExtraction.second->create(prep);
+                if(cv::countNonZero(featureMask) == 0) {
+                    featureMask = cv::Mat::ones(prep.size(), prep.type());
+                }
             } else {
                 featureMask = cv::Mat::ones(prep.size(), prep.type());
             }
@@ -504,13 +510,18 @@ void PipeLine<T>::train(const std::vector<std::string> &input,
             } else {
                 features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
             }
-            if(features.cols == allFeatures.cols || allFeatures.cols == 0) {
+            if(!features.empty() && features.cols == allFeatures.cols || allFeatures.cols == 0) {
+                FileUtil::saveDescriptorWithLabel(features,
+                                                  labels[idx],
+                                                  mPipelineConfig->descriptorDir(),
+                                                  input[idx],
+                                                  mPipelineConfig->descriptorLabelFile());
                 allFeatures.push_back(features);
             } else {
                 error("Features don't match, skipping.");
             }
         } else {
-            std::cerr << "No features extraction method given, aborting." << std::endl;
+            std::cerr << "No feature extraction method given, aborting." << std::endl;
             exit(-1);
         }
 
