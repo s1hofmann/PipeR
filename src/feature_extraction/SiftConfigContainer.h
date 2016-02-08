@@ -77,6 +77,8 @@ public:
 
     virtual std::string toString() const;
 
+    virtual bool fromJSON(std::string &file);
+
 private:
     /**
      * @brief mBestFeatures

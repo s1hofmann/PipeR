@@ -11,25 +11,31 @@ int main(int argc, char *argv[]) {
     std::cout << filesWithLabels.first.size() << std::endl;
 
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
-    pipeCfg->setDescriptorDir("/home/sim0n/descriptors");
-    pipeCfg->setDescriptorLabelFile("/home/sim0n/labels.dat");
+    std::string file = "./test.json";
+    pipeCfg->fromJSON(file);
 
     pl::PipeLine<cv::Mat> pipeLine(pipeCfg, true);
 
     cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");
+    feCfg->fromJSON(file);
 
-    pipeLine.addFeatureExtractionStep(new pl::SiftDetector(feCfg), new pl::VesselMask());
+    cv::Ptr<pl::VesselMask> vesselMask = new pl::VesselMask("vessel");
+    vesselMask->fromJSON(file);
 
-    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig("pca", 64, 0.001, true);
+    pipeLine.addFeatureExtractionStep(new pl::SiftDetector(feCfg), vesselMask);
+
+    cv::Ptr<pl::PCAConfig> pcaCfg = new pl::PCAConfig("pca");
+    pcaCfg->fromJSON(file);
 
     pipeLine.addDimensionalityReductionStep(new pl::PCAStep(pcaCfg));
 
-    std::vector<normStrategy> norms = { NORM_COMPONENT_L2, NORM_GLOBAL_L2 };
-    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig("vlad", norms, 64);
+    cv::Ptr<pl::VladConfig> vladCfg = new pl::VladConfig("vlad");
+    vladCfg->fromJSON(file);
 
     pipeLine.addEncodingStep(new pl::VladEncodingStep(vladCfg));
 
     cv::Ptr<pl::SGDConfig> sgdCfg = new pl::SGDConfig("sgd");
+    sgdCfg->fromJSON(file);
     cv::Ptr<pl::SGDStep> sgd = new pl::SGDStep(sgdCfg);
 
     pipeLine.addClassificationStep(sgd);

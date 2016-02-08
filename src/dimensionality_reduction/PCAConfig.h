@@ -12,7 +12,7 @@ class PCAConfig : public ConfigContainer
 {
 public:
     PCAConfig(const std::string &identifier,
-              const int components,
+              const int components = 64,
               const double epsilon = 0.001,
               const bool whiten = true,
               const std::string &path = ".");
@@ -26,6 +26,8 @@ public:
     std::string getPath() const;
 
     virtual std::string toString() const;
+
+    virtual bool fromJSON(std::string &file);
 
 private:
     int mComponents;

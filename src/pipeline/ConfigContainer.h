@@ -6,6 +6,9 @@
 #pragma once
 
 #include <string>
+#include "globals.h"
+#include "../core/utils/json/json.h"
+#include <fstream>
 
 namespace pl {
 
@@ -39,6 +42,8 @@ public:
      */
     virtual std::string toString() const = 0;
 
+    virtual bool fromJSON(std::string &file) = 0;
+
 protected:
     /**
      * @brief ConfigContainer
@@ -48,6 +53,8 @@ protected:
     ConfigContainer(const std::string &identifier,
                     const std::string &usage = "No usage text provided, I'm sorry.",
                     const std::string &help = "No help text provided, I'm sorry.");
+
+    Json::Value readJSON(const std::string &file);
 
     /**
      * @brief ~ConfigContainer

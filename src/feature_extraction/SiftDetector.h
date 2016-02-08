@@ -7,7 +7,6 @@
 
 #include "FeatureExtractionStep.h"
 #include "SiftConfigContainer.h"
-#include "../pipeline/return_codes.h"
 #include <opencv2/xfeatures2d/nonfree.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 

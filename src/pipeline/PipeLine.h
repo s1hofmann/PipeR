@@ -344,7 +344,7 @@ void PipeLine<T>::showPipeline() {
                 if(this->mDebugMode) {
                     std::cout << this->mPreprocessing[i].second->toString() << std::endl;
                 } else {
-                    std::cout << this->mPreprocessing[i].second->name() << std::endl;
+                    std::cout << this->mPreprocessing[i].second->identifier() << std::endl;
                 }
             }
         }
@@ -367,7 +367,7 @@ void PipeLine<T>::showPipeline() {
         if(this->mDebugMode) {
             std::cout << this->mFeatureExtraction.second->toString() << std::endl;
         } else {
-            std::cout << this->mFeatureExtraction.second->name() << std::endl;
+            std::cout << this->mFeatureExtraction.second->identifier() << std::endl;
         }
     }
 

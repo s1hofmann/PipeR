@@ -9,6 +9,17 @@ PipelineConfig::PipelineConfig(const std::string &identifier)
 {
 }
 
+PipelineConfig::PipelineConfig(const std::string &identifier,
+                               const std::string &descriptorDir,
+                               const std::string &descriptorLabelFile)
+    :
+        ConfigContainer(identifier),
+        mDescriptorDir(descriptorDir),
+        mDescriptorLabelFile(descriptorLabelFile)
+{
+
+}
+
 
 PipelineConfig::~PipelineConfig()
 {
@@ -37,6 +48,26 @@ std::string PipelineConfig::descriptorLabelFile() const
 void PipelineConfig::setDescriptorLabelFile(const std::string &descriptorLabelFile)
 {
     mDescriptorLabelFile = descriptorLabelFile;
+}
+
+bool PipelineConfig::fromJSON(std::string &file)
+{
+    Json::Value root = readJSON(file);
+
+    if(root.empty()) {
+        return false;
+    } else {
+        const Json::Value params = root[identifier()];
+
+        mDescriptorDir = params[varName(mDescriptorDir)].asString();
+        mDescriptorLabelFile = params[varName(mDescriptorLabelFile)].asString();
+        const Json::Value vocabs = params[varName(mVocabs)];
+        for(int idx = 0; idx < vocabs.size(); ++idx) {
+            mVocabs.push_back(vocabs[idx].asString());
+        }
+
+        return true;
+    }
 }
 
 

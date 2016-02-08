@@ -7,14 +7,14 @@
 namespace pl {
 
 
-VesselMask::VesselMask(const int octaves,
+VesselMask::VesselMask(const std::string &identifier,
+                       const int octaves,
                        const int stages,
                        const double sigma,
                        const double beta,
-                       const double c,
-                       const std::string &name)
+                       const double c)
     :
-        MaskGenerator(name),
+        MaskGenerator(identifier),
         mOctaves(octaves),
         mStages(stages),
         mSigma(sigma),
@@ -47,7 +47,7 @@ cv::Mat VesselMask::create(const cv::Mat &input)
 std::string VesselMask::toString() {
     std::stringstream s;
 
-    s << "Mask: " << mName << std::endl
+    s << "Mask: " << mIdentifier << std::endl
       << "Parameters: " << std::endl
       << "Sigma: " << mSigma << std::endl
       << "Octaves: " << mOctaves << std::endl
@@ -59,10 +59,30 @@ std::string VesselMask::toString() {
     return s.str();
 }
 
-
-std::string VesselMask::name()
+bool VesselMask::fromJSON(const std::string &file)
 {
-    return this->mName;
+    Json::Value root = readJSON(file);
+
+    if(root.empty()) {
+        return false;
+    } else {
+        const Json::Value params = root[identifier()];
+
+        mOctaves = params.get(varName(mOctaves), 3).asInt();
+        mStages = params.get(varName(mStages), 3).asInt();
+
+        mSigma = params.get(varName(mSigma), 1).asDouble();
+        mBeta = params.get(varName(mBeta), 0.5).asDouble();
+        mC = params.get(varName(mC), 12).asDouble();
+
+        return true;
+    }
+}
+
+
+std::string VesselMask::identifier()
+{
+    return this->mIdentifier;
 }
 
 

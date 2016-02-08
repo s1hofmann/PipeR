@@ -7,23 +7,17 @@ namespace pl {
 SGDConfig::SGDConfig(const std::string &identifier,
                      const std::string &outputFile,
                      const double lambda,
-                     const double bias,
                      const double learningRate,
                      const double multiplier,
                      const double epsilon,
-                     vl_size iterations,
                      vl_size maxIterations)
     :
-        ConfigContainer(identifier,
-                        "SGD configuration",
-                        "Not done yet..."),
+        ConfigContainer(identifier),
         mClassifierFile(outputFile),
         mLambda(lambda),
-        mBias(bias),
         mLearningRate(learningRate),
         mMultiplier(multiplier),
         mEpsilon(epsilon),
-        mIterations(iterations),
         mMaxIterations(maxIterations)
 {
 
@@ -159,6 +153,26 @@ std::string SGDConfig::toString() const
                  << "Model dimensions: " << mModel.rows << "x" << mModel.cols << std::endl;
 
     return configString.str();
+}
+
+bool SGDConfig::fromJSON(std::string &file)
+{
+    Json::Value root = readJSON(file);
+
+    if(root.empty()) {
+        return false;
+    } else {
+        const Json::Value params = root[identifier()];
+
+        mLambda = params.get(varName(mLambda), 0.001).asDouble();
+        mLearningRate = params.get(varName(mLearningRate), 0.001).asDouble();
+        mMultiplier = params.get(varName(mMultiplier), 1.0).asDouble();
+        mEpsilon = params.get(varName(mEpsilon), 1e10-5).asDouble();
+        mMaxIterations = params.get(varName(mMaxIterations), 10000).asInt();
+        mClassifierFile = params.get(varName(mClassifierFile), "./trainedClassifier.yml").asString();
+
+        return true;
+    }
 }
 
 

@@ -13,12 +13,14 @@ namespace pl {
 
 class VesselMask : public MaskGenerator {
 public:
-    VesselMask(const int octaves = 3,
+    VesselMask();
+
+    VesselMask(const std::string &identifier = "vessel",
+               const int octaves = 3,
                const int stages = 3,
                const double sigma = 1,
                const double beta = 0.5,
-               const double c = 15,
-               const std::string &name = "Vessel mask generator");
+               const double c = 15);
 
     ~VesselMask();
 
@@ -26,7 +28,9 @@ public:
 
     std::string toString();
 
-    std::string name();
+    virtual bool fromJSON(const std::string &file);
+
+    std::string identifier();
 
 private:
     int mOctaves;

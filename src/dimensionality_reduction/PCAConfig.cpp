@@ -56,5 +56,23 @@ std::string PCAConfig::toString() const
     return configString.str();
 }
 
+bool PCAConfig::fromJSON(std::string &file)
+{
+    Json::Value root = readJSON(file);
+
+    if(root.empty()) {
+        return false;
+    } else {
+        const Json::Value params = root[identifier()];
+
+        mComponents = params.get(varName(mComponents), 64).asInt();
+        mEpsilon = params.get(varName(mEpsilon), 0.0001).asDouble();
+        mWhitening = params.get(varName(mWhitening), true).asBool();
+        mPath = params.get(varName(mPath), ".").asString();
+
+        return true;
+    }
+}
+
 
 }

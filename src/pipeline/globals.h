@@ -15,6 +15,10 @@
 #include <tbb/parallel_for.h>
 #endif
 
+/**
+  * Macro which gives name of passed variable. Used for config parsing
+  */
+#define varName(n) #n
 
 /**
   * Variadic template functions for debug / warning / log output

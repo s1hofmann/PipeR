@@ -13,11 +13,9 @@ public:
     SGDConfig(const std::string &identifier,
               const std::string &classifierFile = "./trainedClassifier.yml",
               const double lambda = 0.01,
-              const double bias = 0.0,
               const double learningRate = 0.001,
               const double multiplier = 1,
               const double epsilon = 1e10-5,
-              vl_size iterations = 1000,
               vl_size maxIterations = 10000);
 
     virtual ~SGDConfig();
@@ -51,6 +49,8 @@ public:
 
     // ConfigContainer interface
     virtual std::string toString() const;
+
+    virtual bool fromJSON(std::string &file);
 
 private:
     double mLambda;

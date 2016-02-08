@@ -19,6 +19,24 @@ ConfigContainer::ConfigContainer(const std::string &identifier,
 
 }
 
+Json::Value ConfigContainer::readJSON(const std::string &file)
+{
+    Json::Reader reader;
+    Json::Value root;
+
+    std::ifstream ifs;
+    ifs.open(file, std::ifstream::in);
+
+    bool parsingSuccessfull = reader.parse(ifs, root);
+
+    if(parsingSuccessfull) {
+        ifs.close();
+        return root;
+    } else {
+        return Json::Value();
+    }
+}
+
 
 ConfigContainer::~ConfigContainer()
 {

@@ -13,6 +13,11 @@ class PipelineConfig : public ConfigContainer
 {
 public:
     PipelineConfig(const std::string &identifier);
+
+    PipelineConfig(const std::string &identifier,
+                   const std::string &descriptorDir,
+                   const std::string &descriptorLabelFile);
+
     virtual ~PipelineConfig();
 
     std::string descriptorDir() const;
@@ -20,6 +25,11 @@ public:
 
     std::string descriptorLabelFile() const;
     void setDescriptorLabelFile(const std::string &descriptorLabelFile);
+
+    // ConfigContainer interface
+    virtual std::string toString() const;
+
+    virtual bool fromJSON(std::string &file);
 
 private:
     /**
@@ -41,9 +51,6 @@ private:
      * @brief vocabs
      */
     std::vector<std::string> mVocabs;
-
-    // ConfigContainer interface
-    virtual std::string toString() const;
 };
 
 
