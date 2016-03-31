@@ -34,14 +34,19 @@ void RPCA::fit(const cv::Mat1f & descr)
 #endif
 
     cv::Mat1f U, S, V;
-    cv::SVD::compute(X, S, U, V);
+    cv::SVD::compute(X, S, U, V, cv::SVD::FULL_UV);
     cv::pow(S, 2, variance);
     variance /= X.rows;
-    if (n_components <= 0)
+    if (n_components <= 0) {
         n_components = X.cols;
+    }
 
     components = V.rowRange(0, n_components);
-    variance = variance.rowRange(0, n_components);
+    if(variance.rows < n_components) {
+        whiten = false;
+    } else {
+        variance = variance.rowRange(0, n_components);
+    }
 
     this->dataLoaded = true;
 }
@@ -85,7 +90,6 @@ void RPCA::transform(const cv::Mat1f & descr,
 #endif
     }
     out = X;
-//    X.copyTo(out);
 }
 
 void RPCA::dump(const std::string &path)

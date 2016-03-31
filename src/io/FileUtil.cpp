@@ -41,9 +41,10 @@ std::vector<cv::Mat> FileUtil::loadImages(const std::string &path)
 }
 
 
-std::vector<std::string> FileUtil::getFiles(const std::string &path)
+std::vector<std::string> FileUtil::getFiles(const std::string &path,
+                                            const std::vector<std::string> &filters)
 {
-    std::vector<std::string> files = examineDirectory(path);
+    std::vector<std::string> files = examineDirectory(path, filters);
     ProgressBar<long> pb(files.size() - 1, "Fetching files...");
     for(size_t idx = 0; idx < files.size(); ++idx) {
         pb.update();
@@ -113,6 +114,26 @@ bool FileUtil::saveBinary(const cv::Mat &data,
 }
 
 
+cv::Mat FileUtil::loadBinary(const std::string &inputPath,
+                             const std::string &fileName)
+{
+    FileReader<BIN> binaryReader;
+
+    QDir inDir(QString::fromStdString(inputPath));
+    QFileInfo info(inDir, QString::fromStdString(fileName));
+
+    return binaryReader.read(info.absoluteFilePath().toStdString());
+}
+
+
+cv::Mat FileUtil::loadBinary(const std::string &fileName)
+{
+    FileReader<BIN> binaryReader;
+
+    return binaryReader.read(fileName);
+}
+
+
 bool FileUtil::saveYML(const cv::Mat &data,
                        const std::string &outputPath,
                        const std::string &fileName)
@@ -137,8 +158,8 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
         QDir outputDir(QString::fromStdString(outputPath));
         if(outputDir.exists()) {
             if(writer.write(descriptor, outputPath, descriptorFileName)) {
-                if(appendDescriptor(outputPath,
-                                    labelFileName,
+                if(appendDescriptor(labelFileName,
+                                    outputPath,
                                     descriptorFileName,
                                     label)) {
                     return true;
@@ -181,6 +202,47 @@ bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
         error("Empty output object given, aborting.");
         return false;
     }
+}
+
+cv::Mat FileUtil::loadDescriptors(const std::string &descriptorDir,
+                                  const std::string &labelFile,
+                                  const int maxDescriptors,
+                                  bool random)
+{
+    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = getFilesFromLabelFile(labelFile);
+
+    int maxDescriptorsPerFile = maxDescriptors / filesWithLabels.first.size();
+
+    cv::Mat allDescriptors;
+    int idx = 0;
+
+    while((allDescriptors.rows < maxDescriptors || maxDescriptors <= 0) && idx < filesWithLabels.first.size()) {
+        cv::Mat desc = loadBinary(filesWithLabels.first[idx]);
+
+        int rows;
+        if(maxDescriptors <= 0) {
+            rows = desc.rows;
+        } else {
+            rows = std::min(desc.rows, maxDescriptorsPerFile);
+        }
+
+        std::vector<int> indices;
+        allDescriptors.reserve(rows);
+        if(random) {
+            indices = Range<int>::random(0, rows);
+        } else {
+            indices = Range<int>::unique(0, rows);
+        }
+
+        for(size_t i = 0; i < indices.size(); ++i) {
+            if(desc.cols == allDescriptors.cols || allDescriptors.empty()) {
+                allDescriptors.push_back(desc.row(indices[i]));
+            }
+        }
+        ++idx;
+    }
+
+    return allDescriptors;
 }
 
 std::string FileUtil::getFilename(const std::string &path)
@@ -261,10 +323,19 @@ std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelF
 }
 
 
-std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName)
+std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName,
+                                                    const std::vector<std::string> &filters)
 {
     QDir dir(QString::fromStdString(pathName));
     std::vector<std::string> returnFiles;
+
+    QStringList filter;
+
+    for(size_t idx = 0; idx < filters.size(); ++idx) {
+        filter << QString::fromStdString(filters[idx]);
+    }
+
+    dir.setNameFilters(filter);
 
     if(dir.exists()) {
         QFileInfoList fileList = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
@@ -287,41 +358,37 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName)
 }
 
 
-bool FileUtil::appendDescriptor(const std::string &labelFilePath,
-                                const std::string &labelFileName,
+bool FileUtil::appendDescriptor(const std::string &labelFileName,
+                                const std::string &outputPath,
                                 const std::string &fileName,
                                 const int label)
 {
-    QDir outputDir(QString::fromStdString(labelFilePath));
-    if(outputDir.exists()) {
-        QFileInfo labelFileInfo(outputDir, QString::fromStdString(labelFileName));
-        QFile fileHandler(labelFileInfo.absoluteFilePath());
+    QDir d(QString::fromStdString(outputPath));
+    QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
+    QFileInfo labelFileInfo(QString::fromStdString(labelFileName));
+    QFile fileHandler(labelFileInfo.absoluteFilePath());
 
-        if(!fileHandler.exists()) {
-            //If the file doesn't exist yet, it'll be created
-            if(fileHandler.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                fileHandler.close();
-            } else {
-                error("Unable to create labelfile.");
-                return false;
-            }
-        }
-
-        if(!fileHandler.open(QIODevice::Append | QIODevice::Text)) {
-            error("Unable to open labelfile.");
+    if(!fileHandler.exists()) {
+        //If the file doesn't exist yet, it'll be created
+        if(fileHandler.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            fileHandler.close();
+        } else {
+            error("Unable to create labelfile.");
             return false;
         }
+    }
 
-        QTextStream out(&fileHandler);
-        out << QString::fromStdString(fileName) << " " << label << "\n";
-
-        fileHandler.close();
-
-        return true;
-    } else {
-        error("Output directory doesn't exist, aborting.");
+    if(!fileHandler.open(QIODevice::Append | QIODevice::Text)) {
+        error("Unable to open labelfile.");
         return false;
     }
+
+    QTextStream out(&fileHandler);
+    out << absFile << " " << label << "\n";
+
+    fileHandler.close();
+
+    return true;
 }
 
 

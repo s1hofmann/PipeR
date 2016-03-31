@@ -40,37 +40,19 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
         kmeans.dump(vocabs[runs]);
     }
 
-    std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
-
-    cv::Mat encoded;
-    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
-        VladEncoder vlad;
-        vlad.setNormStrategy(normalization);
-        vlad.loadData(vocabs[runs]);
-
-        if(encoded.empty()) {
-            encoded = vlad.encode(input);
-        } else {
-            cv::Mat enc = vlad.encode(input);
-            cv::hconcat(encoded, enc, encoded);
-        }
-    }
-
-    return encoded;
+    return cv::Mat();
 }
 
 
 cv::Mat VladEncodingStep::run(const cv::Mat &input,
                               const cv::Mat &param) const
 {
-    int vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabCount();
-    std::string path = this->mConfig.dynamicCast<VladConfig>()->getPath();
-
     std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
 
     cv::Mat encoded;
-    for(size_t runs = 0; runs < vocabs; ++runs) {
-        std::string inputFile = FileUtil::buildPath(path, "cluster", "yml", std::to_string(runs));
+    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
+    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
+        std::string inputFile = vocabs[runs];
 
         VladEncoder vlad;
         vlad.setNormStrategy(normalization);

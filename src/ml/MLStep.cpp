@@ -20,8 +20,8 @@ cv::Mat1d MLStep::calculateWeights(const cv::Mat1d &labels) const
     double negCnt = std::count(labels.begin(), labels.end(), -1);
 
     //Compute reciprocal weights
-    double posWeight = (posCnt > 0) ? 1.0/posCnt : 1;
-    double negWeight = (negCnt > 0) ? 1.0/negCnt : 1;
+    double posWeight = (posCnt > 0) ? 1.0/posCnt : 0;
+    double negWeight = (negCnt > 0) ? 1.0/negCnt : 0;
 
     //Construct weight matrix
     size_t elems = std::max(labels.cols, labels.rows);

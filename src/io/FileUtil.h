@@ -21,6 +21,7 @@
 #include "FileWriter.h"
 
 #include "../core/utils/progressbar.h"
+#include "../core/utils/Range.h"
 #include "../pipeline/globals.h"
 
 namespace pl {
@@ -52,7 +53,8 @@ public:
      * @param path Folder to get files from
      * @return std::vector<std::string>
      */
-    static std::vector<std::string> getFiles(const std::string &path);
+    static std::vector<std::string> getFiles(const std::string &path,
+                                             const std::vector<std::string> &filters = std::vector<std::string>());
 
     /**
      * @brief getFilesFromLabelFile Returns a std::pair of std::vector<std::string> and std::vector<int>, holding filenames and corresponding labels read from a given labelfile
@@ -89,6 +91,11 @@ public:
     static bool saveBinary(const cv::Mat &data,
                            const std::string &outputPath,
                            const std::string &fileName);
+
+    static cv::Mat loadBinary(const std::string &inputPath,
+                              const std::string &fileName);
+
+    static cv::Mat loadBinary(const std::string &fileName);
 
     /**
      * @brief saveYML Utility function to save a cv::Mat in YML format
@@ -135,10 +142,10 @@ public:
      * @param seed Seed for PRNG, if -1 is passed, the current time will be used
      * @return cv::Mat containing all descriptors
      */
-    static cv::Mat loadDescriptors(const std::vector<std::string> &fileNames,
+    static cv::Mat loadDescriptors(const std::string &descriptorDir,
+                                   const std::string &labelFile,
                                    const int maxDescriptors,
-                                   bool random = true,
-                                   int seed = -1);
+                                   bool random = true);
 
     /**
      * @brief getFilename Utility function which returns the filename from a passed absolute file path
@@ -180,7 +187,8 @@ private:
      * @param pathName std::string containing the directory to examine
      * @return std::vector<std::string> containing the folder contents
      */
-    static std::vector<std::string> examineDirectory(const std::string &pathName);
+    static std::vector<std::string> examineDirectory(const std::string &pathName,
+                                                     const std::vector<std::string> &filters = std::vector<std::string>());
 
     /**
      * @brief appendDescriptor Appends a descriptor to a given labelfile
@@ -190,8 +198,8 @@ private:
      * @param label Descriptor label
      * @return boolean value if the file was written or not
      */
-    static bool appendDescriptor(const std::string &labelFilePath,
-                                 const std::string &labelFileName,
+    static bool appendDescriptor(const std::string &labelFileName,
+                                 const std::string &outputPath,
                                  const std::string &fileName,
                                  const int label);
 };

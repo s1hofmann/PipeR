@@ -8,6 +8,12 @@
 
 namespace pl {
 
+enum PipeLineMode {
+    MODE_TRAIN,
+    MODE_RUN,
+    MODE_OPTIMIZE
+};
+
 
 class PipelineConfig : public ConfigContainer
 {
@@ -31,7 +37,28 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
+    int maxDescriptors() const;
+
+    void setMaxDescriptors(int value);
+
+    bool rebuildPca() const;
+    void setRebuildPca(bool rebuildPca);
+
+    bool rebuildClusters() const;
+    void setRebuildClusters(bool rebuildClusters);
+
+    bool rebuildDescriptors() const;
+    void setRebuildDescriptors(bool rebuildDescriptors);
+
+    PipeLineMode pipelineMode() const;
+    void setPipelineMode(const PipeLineMode &pipelineMode);
+
+    bool debugMode() const;
+    void setDebugMode(bool debugMode);
+
 private:
+    PipeLineMode str2mode(const std::string &modeString);
+
     /**
      * @brief mIdentifier: Identifier string (preparation for config parsing from file)
      */
@@ -48,9 +75,34 @@ private:
     std::string mDescriptorLabelFile;
 
     /**
-     * @brief vocabs
+     * @brief maxDescriptors
      */
-    std::vector<std::string> mVocabs;
+    int mMaxDescriptors;
+
+    /**
+     * @brief mRebuildDescriptors
+     */
+    bool mRebuildDescriptors;
+
+    /**
+     * @brief mRebuildClusters
+     */
+    bool mRebuildClusters;
+
+    /**
+     * @brief mRebuildPca
+     */
+    bool mRebuildPca;
+
+    /**
+     * @brief mPipelineMode
+     */
+    PipeLineMode mPipelineMode;
+
+    /**
+     * @brief mDebugMode
+     */
+    bool mDebugMode;
 };
 
 

@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 add_library(vlfeat vl/aib
                    vl/array
                    vl/covdet
@@ -41,3 +43,5 @@ add_library(vlfeat vl/aib
                    wrapper/sdcasolver
                    wrapper/sgdsolver
                    wrapper/svm_solver)
+
+target_link_libraries(vlfeat ${CMAKE_THREAD_LIBS_INIT})

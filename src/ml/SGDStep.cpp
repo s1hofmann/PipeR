@@ -75,6 +75,8 @@ cv::Mat SGDStep::train(const cv::Mat &input,
                    model,
                    bias);
     }
+
+    return cv::Mat();
 }
 
 

@@ -222,6 +222,7 @@ private:
 
 template <typename T>
 PipeLine<T>::PipeLine(cv::Ptr<PipelineConfig> config, const bool debug) {
+    this->mPipelineConfig = config;
     this->mDebugMode = debug;
 }
 
@@ -332,6 +333,11 @@ bool PipeLine<T>::removeFeatureExtractionStep() {
 
 template <typename T>
 void PipeLine<T>::showPipeline() {
+    std::cout << "Global:";
+    std::cout << this->mPipelineConfig->toString() << std::endl;
+
+    std::cout << std::endl;
+
     std::cout << "Preprocessing:" << std::endl;
 
     if(this->mPreprocessing.empty()) {
@@ -450,86 +456,102 @@ void PipeLine<T>::train(const std::vector<std::string> &input,
 
     ProgressBar<long> pb(input.size(), "Creating descriptors...");
 
-    //cv::Mat object to store all created descriptors
-    cv::Mat allFeatures;
+    if(mPipelineConfig->rebuildDescriptors()) {
+        for(size_t idx = 0; idx < input.size(); ++idx) {
+            //Load image file
+            cv::Mat inputMat = FileUtil::loadImage(input[idx]);
 
-    for(size_t idx = 0; idx < input.size(); ++idx) {
-        //Load image file
-        cv::Mat inputMat = FileUtil::loadImage(input[idx]);
-
-        //Skip empty images
-        if(inputMat.empty()) {
-            pb.update();
-            continue;
-        }
-
-        cv::Mat prep;
-        cv::Mat prepMask;
-
-        if(!this->mPreprocessing.empty()) {
-            if(!this->mPreprocessing[0].second.empty()) {
-                prepMask = this->mPreprocessing[0].second->create(inputMat);
-            } else {
-                prepMask = cv::Mat::ones(inputMat.size(), inputMat.type());
+            //Skip empty images
+            if(inputMat.empty()) {
+                pb.update();
+                continue;
             }
-            if(!this->mDebugMode) {
-                prep = this->mPreprocessing[0].first->train(inputMat, prepMask);
-            } else {
-                prep = this->mPreprocessing[0].first->debugTrain(inputMat, prepMask);
-            }
-            for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
-                if(!this->mPreprocessing[idx].second.empty()) {
-                    prepMask = this->mPreprocessing[idx].second->create(prep);
+
+            cv::Mat prep;
+            cv::Mat prepMask;
+
+            if(!this->mPreprocessing.empty()) {
+                if(!this->mPreprocessing[0].second.empty()) {
+                    prepMask = this->mPreprocessing[0].second->create(inputMat);
                 } else {
-                    prepMask = cv::Mat::ones(prep.size(), prep.type());
+                    prepMask = cv::Mat::ones(inputMat.size(), inputMat.type());
                 }
                 if(!this->mDebugMode) {
-                    prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+                    prep = this->mPreprocessing[0].first->train(inputMat, prepMask);
                 } else {
-                    prep = this->mPreprocessing[idx].first->debugTrain(prep, prepMask);
+                    prep = this->mPreprocessing[0].first->debugTrain(inputMat, prepMask);
                 }
+                for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+                    if(!this->mPreprocessing[idx].second.empty()) {
+                        prepMask = this->mPreprocessing[idx].second->create(prep);
+                    } else {
+                        prepMask = cv::Mat::ones(prep.size(), prep.type());
+                    }
+                    if(!this->mDebugMode) {
+                        prep = this->mPreprocessing[idx].first->train(prep, prepMask);
+                    } else {
+                        prep = this->mPreprocessing[idx].first->debugTrain(prep, prepMask);
+                    }
+                }
+            } else {
+                prep = inputMat.clone();
             }
-        } else {
-            prep = inputMat.clone();
-        }
+            inputMat.release();
+            prepMask.release();
 
-        cv::Mat features;
-        cv::Mat featureMask;
+            cv::Mat features;
+            cv::Mat featureMask;
 
-        if(!this->mFeatureExtraction.first.empty()) {
-            if(!this->mFeatureExtraction.second.empty()) {
-                featureMask = this->mFeatureExtraction.second->create(prep);
-                if(cv::countNonZero(featureMask) == 0) {
+            if(!this->mFeatureExtraction.first.empty()) {
+                if(!this->mFeatureExtraction.second.empty()) {
+                    featureMask = this->mFeatureExtraction.second->create(prep);
+                    // Check if an all zero mask was generated, in that case, neglect it
+                    if(cv::countNonZero(featureMask) == 0) {
+                        featureMask = cv::Mat::ones(prep.size(), prep.type());
+                    }
+                } else {
                     featureMask = cv::Mat::ones(prep.size(), prep.type());
                 }
+                if(!this->mDebugMode) {
+                    features = this->mFeatureExtraction.first->train(prep, featureMask);
+                } else {
+                    features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
+                }
+                if(!features.empty()) {
+                    QFileInfo info(QString::fromStdString(input[idx]));
+                    std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
+                    if(!FileUtil::saveDescriptorWithLabel(features,
+                                                          labels[idx],
+                                                          mPipelineConfig->descriptorDir(),
+                                                          descriptorFile,
+                                                          mPipelineConfig->descriptorLabelFile())) {
+                        error("Unable to save descriptor. Skipping!");
+                        continue;
+                    } else {
+                        features.release();
+                        featureMask.release();
+                        prep.release();
+                    }
+                } else {
+                    error("Features don't match, skipping.");
+                }
             } else {
-                featureMask = cv::Mat::ones(prep.size(), prep.type());
+                std::cerr << "No feature extraction method given, aborting." << std::endl;
+                exit(-1);
             }
-            if(!this->mDebugMode) {
-                features = this->mFeatureExtraction.first->train(prep, featureMask);
-            } else {
-                features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
-            }
-            if(!features.empty() && features.cols == allFeatures.cols || allFeatures.cols == 0) {
-                FileUtil::saveDescriptorWithLabel(features,
-                                                  labels[idx],
-                                                  mPipelineConfig->descriptorDir(),
-                                                  input[idx],
-                                                  mPipelineConfig->descriptorLabelFile());
-                allFeatures.push_back(features);
-            } else {
-                error("Features don't match, skipping.");
-            }
-        } else {
-            std::cerr << "No feature extraction method given, aborting." << std::endl;
-            exit(-1);
-        }
 
-        pb.update();
+            pb.update();
+        }
     }
 
+    cv::Mat allFeatures = FileUtil::loadDescriptors(mPipelineConfig->descriptorDir(),
+                                                    mPipelineConfig->descriptorLabelFile(),
+                                                    mPipelineConfig->maxDescriptors(),
+                                                    true);
+
+
     cv::Mat reduced;
-    if(!this->mDimensionalityReduction.empty()) {
+    if(!this->mDimensionalityReduction.empty() && mPipelineConfig->rebuildPca()) {
         if(!this->mDebugMode) {
             reduced = this->mDimensionalityReduction->train(allFeatures);
         } else {
@@ -539,21 +561,39 @@ void PipeLine<T>::train(const std::vector<std::string> &input,
         reduced = allFeatures;
     }
 
-    cv::Mat encoded;
-    if(!this->mEncoding.empty()) {
+    // Result will be neglected here, should be an empty Mat anyways
+    if(!this->mEncoding.empty() && mPipelineConfig->rebuildClusters()) {
         if(!this->mDebugMode) {
-            encoded = this->mEncoding->train(reduced);
+            this->mEncoding->train(reduced);
         } else {
-            encoded = this->mEncoding->debugTrain(reduced);
+            this->mEncoding->debugTrain(reduced);
         }
-    } else {
-        encoded = reduced;
     }
+
+    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
+
+    cv::Mat1d trainingData;
+    trainingData.reserve(filesWithLabels.first.size());
+    cv::Mat1i trainingLabels;
+    trainingLabels.reserve(filesWithLabels.second.size());
+
+    for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
+        cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[idx]);
+        int label = filesWithLabels.second[idx];
+
+        trainingLabels.push_back(label);
+        trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+    }
+
+    this->mClassification->train(trainingData,
+                                 trainingLabels);
+
+    info("Training done!");
 }
 
 template <typename T>
 T PipeLine<T>::run(const cv::Mat &input) const {
-    return nullptr;
+    return T();
 }
 
 }

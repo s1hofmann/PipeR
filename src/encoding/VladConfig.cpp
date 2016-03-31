@@ -98,6 +98,11 @@ std::string VladConfig::toString() const
 
     configString << "No. of clusters: " << mClusters << std::endl;
     configString << "No. of vocabularies: " << mVocabs.size() << std::endl;
+
+    for(size_t idx = 0; idx < mVocabs.size(); ++idx) {
+        configString << "Vocab " << idx << ": " << mVocabs[idx] << std::endl;
+    }
+
     configString << "Max. iterations: " << mIterations << std::endl;
     configString << "Epsilon: " << mEpsilon << std::endl;
     configString << "Path: " << mPath << std::endl;

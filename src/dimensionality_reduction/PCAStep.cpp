@@ -15,12 +15,13 @@ PCAStep::PCAStep(const cv::Ptr<PCAConfig> config)
 cv::Mat PCAStep::train(const cv::Mat &input,
                        const cv::Mat &param) const
 {
-    int components = this->mConfig.dynamicCast<PCAConfig>()->getComponents();
+    int components = std::min(this->mConfig.dynamicCast<PCAConfig>()->getComponents(), input.cols);
+    if(components <= 0) {
+        components = input.cols;
+    }
     double epsilon = this->mConfig.dynamicCast<PCAConfig>()->getEpsilon();
     bool whitening = this->mConfig.dynamicCast<PCAConfig>()->getWhitening();
     std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
-
-    std::string outputFile = FileUtil::buildPath(path, "pca", "yml");
 
     RPCA rpca(components,
               whitening,
@@ -28,7 +29,7 @@ cv::Mat PCAStep::train(const cv::Mat &input,
 
     rpca.fit(input);
 
-    rpca.dump(outputFile);
+    rpca.dump(path);
 
     cv::Mat1f result;
     rpca.transform(input,

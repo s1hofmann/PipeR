@@ -146,11 +146,11 @@ std::string SGDConfig::toString() const
                  << "Lambda: " << lambda() << std::endl
                  << "Learning rate: " << learningRate() << std::endl
                  << "Epsilon: " << epsilon() << std::endl
-                 << "Bias: " << bias() << std::endl
                  << "Bias multiplier: " << multiplier() << std::endl
-                 << "Iterations: " << iterations() << std::endl
-                 << "Max. iterations: " << maxIterations() << std::endl
-                 << "Model dimensions: " << mModel.rows << "x" << mModel.cols << std::endl;
+                 << "Max. iterations: " << maxIterations() << std::endl;
+    if(mModel.rows > 0 && mModel.cols > 0) {
+        configString << "Model dimensions: " << mModel.rows << "x" << mModel.cols << std::endl;
+    }
 
     return configString.str();
 }
