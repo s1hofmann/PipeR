@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     pipeCfg->fromJSON(file);
 
     // And the actual pipeline object
-    pl::PipeLine<cv::Mat> pipeLine(pipeCfg, pipeCfg->debugMode());
+    pl::PipeLine pipeLine(pipeCfg, pipeCfg->debugMode());
 
     // A little helper to load files
     // TODO Move to pipeline.execute

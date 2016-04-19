@@ -5,12 +5,12 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include <qt/QtCore/QFile>
-#include <qt/QtCore/QFileInfo>
-#include <qt/QtCore/QFileInfoList>
-#include <qt/QtCore/QString>
-#include <qt/QtCore/QDir>
-#include <qt/QtCore/QTextStream>
+#include <QFile>
+#include <QFileInfo>
+#include <QFileInfoList>
+#include <QString>
+#include <QDir>
+#include <QTextStream>
 
 #include "../pipeline/globals.h"
 

@@ -49,6 +49,21 @@ add_subdirectory(src/io)
 include_directories ("${PROJECT_SOURCE_DIR}/pipeline")
 add_subdirectory(src/pipeline)
 
+if(PREPROCESSING)
+    include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
+    add_subdirectory(src/preprocessing)
+    set (EXTRA_LIBS ${EXTRA_LIBS} preprocessing)
+endif(PREPROCESSING)
+
+if(MASKS)
+    include_directories ("${PROJECT_SOURCE_DIR}/core/masks")
+    add_subdirectory(src/core/masks)
+    set (EXTRA_LIBS ${EXTRA_LIBS} masks_core)
+    include_directories ("${PROJECT_SOURCE_DIR}/masks")
+    add_subdirectory(src/masks)
+    set (EXTRA_LIBS ${EXTRA_LIBS} masks)
+endif(MASKS)
+
 if(DIMENSIONALITY_REDUCTION)
     include_directories ("${PROJECT_SOURCE_DIR}/core/dim")
     add_subdirectory(src/core/dim)
@@ -70,27 +85,14 @@ endif(ENCODING)
 include_directories ("${PROJECT_SOURCE_DIR}/feature_extraction")
 add_subdirectory(src/feature_extraction)
 
-if(MASKS)
-    include_directories ("${PROJECT_SOURCE_DIR}/core/masks")
-    add_subdirectory(src/core/masks)
-    set (EXTRA_LIBS ${EXTRA_LIBS} masks_core)
-    include_directories ("${PROJECT_SOURCE_DIR}/masks")
-    add_subdirectory(src/masks)
-    set (EXTRA_LIBS ${EXTRA_LIBS} masks)
-endif(MASKS)
-
 include_directories ("${PROJECT_SOURCE_DIR}/ml")
 add_subdirectory(src/ml)
-
-if(PREPROCESSING)
-    include_directories ("${PROJECT_SOURCE_DIR}/preprocessing")
-    add_subdirectory(src/preprocessing)
-    set (EXTRA_LIBS ${EXTRA_LIBS} preprocessing)
-endif(PREPROCESSING)
+include_directories ("${PROJECT_SOURCE_DIR}/processing")
+add_subdirectory(src/processing)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
-                                      ${Boost_LIBRARIES}
+#                                      ${Boost_LIBRARIES}
 #                                      exception
                                       clustering_core
                                       utils_core
@@ -99,4 +101,5 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       feature_extraction
                                       ml
                                       vlfeat
+                                      processing
                                       ${EXTRA_LIBS})
