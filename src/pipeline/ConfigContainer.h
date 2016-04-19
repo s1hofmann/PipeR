@@ -42,6 +42,11 @@ public:
      */
     virtual std::string toString() const = 0;
 
+    /**
+     * @brief fromJSON
+     * @param file
+     * @return
+     */
     virtual bool fromJSON(std::string &file) = 0;
 
 protected:
