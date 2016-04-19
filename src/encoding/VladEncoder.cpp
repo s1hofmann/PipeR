@@ -56,7 +56,12 @@ cv::Mat VladEncodingStep::run(const cv::Mat &input,
 
         VladEncoder vlad;
         vlad.setNormStrategy(normalization);
-        vlad.loadData(inputFile);
+        try {
+            vlad.loadData(inputFile);
+        } catch(std::runtime_error &e) {
+            error("Unable to load cluster center data.");
+            exit(-1);
+        }
 
         if(encoded.empty()) {
             encoded = vlad.encode(input);
@@ -82,7 +87,9 @@ cv::Mat VladEncodingStep::debugTrain(const cv::Mat &input,
 cv::Mat VladEncodingStep::debugRun(const cv::Mat &input,
                                    const cv::Mat &param) const
 {
-
+    std::cout << "Debug mode" << std::endl;
+    this->run(input,
+              param);
 }
 
 
