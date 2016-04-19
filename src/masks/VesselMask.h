@@ -26,11 +26,11 @@ public:
 
     cv::Mat create(const cv::Mat &input);
 
-    std::string toString();
+    std::string toString() const;
 
     virtual bool fromJSON(const std::string &file);
 
-    std::string identifier();
+    std::string identifier() const;
 
 private:
     int mOctaves;

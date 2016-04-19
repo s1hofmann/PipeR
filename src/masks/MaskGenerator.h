@@ -19,11 +19,11 @@ public:
 
     virtual cv::Mat create(const cv::Mat &input) = 0;
 
-    virtual std::string toString() = 0;
+    virtual std::string toString() const = 0;
 
     virtual bool fromJSON(const std::string &file) = 0;
 
-    virtual std::string identifier() = 0;
+    virtual std::string identifier() const = 0;
 
 protected:
     MaskGenerator(const std::string &identifier = "Mask generator");

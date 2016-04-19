@@ -44,7 +44,7 @@ cv::Mat VesselMask::create(const cv::Mat &input)
 }
 
 
-std::string VesselMask::toString() {
+std::string VesselMask::toString() const {
     std::stringstream s;
 
     s << "Mask: " << mIdentifier << std::endl
@@ -80,7 +80,7 @@ bool VesselMask::fromJSON(const std::string &file)
 }
 
 
-std::string VesselMask::identifier()
+std::string VesselMask::identifier() const
 {
     return this->mIdentifier;
 }
