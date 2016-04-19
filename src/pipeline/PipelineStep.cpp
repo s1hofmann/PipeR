@@ -43,5 +43,10 @@ std::string PipelineStep::config() const {
     return mConfig->toString();
 }
 
+std::string PipelineStep::identifier() const
+{
+    return mConfig->identifier();
+}
+
 
 }

@@ -78,6 +78,12 @@ public:
      */
     std::string config() const;
 
+    /**
+     * @brief id
+     * @return
+     */
+    std::string identifier() const;
+
 protected:
     /**
      * @brief PipelineStep
