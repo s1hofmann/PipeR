@@ -1,13 +1,12 @@
 #include <iostream>
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include "pipeline/PipeLine.h"
 
 int main(int argc, char *argv[]) {
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
+    // TODO config file should be passed as parameter, this should just serve as generic fallback
     std::string file = "./test.json";
     pipeCfg->fromJSON(file);
 
@@ -15,8 +14,8 @@ int main(int argc, char *argv[]) {
     pl::PipeLine<cv::Mat> pipeLine(pipeCfg, pipeCfg->debugMode());
 
     // A little helper to load files
+    // TODO Move to pipeline.execute
     pl::FileUtil fileUtil;
-    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fileUtil.getFilesFromLabelFile(argv[1]);
 
     // Create a feature detector / descriptor to the pipeline
     cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");
@@ -48,18 +47,5 @@ int main(int argc, char *argv[]) {
     // Shows the whole pipeline
     pipeLine.showPipeline();
 
-    switch (pipeCfg->pipelineMode()) {
-    case pl::PipeLineMode::MODE_TRAIN:
-        pipeLine.train(filesWithLabels.first, filesWithLabels.second);
-        break;
-    case pl::PipeLineMode::MODE_RUN:
-        pipeLine.run(cv::Mat());
-        break;
-    case pl::PipeLineMode::MODE_OPTIMIZE:
-        break;
-    default:
-        break;
-    }
-
-    return 0;
+    return pipeLine.execute(argc, argv);
 }

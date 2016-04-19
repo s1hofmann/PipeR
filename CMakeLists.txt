@@ -31,6 +31,9 @@ option (POSTPROCESSING
 option (MASKS
         "Enable masks?" ON)
 
+include_directories ("${PROJECT_SOURCE_DIR}/core/exceptions")
+add_subdirectory(src/core/exceptions)
+
 include_directories ("${PROJECT_SOURCE_DIR}/core/clustering")
 add_subdirectory(src/core/clustering)
 
@@ -88,6 +91,7 @@ endif(PREPROCESSING)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       ${Boost_LIBRARIES}
+#                                      exception
                                       clustering_core
                                       utils_core
                                       io
