@@ -68,8 +68,13 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
            {
               QString line = in.readLine();
               QStringList parts = line.split(" ");
-              path.push_back(parts[0].toStdString());
-              labels.push_back(parts[1].toInt());
+              if(parts.size() == 2) {
+                  path.push_back(parts[0].toStdString());
+                  labels.push_back(parts[1].toInt());
+              } else {
+                  warning("Incompatible lable format, skipping.");
+                  continue;
+              }
            }
            f.close();
         }
