@@ -1,21 +1,38 @@
 #include <iostream>
 
 #include <opencv2/core/core.hpp>
-#include "pipeline/PipeLine.h"
+#include "pl/pipeline/PipeLine.h"
+#include "pl/pipeline/argumentprocessor.h"
+#include "pl/pipeline/return_codes.h"
 
 int main(int argc, char *argv[]) {
+    pl::ArgumentProcessor ap("test");
+    ap.addArgument("m", "Operational mode.", false, {"train", "run", "optimize"});
+    ap.addArgument("c", "Pipeline config.", false);
+    ap.addArgument("i", "Input for one shot processing.", true);
+    ap.addArgument("b", "Input for batch processing.", true);
+    ap.addSwitch("d", "Debug mode");
+
+    std::unordered_map<std::string, std::string> arguments;
+    try {
+        arguments = ap.parse(argc, argv);
+    } catch(std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
+
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
-    // TODO config file should be passed as parameter, this should just serve as generic fallback
-    std::string file = "./test.json";
+    std::string file = arguments["c"];
     pipeCfg->fromJSON(file);
 
     // And the actual pipeline object
-    pl::PipeLine pipeLine(pipeCfg, pipeCfg->debugMode());
-
-    // A little helper to load files
-    // TODO Move to pipeline.execute
-    pl::FileUtil fileUtil;
+    pl::PipeLine pipeLine(pipeCfg);
+    if(!arguments["d"].empty()) {
+        pipeLine.setDebugMode(true);
+    } else {
+        pipeLine.setDebugMode(false);
+    }
 
     // Create a feature detector / descriptor to the pipeline
     cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");
@@ -47,5 +64,53 @@ int main(int argc, char *argv[]) {
     // Shows the whole pipeline
     pipeLine.showPipeline();
 
-    return pipeLine.execute(argc, argv);
+    pl::FileUtil fu;
+    std::string mode = arguments.at("m");
+    if(!mode.compare("train")) {
+        if(arguments["i"].empty()) {
+            std::cerr << "Labelfile required for training. Aborting." << std::endl;
+            return PipeLineReturnValues::RETURN_IO_ERROR;
+        } else {
+            try {
+                std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fu.getFilesFromLabelFile(arguments["i"]);
+                pipeLine.train(filesWithLabels.first, filesWithLabels.second);
+            } catch(pl::IOError &e) {
+                std::cerr << e.what();
+                return PipeLineReturnValues::RETURN_IO_ERROR;
+            }
+
+            return PipeLineReturnValues::RETURN_SUCCESS;
+        }
+    } else if(!mode.compare("run")) {
+        if(!arguments["b"].empty()) {
+            try {
+                std::vector<std::string> files = fu.getFiles(arguments["b"]);
+                for(std::string file : files) {
+                    cv::Mat result = pipeLine.run(file);
+                    if(!result.empty()) {
+                        std::cout << "Result for file " << file << ": " << result << std::endl;
+                    }
+                }
+            } catch(pl::Error &e) {
+                std::cerr << e.what();
+                return PipeLineReturnValues::RETURN_IO_ERROR;
+            }
+
+            return PipeLineReturnValues::RETURN_SUCCESS;
+        } else if(!arguments["i"].empty()) {
+            try {
+                std::string file = arguments["i"];
+                std::cout << "Result for file " << file << ": " << pipeLine.run(file) << std::endl;
+            } catch(pl::Error &e) {
+                std::cerr << e.what();
+                return PipeLineReturnValues::RETURN_IO_ERROR;
+            }
+
+            return PipeLineReturnValues::RETURN_SUCCESS;
+        }
+    } else if(!mode.compare("optimize")) {
+        info("Not yet");
+        return PipeLineReturnValues::RETURN_SUCCESS;
+    }
+    return 0;
 }
