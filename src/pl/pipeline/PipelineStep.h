@@ -10,7 +10,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "globals.h"
-#include "../exception/BaseError.h"
+#include "../exception/error.h"
 
 #include "ConfigContainer.h"
 

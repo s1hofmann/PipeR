@@ -8,7 +8,7 @@
 #include <sstream>
 #include <iostream>
 #include "globals.h"
-#include "../exception/BaseError.h"
+#include "../exception/error.h"
 
 namespace pl {
 

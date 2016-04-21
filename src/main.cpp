@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
                         std::cout << "Result for file " << file << ": " << result << std::endl;
                     }
                 }
-            } catch(pl::Error &e) {
+            } catch(pl::BaseError &e) {
                 std::cerr << e.what();
                 return PipeLineReturnValues::RETURN_IO_ERROR;
             }
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
             try {
                 std::string file = arguments["i"];
                 std::cout << "Result for file " << file << ": " << pipeLine.run(file) << std::endl;
-            } catch(pl::Error &e) {
+            } catch(pl::BaseError &e) {
                 std::cerr << e.what();
                 return PipeLineReturnValues::RETURN_IO_ERROR;
             }

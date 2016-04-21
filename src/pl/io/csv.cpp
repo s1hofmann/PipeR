@@ -29,17 +29,17 @@ unsigned long CSV::write(const cv::Mat &output,
     if(output.empty()) {
         std::stringstream s;
         s << "Empty output object given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(outPath.empty()) {
         std::stringstream s;
         s << "No output path given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(fileName.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -49,7 +49,7 @@ unsigned long CSV::write(const cv::Mat &output,
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text) ) {
         std::stringstream s;
         s << "Unable to open file " << absFile.toStdString() << "." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QTextStream file_stream(&file);
@@ -73,7 +73,7 @@ unsigned long CSV::write(const cv::Mat &output,
             } else {
                 std::stringstream s;
                 s << "Format not supported." << std::endl;
-                throw Error(s.str(), currentMethod, currentLine);
+                throw IOError(s.str(), currentMethod, currentLine);
             }
             if(x != output.cols - 1) {
                 file_stream << ",";
@@ -92,14 +92,14 @@ cv::Mat CSV::read(const std::string &input) const
     if(input.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QFile file(QString::fromStdString(input));
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         std::stringstream s;
         s << "Unable to open file " << input << "." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QTextStream file_stream(&file);
@@ -118,19 +118,19 @@ cv::Mat CSV::read(const std::string &input) const
            if(!ok) {
                std::stringstream s;
                s << "Error while parsing CSV data." << std::endl;
-               throw Error(s.str(), currentMethod, currentLine);
+               throw IOError(s.str(), currentMethod, currentLine);
            }
            col++;
        }
        if((vals.size() % col) != 0) {
            std::stringstream s;
            s << "Size error!" << std::endl << "Is: " << vals.size() << " Should be: " << col << std::endl;
-           throw Error(s.str(), currentMethod, currentLine);
+           throw IOError(s.str(), currentMethod, currentLine);
        }
        if(cols != 0 && cols != col) {
            std::stringstream s;
            s << "Size error! Data missaligned." << std::endl;
-           throw Error(s.str(), currentMethod, currentLine);
+           throw IOError(s.str(), currentMethod, currentLine);
        }
        cols = col;
        rows++;

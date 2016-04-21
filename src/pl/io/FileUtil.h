@@ -22,7 +22,7 @@
 #include "../core/utils/progressbar.h"
 #include "../core/utils/Range.h"
 #include "../pipeline/globals.h"
-#include "../exception/BaseError.h"
+#include "../exception/error.h"
 
 namespace pl {
 

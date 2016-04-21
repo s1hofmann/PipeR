@@ -1,6 +1,8 @@
 add_library(exception BaseError
                       ClusterError
+                      CommandLineError
                       DimensionalityReductionError
                       EncodingError
                       FeatureExError
-                      IOError)
+                      IOError
+                      MLError)

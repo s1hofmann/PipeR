@@ -24,7 +24,7 @@ void VladEncoder::loadData(const std::string & file_name)
     if ( fs["means"].isNone() || fs["means"].empty() ){
         std::stringstream s;
         s << "No node 'means' in file: " << file_name << std::endl;
-        throw pl::Error(s.str(), currentMethod, currentLine);
+        throw pl::EncodingError(s.str(), currentMethod, currentLine);
     }
     fs["means"] >> means;
     fs.release();

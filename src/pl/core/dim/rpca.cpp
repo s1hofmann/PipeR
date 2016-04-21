@@ -115,7 +115,7 @@ void RPCA::load(const std::string &path)
        fs["variance"].isNone() || fs["variance"].empty()) {
         std::stringstream s;
         s << "Unable to load data from file: " << path << std::endl;
-        throw pl::Error(s.str(), currentMethod, currentLine);
+        throw pl::DimensionalityReductionError(s.str(), currentMethod, currentLine);
     }
 
     fs["whiten"] >> whiten;

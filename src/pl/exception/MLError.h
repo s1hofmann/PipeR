@@ -5,9 +5,9 @@
 namespace pl {
 
 
-class IOError : public BaseError {
+class MLError : public BaseError {
 public:
-    IOError(const std::string &msg,
+    MLError(const std::string &msg,
             const std::string &where = std::string(),
             const int line = -1);
 };

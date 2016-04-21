@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../pipeline/globals.h"
-#include "../../exception/BaseError.h"
+#include "../../exception/error.h"
 
 #include <opencv2/core/core.hpp>
 

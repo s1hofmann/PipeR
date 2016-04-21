@@ -29,17 +29,17 @@ unsigned long IMG::write(const cv::Mat &output,
     if(output.empty()) {
         std::stringstream s;
         s << "Empty output object given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(outPath.empty()) {
         std::stringstream s;
         s << "No output path given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(fileName.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -52,7 +52,7 @@ unsigned long IMG::write(const cv::Mat &output,
     } else {
         std::stringstream s;
         s << "Failed to write " << absFile.toStdString() << "." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 }
 
@@ -62,7 +62,7 @@ cv::Mat IMG::read(const std::string &input) const
     if(input.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     cv::Mat img = cv::imread(input, CV_LOAD_IMAGE_UNCHANGED);

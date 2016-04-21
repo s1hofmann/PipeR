@@ -73,7 +73,7 @@ std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, 
                         } else {
                             std::stringstream s;
                             s << "Encountered invalid option: " << currentArgument << " " << nextArgument << std::endl;
-                            throw Error(s.str(), currentMethod, currentLine);
+                            throw CommandLineError(s.str(), currentMethod, currentLine);
                         }
                     } else {
                         argumentMap[parseFlag(currentArgument)] = nextArgument;
@@ -91,7 +91,7 @@ std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, 
         if(argumentMap[parseFlag(arg)].empty()) {
             std::stringstream s;
             s << "Missing required argument: " << arg << std::endl;
-            throw Error(s.str(), __FUNCTION__, __LINE__);
+            throw CommandLineError(s.str(), currentMethod, currentLine);
         }
     }
     return argumentMap;

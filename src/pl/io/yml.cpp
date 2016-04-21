@@ -28,17 +28,17 @@ unsigned long YML::write(const cv::Mat &output,
     if(output.empty()) {
         std::stringstream s;
         s << "Empty output object given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(outPath.empty()) {
         std::stringstream s;
         s << "Empty output object given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
     if(fileName.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     QDir d(QString::fromStdString(outPath));
@@ -60,7 +60,7 @@ cv::Mat YML::read(const std::string &input) const
     if(input.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     cv::Mat descr;

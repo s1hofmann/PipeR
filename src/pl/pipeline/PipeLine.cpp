@@ -249,7 +249,7 @@ void PipeLine::train(const std::vector<std::string> &input,
     if(input.size() != labels.size()) {
         std::stringstream s;
         s << "Data and labels missmatch. Aborting." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw BaseError(s.str(), currentMethod, currentLine);
     }
 
     if(mPipelineConfig->rebuildDescriptors()) {
@@ -348,7 +348,7 @@ void PipeLine::train(const std::vector<std::string> &input,
             } else {
                 std::stringstream s;
                 s << "No feature extraction method given. Aborting." << std::endl;
-                throw Error(s.str(), currentMethod, currentLine);
+                throw FeatureExError(s.str(), currentMethod, currentLine);
             }
         }
     }

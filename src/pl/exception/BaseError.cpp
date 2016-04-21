@@ -2,7 +2,7 @@
 
 namespace pl {
 
-Error::Error(const std::string &msg, const std::string &where, const int line)
+BaseError::BaseError(const std::string &msg, const std::string &where, const int line)
     :
         std::runtime_error("")
 {
@@ -10,9 +10,9 @@ Error::Error(const std::string &msg, const std::string &where, const int line)
     static_cast<std::runtime_error&>(*this) = std::runtime_error(errorText);
 }
 
-std::string Error::getMsg(const std::string &msg,
-                          const std::string &where,
-                          const int line) const
+std::string BaseError::getMsg(const std::string &msg,
+                              const std::string &where,
+                              const int line) const
 {
     std::stringstream s;
     if(!where.empty()) {

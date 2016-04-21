@@ -6,7 +6,7 @@
 
 #include "encodingmethod.h"
 #include "../../pipeline/globals.h"
-#include "../../exception/BaseError.h"
+#include "../../exception/error.h"
 
 #include <unordered_map>
 

@@ -93,7 +93,7 @@ cv::Mat SGDStep::run(const cv::Mat &input,
             if(input.cols != classifierData.first.cols) {
                 std::stringstream s;
                 s << "Data doesn't fit trained model." << std::endl;
-                throw Error(s.str(), currentMethod, currentLine);
+                throw MLError(s.str(), currentMethod, currentLine);
             } else {
                 if(input.type() != CV_64F) {
                     cv::Mat tmp;
@@ -103,7 +103,7 @@ cv::Mat SGDStep::run(const cv::Mat &input,
                     results.at<float>(idx) = input.dot(classifierData.first) + classifierData.second;
                 }
             }
-        } catch(std::runtime_error) {
+        } catch(MLError) {
             throw;
         }
     }
@@ -202,7 +202,7 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
             if(input.cols != classifierData.first.cols) {
                 std::stringstream s;
                 s << "Data doesn't fit trained model." << std::endl;
-                throw Error(s.str(), currentMethod, currentLine);
+                throw MLError(s.str(), currentMethod, currentLine);
             } else {
                 if(input.type() != CV_64F) {
                     cv::Mat tmp;
@@ -234,7 +234,7 @@ std::pair<cv::Mat1d, double> SGDStep::load(const std::string &fileName) const
         (fs["bias"].isNone() || fs["bias"].empty())) {
         std::stringstream s;
         s << "Error. Unable to load classifier data from file: " << fileName << ". Aborting." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw MLError(s.str(), currentMethod, currentLine);
     }
 
     cv::Mat1d model;

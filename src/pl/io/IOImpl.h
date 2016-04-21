@@ -13,7 +13,7 @@
 #include <QTextStream>
 
 #include "../pipeline/globals.h"
-#include "../exception/BaseError.h"
+#include "../exception/error.h"
 
 namespace pl {
 

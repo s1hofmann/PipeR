@@ -6,9 +6,9 @@
 namespace pl {
 
 
-class Error : public std::runtime_error {
+class BaseError : public std::runtime_error {
 public:
-    Error(const std::string &msg,
+    BaseError(const std::string &msg,
           const std::string &where = std::string(),
           const int line = -1);
 

@@ -27,7 +27,7 @@ std::vector<cv::Mat> FileUtil::loadImages(const std::string &path)
                 imageList.push_back(image);
             }
         } catch (cv::Exception &e) {
-            throw Error(e.what(), currentMethod, currentLine);
+            throw IOError(e.what(), currentMethod, currentLine);
         }
     }
 
@@ -72,7 +72,7 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
     } else {
         std::stringstream s;
         s << "Label file " << labelFile << " does not exist. Aborting." << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 
     return std::make_pair(path, labels);
@@ -127,7 +127,7 @@ cv::Mat FileUtil::loadBinary(const std::string &inputPath,
 
     try {
         return binaryReader.read(info.absoluteFilePath().toStdString());
-    } catch(Error) {
+    } catch(IOError) {
         throw;
     }
 }
@@ -139,7 +139,7 @@ cv::Mat FileUtil::loadBinary(const std::string &fileName)
 
     try {
         return binaryReader.read(fileName);
-    } catch(Error) {
+    } catch(IOError) {
         throw;
     }
 }
@@ -155,7 +155,7 @@ bool FileUtil::saveYML(const cv::Mat &data,
         return ymlWriter.write(data,
                                outputPath,
                                fileName);
-    } catch(Error) {
+    } catch(IOError) {
         throw;
     }
 }
@@ -332,7 +332,7 @@ std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelF
 
         return std::make_pair(loadedImages, loadedLabels);
     } catch (cv::Exception &e) {
-        throw Error(e.what(), currentMethod, currentLine);
+        throw IOError(e.what(), currentMethod, currentLine);
     }
 }
 
@@ -368,7 +368,7 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName,
     } else {
         std::stringstream s;
         s << "Directory " << pathName << " does not exist. Aborting" << std::endl;
-        throw Error(s.str(), currentMethod, currentLine);
+        throw IOError(s.str(), currentMethod, currentLine);
     }
 }
 
