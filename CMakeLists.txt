@@ -88,6 +88,9 @@ add_subdirectory(src/pl/ml)
 include_directories ("${PROJECT_SOURCE_DIR}/pl/exception")
 add_subdirectory(src/pl/exception)
 
+include_directories ("${PROJECT_SOURCE_DIR}/pl/logging")
+add_subdirectory(src/pl/logging)
+
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
 #                                      ${Boost_LIBRARIES}
@@ -96,6 +99,7 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
                                       io
                                       pipeline
                                       exception
+                                      logging
                                       feature_extraction
                                       ml
                                       vlfeat

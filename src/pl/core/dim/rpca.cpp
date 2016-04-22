@@ -11,7 +11,7 @@ RPCA::RPCA(int _components,
 {}
 
 
-RPCA:: RPCA(const std::string & path)
+RPCA::RPCA(const std::string & path)
 {
     load(path);
 }

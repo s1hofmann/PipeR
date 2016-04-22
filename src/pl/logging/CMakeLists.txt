@@ -1,1 +1,3 @@
-add_library(exception BaseError)
+add_library(logging BaseLogger
+                    FileLogger
+                    ConsoleLogger)

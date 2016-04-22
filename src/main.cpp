@@ -2,10 +2,10 @@
 
 #include <opencv2/core/core.hpp>
 #include "pl/pipeline/PipeLine.h"
-#include "pl/pipeline/argumentprocessor.h"
-#include "pl/pipeline/return_codes.h"
 
 int main(int argc, char *argv[]) {
+    pl::FileLogger logger("/home/sim0n/pipeline_log.txt");
+    logger.warn("hi", "geht's?");
     pl::ArgumentProcessor ap("test");
     ap.addArgument("m", "Operational mode.", false, {"train", "run", "optimize"});
     ap.addArgument("c", "Pipeline config.", false);

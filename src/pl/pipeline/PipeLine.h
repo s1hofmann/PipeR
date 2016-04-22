@@ -15,6 +15,8 @@
 #include "PipelineStep.h"
 #include "PipelineConfig.h"
 #include "globals.h"
+#include "argumentprocessor.h"
+#include "return_codes.h"
 
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
@@ -29,7 +31,7 @@
 #include "../ml/SGDStep.h"
 #include "../core/utils/Shuffler.h"
 #include "../exception/error.h"
-#include "argumentprocessor.h"
+#include "../logging/logging.h"
 
 namespace pl {
 
