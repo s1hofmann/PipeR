@@ -14,8 +14,8 @@ void Shuffler::shuffle(const cv::Mat &descriptors,
                        cv::Mat &shuffledDescriptors,
                        cv::Mat &shuffledLabels)
 {
-    shuffledDescriptors.create(descriptors.rows, descriptors.cols, descriptors.type());
-    shuffledLabels.create(1, labels.cols, labels.type());
+    shuffledDescriptors.create(descriptors.size(), CV_64F);
+    shuffledLabels.create(labels.size(), CV_64F);
 
     std::vector<int> idx = Range<int>::random(0, descriptors.rows);
 
@@ -56,56 +56,5 @@ void Shuffler::shuffle(const std::vector<std::string> &files,
 #endif
 }
 
-void Shuffler::shuffle(cv::Mat &descriptors,
-                       cv::Mat &labels)
-{
-    cv::Mat shuffledDescriptors;
-    cv::Mat shuffledLabels;
-    shuffledDescriptors.create(descriptors.rows, descriptors.cols, descriptors.type());
-    shuffledLabels.create(1, labels.cols, labels.type());
-
-    std::vector<int> idx = Range<int>::random(0, descriptors.rows);
-
-#if USE_TBB
-    tbb::parallel_for(int(0), descriptors.rows, [&](int i) {
-        descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
-        shuffledLabels.at<int>(i) = labels.at<int>(idx[i]);
-    }
-    );
-#else
-    for(int i = 0; i < descriptors.rows; ++i) {
-        descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
-        shuffledLabels.at<int>(i) = labels.at<int>(idx[i]);
-    }
-#endif
-
-    descriptors = shuffledDescriptors;
-    labels = shuffledLabels;
-}
-
-void Shuffler::shuffle(std::vector<std::string> &files,
-                       std::vector<int> &labels)
-{
-    std::vector<std::string> shuffledFiles;
-    std::vector<std::string> shuffledLabels;
-    shuffledFiles.resize(files.size());
-    shuffledLabels.resize(labels.size());
-
-    std::vector<int> idx = Range<int>::random(0, files.size());
-#if USE_TBB
-        tbb::parallel_for(size_t(0), files.size(), [&](size_t i) {
-            shuffledFiles[i] = files[idx[i]];
-            shuffledLabels[i] = labels[idx[i]];
-        }
-        );
-#else
-    for(int i = 0; i < files.size(); ++i) {
-        shuffledFiles[i] = files[idx[i]];
-        shuffledLabels[i] = labels[idx[i]];
-    }
-#endif
-
-    std::copy(shuffledFiles.begin(), shuffledFiles.end(), files.begin());
-}
 
 }

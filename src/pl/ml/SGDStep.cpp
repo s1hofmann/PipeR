@@ -19,9 +19,12 @@ SGDStep::~SGDStep()
 cv::Mat SGDStep::train(const cv::Mat &input,
                        const cv::Mat &param) const
 {
-    if(input.empty() || param.empty()) {
-        exit(-1);
+    if(input.empty()) {
+        throw MLError("Missing parameters, input empty.", currentMethod, currentLine);
+    } else if(param.empty()) {
+        throw MLError("Missing parameters, labels empty.", currentMethod, currentLine);
     }
+
 
     cv::Mat1d dInput;
     cv::Mat1d dParam;
@@ -38,7 +41,7 @@ cv::Mat SGDStep::train(const cv::Mat &input,
         dParam = param;
     }
 
-    cv::Mat1d weights = calculateWeights(param);
+    cv::Mat1d weights = calculateWeights(dParam);
     double lambda = this->mConfig.dynamicCast<SGDConfig>()->lambda();
     double learningRate = this->mConfig.dynamicCast<SGDConfig>()->learningRate();
     double epsilon = this->mConfig.dynamicCast<SGDConfig>()->epsilon();

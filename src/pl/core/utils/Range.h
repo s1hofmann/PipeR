@@ -69,31 +69,7 @@ public:
 
     static std::vector<T> random(T from, T to, T step = 1.0)
     {
-        if(!std::is_integral<T>::value) { return std::vector<T>(); }
-
-        T delta = abs(to-from);
-        T stepSize = abs(step);
-
-        std::vector<T> ret;
-        if(step == 0) {
-            return ret;
-        } else if(step != 1) {
-            if(delta % stepSize == 0) {
-                ret.resize(delta/stepSize);
-            } else {
-                ret.resize((delta/stepSize)+1);
-            }
-        } else {
-            ret.resize(abs(to-from));
-        }
-        if(from == to) {
-            return std::vector<T>();
-        } else if(from > to) {
-            std::generate(ret.begin(), ret.end(), UniqueNumber<T>(from, stepSize, true));
-        } else {
-            std::generate(ret.begin(), ret.end(), UniqueNumber<T>(from, stepSize));
-        }
-
+        std::vector<T> ret = unique(from, to, step);
         std::random_shuffle(ret.begin(), ret.end());
         return ret;
     }

@@ -61,6 +61,10 @@ public:
 
     std::string mode2string(const PipeLineMode &mode) const;
 
+    std::string getLogFile() const;
+
+    void setLogFile(const std::string &value);
+
 private:
     /**
      * @brief mIdentifier: Identifier string (preparation for config parsing from file)
@@ -106,6 +110,11 @@ private:
      * @brief mDebugMode
      */
     bool mDebugMode;
+
+    /**
+     * @brief logFile
+     */
+    std::string mLogFile;
 };
 
 

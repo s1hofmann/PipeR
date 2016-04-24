@@ -43,11 +43,11 @@ public:
     }
 
     template <typename ... T>
-    void report(T ... error) {
+    void report(T ... err) {
         if(!mValidStream) {
             std::cerr << "Unable to write to log file." << std::endl;
         } else {
-            mFileStream << e(error ...);
+            mFileStream << e(err ...);
             mFileStream.flush();
         }
     }

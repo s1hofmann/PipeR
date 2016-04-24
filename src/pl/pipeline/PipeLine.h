@@ -33,7 +33,9 @@
 #include "../exception/error.h"
 #include "../logging/logging.h"
 
+
 namespace pl {
+
 
 class PipeLine {
 public:
@@ -193,10 +195,6 @@ public:
      * @brief showPipeline
      */
     void showPipeline();
-
-    bool debugMode() const;
-
-    void setDebugMode(bool debugMode);
 
 private:
     /**

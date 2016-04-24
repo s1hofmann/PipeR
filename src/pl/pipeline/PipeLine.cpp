@@ -4,7 +4,8 @@ namespace pl {
 
 
 PipeLine::PipeLine(cv::Ptr<PipelineConfig> config) {
-    this->mPipelineConfig = config;
+    mPipelineConfig = config;
+    mDebugMode = mPipelineConfig.dynamicCast<PipelineConfig>()->debugMode();
 }
 
 
@@ -246,6 +247,9 @@ bool PipeLine::removeClassificationStep() {
 
 void PipeLine::train(const std::vector<std::string> &input,
                      const std::vector<int> &labels) const {
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    ConsoleLogger debug;
+
     if(input.size() != labels.size()) {
         std::stringstream s;
         s << "Data and labels missmatch. Aborting." << std::endl;
@@ -262,7 +266,7 @@ void PipeLine::train(const std::vector<std::string> &input,
                 continue;
             }
 
-            info("Processing file:", input[idx]);
+            logger.inform("Processing file:", input[idx]);
 
             cv::Mat prep;
             cv::Mat prepMask;
@@ -270,7 +274,7 @@ void PipeLine::train(const std::vector<std::string> &input,
             // Apply possible preprocessing steps
             if(!this->mPreprocessing.empty()) {
                 if(mDebugMode) {
-                    info("Starting preprocessing...");
+                    debug.inform("Starting preprocessing...");
                 }
                 // First preprocessing step
                 // Generate mask
@@ -284,7 +288,6 @@ void PipeLine::train(const std::vector<std::string> &input,
                 } else {
                     prep = this->mPreprocessing[0].first->debugTrain(inputMat, prepMask);
                 }
-                inputMat.release();
                 // Process additional steps
                 for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
                     if(!this->mPreprocessing[idx].second.empty()) {
@@ -309,7 +312,7 @@ void PipeLine::train(const std::vector<std::string> &input,
 
             if(!this->mFeatureExtraction.first.empty()) {
                 if(mDebugMode) {
-                    info("Starting feature extraction...");
+                    debug.inform("Starting feature extraction...");
                 }
                 if(!this->mFeatureExtraction.second.empty()) {
                     featureMask = this->mFeatureExtraction.second->create(prep);
@@ -325,7 +328,6 @@ void PipeLine::train(const std::vector<std::string> &input,
                 } else {
                     features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
                 }
-                prep.release();
                 if(!features.empty()) {
                     QFileInfo info(QString::fromStdString(input[idx]));
                     std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
@@ -334,16 +336,13 @@ void PipeLine::train(const std::vector<std::string> &input,
                                                           mPipelineConfig->descriptorDir(),
                                                           descriptorFile,
                                                           mPipelineConfig->descriptorLabelFile())) {
-                        error("Unable to save descriptor. Skipping!");
+                        logger.report("Unable to save descriptor", descriptorFile, ". Skipping!");
                         continue;
                     } else {
-                        // Free no longer needed stuff
-                        features.release();
-                        featureMask.release();
                         continue;
                     }
                 } else {
-                    error("Features don't match, skipping.");
+                    logger.report("No features in file", input[idx], ". Skipping!");
                 }
             } else {
                 std::stringstream s;
@@ -355,7 +354,7 @@ void PipeLine::train(const std::vector<std::string> &input,
 
     // Load all generated descriptors
     if(mDebugMode) {
-        info("Loading generated descriptors...");
+        debug.inform("Loading generated descriptors...");
     }
     cv::Mat allFeatures = FileUtil::loadDescriptors(mPipelineConfig->descriptorDir(),
                                                     mPipelineConfig->descriptorLabelFile(),
@@ -367,14 +366,13 @@ void PipeLine::train(const std::vector<std::string> &input,
     // Apply dimensionality reduction
     if(!this->mDimensionalityReduction.empty() && mPipelineConfig->rebuildPca()) {
         if(mDebugMode) {
-            info("Perfom dimensionality reduction...");
+            debug.inform("Perfom dimensionality reduction...");
         }
         if(!this->mDebugMode) {
             reduced = this->mDimensionalityReduction->train(allFeatures);
         } else {
             reduced = this->mDimensionalityReduction->debugTrain(allFeatures);
         }
-        allFeatures.release();
     } else {
         reduced = allFeatures;
     }
@@ -383,7 +381,7 @@ void PipeLine::train(const std::vector<std::string> &input,
     // Should be an empty Mat anyways since cluster means are written to disk
     if(!this->mEncoding.empty() && mPipelineConfig->rebuildClusters()) {
         if(mDebugMode) {
-            info("Encoding...");
+            debug.inform("Encoding...");
         }
         if(!this->mDebugMode) {
             this->mEncoding->train(reduced);
@@ -396,7 +394,7 @@ void PipeLine::train(const std::vector<std::string> &input,
     std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
 
     if(mDebugMode) {
-        info("Starting training.", "Data size:", filesWithLabels.first.size());
+        debug.inform("Starting training.", "Data size:", filesWithLabels.first.size());
     }
 
     cv::Mat1d trainingData;
@@ -414,13 +412,22 @@ void PipeLine::train(const std::vector<std::string> &input,
     }
 
     // Permute data
-    Shuffler shuffler;
-    shuffler.shuffle(trainingData, trainingLabels);
+    cv::Mat permutedData;
+    cv::Mat permutedLabels;
+    Shuffler::shuffle(trainingData,
+                      trainingLabels,
+                      permutedData,
+                      permutedLabels);
 
-    this->mClassification->train(trainingData,
-                                 trainingLabels);
+    try {
+        this->mClassification->train(permutedData,
+                                     permutedLabels);
+    } catch(MLError &e) {
+        logger.report(e.what());
+    }
 
-    info("Training done!");
+    logger.inform("Training done!");
+    debug.inform("Training done!");
 }
 
 cv::Mat PipeLine::run(const std::string &input) const {
@@ -542,16 +549,6 @@ cv::Mat PipeLine::run(const std::string &input) const {
     }
 
     return result;
-}
-
-bool PipeLine::debugMode() const
-{
-    return mDebugMode;
-}
-
-void PipeLine::setDebugMode(bool debugMode)
-{
-    mDebugMode = debugMode;
 }
 
 

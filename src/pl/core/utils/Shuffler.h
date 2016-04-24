@@ -23,12 +23,6 @@ public:
                         const std::vector<int> &labels,
                         std::vector<std::string> &shuffledFiles,
                         std::vector<int> &shuffledLabels);
-
-    void shuffle(std::vector<std::string> &files,
-                 std::vector<int> &labels);
-
-    void shuffle(cv::Mat &descriptors,
-                 cv::Mat &labels);
 };
 
 

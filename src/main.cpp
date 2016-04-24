@@ -3,9 +3,8 @@
 #include <opencv2/core/core.hpp>
 #include "pl/pipeline/PipeLine.h"
 
+
 int main(int argc, char *argv[]) {
-    pl::FileLogger logger("/home/sim0n/pipeline_log.txt");
-    logger.warn("hi", "geht's?");
     pl::ArgumentProcessor ap("test");
     ap.addArgument("m", "Operational mode.", false, {"train", "run", "optimize"});
     ap.addArgument("c", "Pipeline config.", false);
@@ -26,13 +25,14 @@ int main(int argc, char *argv[]) {
     std::string file = arguments["c"];
     pipeCfg->fromJSON(file);
 
+    if(!arguments["d"].empty()) {
+        pipeCfg.dynamicCast<pl::PipelineConfig>()->setDebugMode(true);
+    } else {
+        pipeCfg.dynamicCast<pl::PipelineConfig>()->setDebugMode(false);
+    }
+
     // And the actual pipeline object
     pl::PipeLine pipeLine(pipeCfg);
-    if(!arguments["d"].empty()) {
-        pipeLine.setDebugMode(true);
-    } else {
-        pipeLine.setDebugMode(false);
-    }
 
     // Create a feature detector / descriptor to the pipeline
     cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");

@@ -68,6 +68,7 @@ bool PipelineConfig::fromJSON(std::string &file)
         std::string modeString = params.get(varName(mPipelineMode), "MODE_TRAIN").asString();
         mPipelineMode = str2mode(modeString);
         mDebugMode = params.get(varName(mDebugMode), false).asBool();
+        mLogFile = params.get(varName(mLogFile), "./pipeline.log").asString();
 
         return true;
     }
@@ -167,7 +168,8 @@ std::string PipelineConfig::toString() const
     std::stringstream configString;
 
     configString << "Debug: " << (mDebugMode ? "true" : "false") << std::endl;
-    configString << "Mode: ";
+    configString << "Mode: " << mode2string(mPipelineMode) << std::endl;
+    configString << "Log file: " << mLogFile << std::endl;
 
     std::cout << std::endl;
 
@@ -181,6 +183,16 @@ std::string PipelineConfig::toString() const
     configString << "Rebuild PCA: " << (mRebuildPca ? "true" : "false") << std::endl;
 
     return configString.str();
+}
+
+std::string PipelineConfig::getLogFile() const
+{
+    return mLogFile;
+}
+
+void PipelineConfig::setLogFile(const std::string &value)
+{
+    mLogFile = value;
 }
 
 
