@@ -98,8 +98,8 @@ cv::Mat VladEncodingStep::encode(const std::string &encoder, const cv::Mat &data
     vlad.setNormStrategy(normalization);
     try {
         vlad.loadData(encoder);
-    } catch(std::runtime_error) {
-        throw;
+    } catch(EncodingError &e) {
+        throw EncodingError(e.what(), currentMethod, currentLine);
     }
 
     return vlad.encode(data);
@@ -113,8 +113,8 @@ cv::Mat VladEncodingStep::encodePyramid(const std::string &encoder, const cv::Ma
     vlad.setNormStrategy(normalization);
     try {
         vlad.loadData(encoder);
-    } catch(std::runtime_error) {
-        throw;
+    } catch(EncodingError &e) {
+        throw EncodingError(e.what(), currentMethod, currentLine);
     }
 
     DescriptorPyramid dp(this->mConfig.dynamicCast<VladConfig>()->getPyramidLevels());

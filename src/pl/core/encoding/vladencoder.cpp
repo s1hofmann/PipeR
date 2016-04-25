@@ -26,7 +26,7 @@ void VladEncoder::loadData(const std::string & file_name)
         s << "No node 'means' in file: " << file_name << std::endl;
         throw pl::EncodingError(s.str(), currentMethod, currentLine);
     }
-    fs["means"] >> means;
+    fs["means"] >> mMeans;
     fs.release();
 }
 
@@ -34,9 +34,9 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
 {
     //If there is an empty patch an empty 1xD matrix is returned.
     if(data.empty()) {
-        return cv::Mat1f::zeros(1, means.cols*means.rows);
+        return cv::Mat1f::zeros(1, mMeans.cols*mMeans.rows);
     }
-    cv::Mat1b assignments = assign(data, means);
+    cv::Mat1b assignments = assign(data, mMeans);
 
     cv::Mat vladEncoded(assignments.rows, data.cols, CV_32F);
 
@@ -55,7 +55,7 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
 
         for(int dataPoints = 0; dataPoints < entries; ++dataPoints) {
             cv::Mat1f pTmp;
-            cv::subtract(data.row(indices.at<int>(dataPoints, 0)), means.row(cluster), pTmp);
+            cv::subtract(data.row(indices.at<int>(dataPoints, 0)), mMeans.row(cluster), pTmp);
             cv::add(pAccumulator, pTmp, pAccumulator);
         }
 

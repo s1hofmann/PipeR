@@ -1,8 +1,5 @@
 #include "encodingmethod.h"
 
-#include <cmath>
-#include <iostream>
-
 EncodingMethod::EncodingMethod()
 {
 }
@@ -55,7 +52,8 @@ void EncodingMethod::normalizeData(cv::Mat &data,
         break;
 
     default:
-        std::cerr << "Unknown normalization method." << std::endl;
-        break;
+        std::stringstream s;
+        s << "Unknown normalization method: " << std::endl;
+        throw pl::EncodingError(s.str(), currentMethod, currentLine);
     }
 }

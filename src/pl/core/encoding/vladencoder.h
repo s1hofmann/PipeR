@@ -33,5 +33,5 @@ public:
     virtual cv::Mat encode(const cv::Mat & data) override;
 
 private:
-    cv::Mat1f means;
+    cv::Mat1f mMeans;
 };
