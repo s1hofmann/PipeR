@@ -1,6 +1,5 @@
 #include "rpca.h"
 
-#include <opencv2/imgproc/imgproc.hpp>
 
 RPCA::RPCA(int _components,
            bool _whiten,
@@ -54,6 +53,17 @@ void RPCA::fit(const cv::Mat1f & descr)
 void RPCA::transform(const cv::Mat1f & descr,
                      cv::Mat1f & out) const
 {
+    if(descr.cols != mean.cols) {
+        std::stringstream s;
+        s << "Input and mean data missmatch." << std::endl;
+        s << "Input: " << descr.size() << " Mean: " << mean.size() << std::endl;
+        throw pl::DimensionalityReductionError(s.str(), currentMethod, currentLine);
+    } else if(descr.cols != components.cols) {
+        std::stringstream s;
+        s << "Input and mean data missmatch." << std::endl;
+        s << "Input: " << descr.size() << " Transform: " << components.size() << std::endl;
+        throw pl::DimensionalityReductionError(s.str(), currentMethod, currentLine);
+    }
     // make data zero-mean
     cv::Mat1f X(descr.rows,descr.cols);
 #if USE_TBB

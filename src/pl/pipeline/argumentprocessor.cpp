@@ -94,6 +94,7 @@ std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, 
             throw CommandLineError(s.str(), currentMethod, currentLine);
         }
     }
+
     return argumentMap;
 }
 

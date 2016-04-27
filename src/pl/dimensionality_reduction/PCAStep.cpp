@@ -47,8 +47,12 @@ cv::Mat PCAStep::run(const cv::Mat &input,
     RPCA rpca(path);
 
     cv::Mat1f result;
-    rpca.transform(input,
-                   result);
+    try {
+        rpca.transform(input,
+                       result);
+    } catch(DimensionalityReductionError) {
+        throw;
+    }
 
     return result;
 }
@@ -65,8 +69,12 @@ cv::Mat PCAStep::debugTrain(const cv::Mat &input,
 cv::Mat PCAStep::debugRun(const cv::Mat &input,
                           const cv::Mat &param) const
 {
-    return this->run(input,
-                     param);
+    try {
+        return this->run(input,
+                         param);
+    } catch(DimensionalityReductionError) {
+        throw;
+    }
 }
 
 

@@ -5,4 +5,5 @@ add_library(exception BaseError
                       EncodingError
                       FeatureExError
                       IOError
-                      MLError)
+                      MLError
+                      OCVError)

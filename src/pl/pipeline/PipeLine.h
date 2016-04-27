@@ -16,7 +16,6 @@
 #include "PipelineConfig.h"
 #include "globals.h"
 #include "argumentprocessor.h"
-#include "return_codes.h"
 
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
@@ -60,10 +59,16 @@ public:
     /**
      * @brief run
      * @param input
-     * @param mask
      * @return
      */
-    cv::Mat run(const std::string &input) const;
+    cv::Mat run(const std::string &input);
+
+    /**
+     * @brief run
+     * @param input
+     * @return
+     */
+    cv::Mat run(const cv::Mat &inputMat);
 
     /**
      * @brief execute
@@ -111,6 +116,13 @@ public:
      */
     bool addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step,
                                   const cv::Mat &mask=cv::Mat());
+
+    /**
+     * @brief setFeatureExtractionMask
+     * @param mask
+     * @return
+     */
+    bool setFeatureExtractionMask(const cv::Mat &mask);
 
     /**
      * @brief removeFeatureExtractionStep
@@ -196,7 +208,15 @@ public:
      */
     void showPipeline();
 
+    cv::Mat currentInput() const;
+    void setCurrentInput(const cv::Mat &currentInput);
+
 private:
+    /**
+     * @brief mCurrentInput
+     */
+    cv::Mat mCurrentInput;
+
     /**
      * @brief mPreprocessing
      */
@@ -253,14 +273,6 @@ private:
      * @return
      */
     bool isValidConfigName(const std::string &name) const;
-
-    /**
-     * @brief readArguments
-     * @param argc
-     * @param argv
-     * @return
-     */
-    int readArguments(int argc, char *argv[]);
 };
 
 

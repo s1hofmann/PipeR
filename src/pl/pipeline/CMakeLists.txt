@@ -14,5 +14,4 @@ add_library(pipeline ConfigContainer
                      globals
                      return_codes)
 
-target_link_libraries(pipeline Qt5::Core
-                               logging)
+target_link_libraries(pipeline Qt5::Core)

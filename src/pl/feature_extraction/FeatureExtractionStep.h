@@ -64,6 +64,8 @@ protected:
      * @brief ~FeatureExtractionStep
      */
     virtual ~FeatureExtractionStep();
+
+    cv::Mat augment(cv::Mat &descriptor, std::vector<cv::KeyPoint> &keypoints) const;
 };
 
 

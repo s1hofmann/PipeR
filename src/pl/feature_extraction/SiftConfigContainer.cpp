@@ -13,7 +13,8 @@ SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
                                          int nOctaveLayers,
                                          double contrastThreshold,
                                          double edgeThreshold,
-                                         double sigma)
+                                         double sigma,
+                                         bool augment)
     :
         ConfigContainer(identifier,
                         "Parameter description",
@@ -22,7 +23,8 @@ SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
         mOctaves(nOctaveLayers),
         mContrastThresh(contrastThreshold),
         mEdgeThresh(edgeThreshold),
-        mSigma(sigma)
+        mSigma(sigma),
+        mAugment(augment)
 {
 }
 
@@ -41,7 +43,13 @@ std::string SiftConfigContainer::toString() const
                  << "Octaves: " << getOctaves() << std::endl
                  << "Contrast threshold: " << getContrastThresh() << std::endl
                  << "Edge threshold: " << getEdgeThresh() << std::endl
-                 << "Sigma: " << getSigma() << std::endl;
+                 << "Sigma: " << getSigma() << std::endl
+                 << "Augment: ";
+    if(mAugment == true) {
+        configString << "true" << std::endl;
+    } else {
+        configString << "false" << std::endl;
+    }
 
     return configString.str();
 }
@@ -60,6 +68,7 @@ bool SiftConfigContainer::fromJSON(std::string &file)
         mContrastThresh = params.get(varName(mContrastThresh), 0.04).asDouble();
         mEdgeThresh = params.get(varName(mEdgeThresh), 10.0).asDouble();
         mSigma = params.get(varName(mSigma), 1.6).asDouble();
+        mAugment = params.get(varName(mAugment), true).asBool();
 
         return true;
     }

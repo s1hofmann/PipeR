@@ -19,5 +19,21 @@ FeatureExtractionStep::~FeatureExtractionStep() {
 
 }
 
+cv::Mat FeatureExtractionStep::augment(cv::Mat &descriptor,
+                                       std::vector<cv::KeyPoint> &keypoints) const
+{
+    cv::Mat1f coords(descriptor.rows, 2);
+
+    for(size_t idx = 0; idx < descriptor.rows; ++idx) {
+        coords.at<float>(idx, 0) = keypoints[idx].pt.x;
+        coords.at<float>(idx, 1) = keypoints[idx].pt.y;
+    }
+
+    cv::Mat result;
+    cv::hconcat(descriptor, coords, result);
+
+    return result;
+}
+
 
 }

@@ -112,6 +112,11 @@ bool PipeLine::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> ste
     return this->mFeatureExtraction.first.empty() && this->mFeatureMask.empty();
 }
 
+bool PipeLine::setFeatureExtractionMask(const cv::Mat &mask)
+{
+    this->mFeatureMask = mask;
+}
+
 
 bool PipeLine::removeFeatureExtractionStep() {
     if(!this->mFeatureExtraction.first.empty()) {
@@ -206,6 +211,16 @@ void PipeLine::showPipeline() {
             std::cout << this->mClassification->config() << std::endl;
         }
     }
+}
+
+cv::Mat PipeLine::currentInput() const
+{
+    return mCurrentInput;
+}
+
+void PipeLine::setCurrentInput(const cv::Mat &currentInput)
+{
+    mCurrentInput = currentInput;
 }
 
 
@@ -430,18 +445,38 @@ void PipeLine::train(const std::vector<std::string> &input,
     debug.inform("Training done!");
 }
 
-cv::Mat PipeLine::run(const std::string &input) const {
+cv::Mat PipeLine::run(const std::string &input)
+{
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    ConsoleLogger debug;
+
     //Load image file
-    cv::Mat inputMat = FileUtil::loadImage(input);
+    cv::Mat inputMat;
+    try {
+        inputMat = FileUtil::loadImage(input);
+        logger.inform("Processing file:", input);
+    } catch(IOError &e) {
+        logger.report(e.what());
+        throw;
+    }
 
     //Skip empty images
     if(inputMat.empty()) {
-        std::stringstream s;
-        s << "Unable to open input file: '" << input << "' Aborting." << std::endl;
-        error(s.str());
+        logger.report("Unable to open file:", input, "Aborting.");
         return cv::Mat();
+    } else {
+        mCurrentInput = inputMat.clone();
     }
 
+    return run(inputMat);
+}
+
+cv::Mat PipeLine::run(const cv::Mat &inputMat)
+{
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    ConsoleLogger debug;
+
+    mCurrentInput = inputMat.clone();
     cv::Mat prep;
     cv::Mat prepMask;
 
@@ -458,10 +493,8 @@ cv::Mat PipeLine::run(const std::string &input) const {
         }
         if(!this->mDebugMode) {
             prep = this->mPreprocessing[0].first->train(inputMat, prepMask);
-            inputMat.release();
         } else {
             prep = this->mPreprocessing[0].first->debugTrain(inputMat, prepMask);
-            inputMat.release();
         }
         // Process additional steps
         for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
@@ -489,22 +522,27 @@ cv::Mat PipeLine::run(const std::string &input) const {
     cv::Mat featureMask;
 
     if(!this->mFeatureExtraction.first.empty()) {
-        if(!this->mFeatureExtraction.second.empty()) {
+        if(!this->mFeatureMask.empty()) {
+            featureMask = mFeatureMask;
+        } else if(!this->mFeatureExtraction.second.empty()) {
             featureMask = this->mFeatureExtraction.second->create(prep);
             // Check if an all zero mask was generated, in that case, neglect it
             if(cv::countNonZero(featureMask) == 0) {
-                featureMask = cv::Mat::ones(prep.size(), prep.type());
+                debug.warn("Empty mask file generated.");
+//                featureMask = cv::Mat1b::ones(prep.size());
             }
         } else {
-            featureMask = cv::Mat::ones(prep.size(), prep.type());
+            featureMask = cv::Mat1b::ones(prep.size());
         }
         if(!this->mDebugMode) {
-            features = this->mFeatureExtraction.first->train(prep, featureMask);
+            features = this->mFeatureExtraction.first->run(prep, featureMask);
             prep.release();
         } else {
-            features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
+            features = this->mFeatureExtraction.first->debugRun(prep, featureMask);
             prep.release();
         }
+    } else {
+        features = prep;
     }
 
     /*********************************
@@ -514,10 +552,10 @@ cv::Mat PipeLine::run(const std::string &input) const {
     // Apply dimensionality reduction
     if(!this->mDimensionalityReduction.empty()) {
         if(!this->mDebugMode) {
-            reduced = this->mDimensionalityReduction->train(features);
+            reduced = this->mDimensionalityReduction->run(features);
             features.release();
         } else {
-            reduced = this->mDimensionalityReduction->debugTrain(features);
+            reduced = this->mDimensionalityReduction->debugRun(features);
             features.release();
         }
     } else {
@@ -546,6 +584,8 @@ cv::Mat PipeLine::run(const std::string &input) const {
         } else {
             result = this->mClassification->debugRun(encoded);
         }
+    } else {
+        result = encoded;
     }
 
     return result;
