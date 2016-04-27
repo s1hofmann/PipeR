@@ -2,6 +2,7 @@
 
 #include <opencv2/core/core.hpp>
 #include "app/mom/momprocessor.h"
+#include "app/train/trainingprocessor.h"
 
 
 int main(int argc, char *argv[]) {
@@ -16,6 +17,13 @@ int main(int argc, char *argv[]) {
                 return mp.run();
             } catch(pl::CommandLineError) {
                 return MomProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
+            }
+        } else if(!app.compare("train")) {
+            try {
+                TrainingProcessor tp(argc, argv);
+                return tp.run();
+            } catch(pl::CommandLineError) {
+                return TrainingProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
             }
         }
     }
