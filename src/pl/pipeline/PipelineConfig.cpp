@@ -168,7 +168,6 @@ std::string PipelineConfig::toString() const
     std::stringstream configString;
 
     configString << "Debug: " << (mDebugMode ? "true" : "false") << std::endl;
-    configString << "Mode: " << mode2string(mPipelineMode) << std::endl;
     configString << "Log file: " << mLogFile << std::endl;
 
     std::cout << std::endl;

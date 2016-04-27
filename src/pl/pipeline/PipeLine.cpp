@@ -150,9 +150,7 @@ void PipeLine::showPipeline() {
 
     std::cout << "Preprocessing:" << std::endl;
 
-    if(this->mPreprocessing.empty()) {
-        std::cout << "Skip." << std::endl << std::endl;
-    } else {
+    if(!this->mPreprocessing.empty()) {
         for(size_t i = 0; i < this->mPreprocessing.size(); ++i) {
             std::cout << "Method " << i << ": " << std::endl << this->mPreprocessing[i].first->info() << std::endl << std::endl;
             if(!this->mPreprocessing[i].second.empty()) {

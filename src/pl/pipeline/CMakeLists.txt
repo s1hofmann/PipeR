@@ -11,7 +11,6 @@ add_library(pipeline ConfigContainer
                      PipelineConfig
                      PipeLine
                      PipelineStep
-                     globals
-                     return_codes)
+                     globals)
 
 target_link_libraries(pipeline Qt5::Core)
