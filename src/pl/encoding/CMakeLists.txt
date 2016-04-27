@@ -5,4 +5,5 @@ add_library(encoding EncodingStep
                      bowencoder
                      bowconfig)
 
-target_link_libraries(encoding encoding_core)
+target_link_libraries(encoding encoding_core
+                               clustering_core)
