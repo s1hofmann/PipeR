@@ -77,7 +77,7 @@ int MomProcessor::run()
 
     cv::Ptr<pl::PCAConfig> decoPca = new pl::PCAConfig("deco_pca");
     decoPca->fromJSON(file);
-//    decoPipe.addDimensionalityReductionStep(new pl::PCAStep(decoPca));
+    decoPipe.addDimensionalityReductionStep(new pl::PCAStep(decoPca));
 
     // And an encoding technique
     cv::Ptr<pl::VladConfig> textEncoding = new pl::VladConfig("text_encoding");
@@ -86,7 +86,7 @@ int MomProcessor::run()
 
     cv::Ptr<pl::VladConfig> decoEncoding = new pl::VladConfig("deco_encoding");
     decoEncoding->fromJSON(file);
-//    decoPipe.addEncodingStep(new pl::VladEncodingStep(decoEncoding));
+    decoPipe.addEncodingStep(new pl::VladEncodingStep(decoEncoding));
 
     // Last but not least a classifier
     cv::Ptr<pl::SGDConfig> textCfg = new pl::SGDConfig("text_classifier");
@@ -121,13 +121,41 @@ int MomProcessor::run()
                 if(debugMode) {
                     logger.inform("Height:", input.rows, "Width:", input.cols);
                 }
+                // Add geometry info to summary
                 fileSummary.setImageHeight(input.rows);
                 fileSummary.setImageWidth(input.cols);
 
+                // Estimate decoration niveau
+                cv::Mat niveauResults = decoPipe.run(input);
+                double min, max;
+                cv::Point minIdx, maxIdx;
+                cv::minMaxLoc(niveauResults, &min, &max, &minIdx, &maxIdx);
+                int best = maxIdx.x;
+
+                switch(best) {
+                case 0:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_RICH);
+                    break;
+                case 1:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_GRAPHICAL);
+                    break;
+                case 2:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_STANDARD);
+                    break;
+                case 3:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
+                    break;
+                default:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
+                    break;
+                }
+
+                // Process text detection
                 pl::GaussianScaleSpace sp(mOctaves, mStages);
                 std::vector<cv::Mat> scales;
                 std::vector<cv::Mat> scores;
                 try {
+                    // TODO Revise scalespace to break on invalid resize
                     sp.compute(input, scales);
                 } catch(const cv::Exception) {
                     logger.report("Unable to build scalespace.");
@@ -150,84 +178,63 @@ int MomProcessor::run()
 
                     for(size_t r = 0; r < height - windowSize; r += windowSize) {
                         for(size_t c = 0; c < width - windowSize; c += windowSize) {
-                            try {
-                                cv::Range rows(r, r + windowSize);
-                                cv::Range cols(c, c + windowSize);
-                                cv::Mat part = scales[idx](rows, cols);
-                                cv::Mat s = textPipe.run(part);
-                                score(rows, cols).setTo(s.at<float>(0));
-                            } catch(const pl::ClusterError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_CLUSTERING_ERROR;
-                            } catch(const pl::DimensionalityReductionError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_DIM_ERROR;
-                            } catch(const pl::EncodingError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_ENCODING_ERROR;
-                            } catch(const pl::FeatureExError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_FEATURE_EX_ERROR;
-                            } catch(const pl::IOError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_IO_ERROR;
-                            } catch(const pl::MLError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_ML_ERROR;
-                            } catch(const pl::OCVError &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_OPENCV_ERROR;
-                            } catch(const cv::Exception &e) {
-                                logger.report(e.what());
-                                return ReturnValues::RETURN_OPENCV_ERROR;
-                            }
+                            cv::Range rows(r, r + windowSize);
+                            cv::Range cols(c, c + windowSize);
+                            cv::Mat part = scales[idx](rows, cols);
+                            cv::Mat s = textPipe.run(part);
+                            score(rows, cols).setTo(s.at<float>(0));
                         }
                     }
-
-                    try {
-                        cv::resize(score, score, input.size());
-                    } catch(const cv::Exception &e) {
-                        logger.report(e.what());
-                        return ReturnValues::RETURN_OPENCV_ERROR;
-                    }
+                    cv::resize(score, score, input.size());
 
                     scores.push_back(score);
                 }
 
                 cv::Mat1f result(input.size());
                 for(int idx = 0; idx < scales.size(); ++idx) {
-                    try {
                         result += scores[idx];
-                    } catch(const cv::Exception &e) {
-                        logger.report(e.what());
-                        return ReturnValues::RETURN_OPENCV_ERROR;
-                    }
                 }
-                try {
-                    cv::Scalar mean = cv::mean(result);
-                    cv::threshold(result, result, mean[0], 255, CV_THRESH_BINARY);
+                cv::Scalar mean = cv::mean(result);
+                cv::threshold(result, result, mean[0], 255, CV_THRESH_BINARY);
 
-                    cv::Mat textMask;
-                    // Conversion for use with findContours
-                    result.convertTo(textMask, CV_8UC1);
-                    std::vector<std::vector<cv::Point>> contours;
-                    cv::findContours(textMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-                    for(std::vector<cv::Point> contour : contours) {
-                        cv::Rect bbox = cv::boundingRect(contour);
-                        // TODO: Start at largest bbox and remove all boxes within it, the proceed to next
-                        fileSummary.addTextArea(bbox);
-                        cv::rectangle(input, bbox, cv::Scalar(0, 0, 255), 3);
-                    }
-                } catch(const cv::Exception &e) {
-                    logger.report(e.what());
-                    return ReturnValues::RETURN_OPENCV_ERROR;
+                cv::Mat textMask;
+                // Conversion for use with findContours
+                result.convertTo(textMask, CV_8UC1);
+                std::vector<std::vector<cv::Point>> contours;
+                cv::findContours(textMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+                for(std::vector<cv::Point> contour : contours) {
+                    cv::Rect bbox = cv::boundingRect(contour);
+                    // TODO: Start at largest bbox and remove all boxes within it, the proceed to next
+                    fileSummary.addTextArea(bbox);
+                    cv::rectangle(input, bbox, cv::Scalar(0, 0, 255), 3);
                 }
                 folderSummary.addFile(fileSummary);
             }
             folderSummary.save(mArguments["b"], "summary.xml");
+        } catch(const pl::ClusterError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_CLUSTERING_ERROR;
+        } catch(const pl::DimensionalityReductionError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_DIM_ERROR;
+        } catch(const pl::EncodingError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_ENCODING_ERROR;
+        } catch(const pl::FeatureExError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_FEATURE_EX_ERROR;
         } catch(const pl::IOError &e) {
             logger.report(e.what());
             return ReturnValues::RETURN_IO_ERROR;
+        } catch(const pl::MLError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_ML_ERROR;
+        } catch(const pl::OCVError &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_OPENCV_ERROR;
+        } catch(const cv::Exception &e) {
+            logger.report(e.what());
+            return ReturnValues::RETURN_OPENCV_ERROR;
         }
         return ReturnValues::RETURN_SUCCESS;
     }
