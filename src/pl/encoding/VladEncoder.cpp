@@ -76,18 +76,52 @@ cv::Mat VladEncodingStep::run(const cv::Mat &input,
 cv::Mat VladEncodingStep::debugTrain(const cv::Mat &input,
                                      const cv::Mat &param) const
 {
-    std::cout << "Debug mode" << std::endl;
-    return this->train(input,
-                       param);
+    int clusters = this->mConfig.dynamicCast<VladConfig>()->getClusters();
+    int maxIterations = this->mConfig.dynamicCast<VladConfig>()->getIterations();
+    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
+    double epsilon = this->mConfig.dynamicCast<VladConfig>()->getEpsilon();
+
+    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
+        KMeansCluster kmeans;
+        kmeans.cluster(input,
+                       clusters,
+                       maxIterations,
+                       epsilon);
+
+        kmeans.dump(vocabs[runs]);
+    }
+
+    return cv::Mat();
 }
 
 
 cv::Mat VladEncodingStep::debugRun(const cv::Mat &input,
                                    const cv::Mat &param) const
 {
-    std::cout << "Debug mode" << std::endl;
-    return this->run(input,
-                     param);
+    cv::Mat encoded;
+    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
+    int levels = this->mConfig.dynamicCast<VladConfig>()->getPyramidLevels();
+    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
+        std::string inputFile = vocabs[runs];
+
+        if(encoded.empty()) {
+            if(levels >= 1) {
+                encoded = encodePyramid(inputFile, input);
+            } else {
+                encoded = encode(inputFile, input);
+            }
+        } else {
+            if(levels >= 1) {
+                cv::Mat enc = encodePyramid(inputFile, input);
+                cv::hconcat(encoded, enc, encoded);
+            } else {
+                cv::Mat enc = encode(inputFile, input);
+                cv::hconcat(encoded, enc, encoded);
+            }
+        }
+    }
+
+    return encoded;
 }
 
 cv::Mat VladEncodingStep::encode(const std::string &encoder, const cv::Mat &data) const
