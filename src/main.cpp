@@ -11,14 +11,14 @@ int main(int argc, char *argv[]) {
     } else {
         std::string app = argv[1];
 
-        if(!app.compare("mom")) {
+        if(!app.compare("mom") || !app.compare("MOM")) {
             try {
                 MomProcessor mp(argc, argv);
                 return mp.run();
             } catch(pl::CommandLineError) {
                 return MomProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
             }
-        } else if(!app.compare("train")) {
+        } else if(!app.compare("train") || !app.compare("TRAIN")) {
             try {
                 TrainingProcessor tp(argc, argv);
                 return tp.run();
