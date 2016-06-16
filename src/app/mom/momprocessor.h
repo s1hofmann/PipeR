@@ -35,6 +35,8 @@ public:
 private:
     std::unordered_map<std::string, std::string> mArguments;
     int mWindowSize;
+    int mStepSize;
+    double mThreshold;
     int mOctaves;
     int mStages;
 };

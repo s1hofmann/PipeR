@@ -5,27 +5,39 @@ MomProcessor::MomProcessor(int argc, char *argv[])
     pl::ArgumentProcessor ap("mom");
     ap.addArgument("c", "Pipeline config.", false);
     ap.addArgument("b", "Input for batch processing.", false);
-    ap.addArgument("o", "Octaves", true);
-    ap.addArgument("s", "Substages", true);
-    ap.addArgument("w", "Window size", true);
+    ap.addArgument("octaves", "Octaves", true);
+    ap.addArgument("stages", "Substages", true);
+    ap.addArgument("window", "Window size", true);
+    ap.addArgument("step", "Step size.", true);
+    ap.addArgument("thresh", "Threshold", true);
     ap.addSwitch("d", "Debug mode");
 
     try {
         mArguments = ap.parse(argc, argv);
-        if(mArguments["o"].empty()) {
+        if(mArguments["octaves"].empty()) {
             mOctaves = 4;
         } else {
-            mOctaves = std::atoi(mArguments["o"].c_str());
+            mOctaves = std::atoi(mArguments["octaves"].c_str());
         }
-        if(mArguments["s"].empty()) {
+        if(mArguments["stages"].empty()) {
             mStages = 1;
         } else {
-            mStages = std::atoi(mArguments["s"].c_str());
+            mStages = std::atoi(mArguments["stages"].c_str());
         }
-        if(mArguments["w"].empty()) {
+        if(mArguments["window"].empty()) {
             mWindowSize = 64;
         } else {
-            mWindowSize = std::atoi(mArguments["w"].c_str());
+            mWindowSize = std::atoi(mArguments["window"].c_str());
+        }
+        if(mArguments["step"].empty()) {
+            mStepSize = mWindowSize;
+        } else {
+            mStepSize = std::atoi(mArguments["step"].c_str());
+        }
+        if(mArguments["thresh"].empty()) {
+            mThreshold = 0.5;
+        } else {
+            mThreshold = std::atoi(mArguments["thresh"].c_str());
         }
     } catch(const pl::CommandLineError &e) {
         std::cerr << e.what() << std::endl;
@@ -126,11 +138,62 @@ int MomProcessor::run()
                 fileSummary.setImageWidth(input.cols);
 
                 // Estimate decoration niveau
-                cv::Mat niveauResults = decoPipe.run(input);
+                cv::Mat niveauResults;
+//                cv::Mat niveauResults = decoPipe.run(input);
+
+                // Process text detection
+                pl::GaussianScaleSpace sp(mOctaves, mStages);
+                std::vector<cv::Mat> scales;
+                try {
+                    // TODO Revise scalespace to break on invalid resize
+                    sp.compute(input, scales);
+                } catch(const cv::Exception) {
+                    logger.report("Unable to build scalespace.");
+                    return ReturnValues::RETURN_OPENCV_ERROR;
+                }
+
+                cv::Mat1f textResult = cv::Mat1f::zeros(input.size());
+
+                for(int idx = scales.size() - 1; idx > -1; --idx) {
+                    int windowSize = mWindowSize;
+                    int width = scales[idx].cols;
+                    int height = scales[idx].rows;
+
+                    if(windowSize > width || windowSize > height) {
+                        windowSize = std::min(width, height);
+                        if(debugMode) {
+                            console.inform("Adjusting window size. New Value:", windowSize);
+                        }
+                    }
+
+                    if(niveauResults.empty()) {
+                        niveauResults = decoPipe.run(scales[idx]);
+                    } else {
+                        niveauResults += decoPipe.run(scales[idx]);
+                    }
+
+                    cv::Mat1f score = cv::Mat1f::zeros(scales[idx].size());
+
+                    for(size_t r = 0; r < height - windowSize; r += mStepSize) {
+                        for(size_t c = 0; c < width - windowSize; c += mStepSize) {
+                            cv::Range rows(r, r + windowSize);
+                            cv::Range cols(c, c + windowSize);
+                            cv::Mat part = scales[idx](rows, cols);
+                            cv::Mat s = textPipe.run(part);
+                            score(rows, cols).setTo(s.at<float>(0));
+                        }
+                    }
+                    cv::resize(score, score, input.size());
+
+                    textResult += score;
+                }
+
                 double min, max;
                 cv::Point minIdx, maxIdx;
+                std::cout << niveauResults << std::endl;
                 cv::minMaxLoc(niveauResults, &min, &max, &minIdx, &maxIdx);
                 int best = maxIdx.x;
+                std::cout << best << std::endl;
 
                 switch(best) {
                 case 0:
@@ -150,56 +213,12 @@ int MomProcessor::run()
                     break;
                 }
 
-                // Process text detection
-                pl::GaussianScaleSpace sp(mOctaves, mStages);
-                std::vector<cv::Mat> scales;
-                std::vector<cv::Mat> scores;
-                try {
-                    // TODO Revise scalespace to break on invalid resize
-                    sp.compute(input, scales);
-                } catch(const cv::Exception) {
-                    logger.report("Unable to build scalespace.");
-                    return ReturnValues::RETURN_OPENCV_ERROR;
-                }
-
-                for(int idx = scales.size() - 1; idx > -1; --idx) {
-                    int windowSize = mWindowSize;
-                    int width = scales[idx].cols;
-                    int height = scales[idx].rows;
-
-                    if(windowSize > width || windowSize > height) {
-                        windowSize = std::min(width, height);
-                        if(debugMode) {
-                            console.inform("Adjusting window size. New Value:", windowSize);
-                        }
-                    }
-
-                    cv::Mat1f score = cv::Mat1f::zeros(scales[idx].size());
-
-                    for(size_t r = 0; r < height - windowSize; r += windowSize) {
-                        for(size_t c = 0; c < width - windowSize; c += windowSize) {
-                            cv::Range rows(r, r + windowSize);
-                            cv::Range cols(c, c + windowSize);
-                            cv::Mat part = scales[idx](rows, cols);
-                            cv::Mat s = textPipe.run(part);
-                            score(rows, cols).setTo(s.at<float>(0));
-                        }
-                    }
-                    cv::resize(score, score, input.size());
-
-                    scores.push_back(score);
-                }
-
-                cv::Mat1f result(input.size());
-                for(int idx = 0; idx < scales.size(); ++idx) {
-                        result += scores[idx];
-                }
-                cv::Scalar mean = cv::mean(result);
-                cv::threshold(result, result, mean[0], 255, CV_THRESH_BINARY);
+                double maxScore = (mWindowSize / mStepSize) * scales.size();
+                cv::threshold(textResult, textResult, 0.5*maxScore, 255, CV_THRESH_BINARY);
 
                 cv::Mat textMask;
                 // Conversion for use with findContours
-                result.convertTo(textMask, CV_8UC1);
+                textResult.convertTo(textMask, CV_8UC1);
                 std::vector<std::vector<cv::Point>> contours;
                 cv::findContours(textMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
                 for(std::vector<cv::Point> contour : contours) {
@@ -208,6 +227,9 @@ int MomProcessor::run()
                     fileSummary.addTextArea(bbox);
                     cv::rectangle(input, bbox, cv::Scalar(0, 0, 255), 3);
                 }
+                // TODO: Write output to temporary file
+                cv::imwrite("/home/sim0n/bbox.png", input);
+                std::cout << file << std::endl;
                 folderSummary.addFile(fileSummary);
             }
             folderSummary.save(mArguments["b"], "summary.xml");
