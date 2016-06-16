@@ -60,6 +60,7 @@ bool PipelineConfig::fromJSON(std::string &file)
         const Json::Value params = root[identifier()];
 
         mDescriptorDir = params.get(varName(mDescriptorDir), ".").asString();
+        mOutputDir = params.get(varName(mOutputDir), mDescriptorDir).asString();
         mDescriptorLabelFile = params.get(varName(mDescriptorLabelFile), "./descriptorlabels.dat").asString();
         mMaxDescriptors = params.get(varName(mMaxDescriptors), 150000).asInt();
         mRebuildClusters = params.get(varName(mRebuildClusters), true).asBool();
@@ -167,6 +168,7 @@ std::string PipelineConfig::toString() const
 {
     std::stringstream configString;
 
+    configString << "Output directory: " << mOutputDir << std::endl;
     configString << "Debug: " << (mDebugMode ? "true" : "false") << std::endl;
     configString << "Log file: " << mLogFile << std::endl;
 
@@ -192,6 +194,16 @@ std::string PipelineConfig::getLogFile() const
 void PipelineConfig::setLogFile(const std::string &value)
 {
     mLogFile = value;
+}
+
+std::string PipelineConfig::getOutputDirectory() const
+{
+    return mOutputDir;
+}
+
+void PipelineConfig::setOutputDirectory(const std::string &outputDirectory)
+{
+    mOutputDir = outputDirectory;
 }
 
 

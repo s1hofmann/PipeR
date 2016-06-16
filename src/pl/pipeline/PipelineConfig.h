@@ -65,6 +65,9 @@ public:
 
     void setLogFile(const std::string &value);
 
+    std::string getOutputDirectory() const;
+    void setOutputDirectory(const std::string &outputDirectory);
+
 private:
     /**
      * @brief mIdentifier: Identifier string (preparation for config parsing from file)
@@ -75,6 +78,11 @@ private:
      * @brief descriptorDir
      */
     std::string mDescriptorDir;
+
+    /**
+     * @brief mOutputDirectory
+     */
+    std::string mOutputDir;
 
     /**
      * @brief descriptorLabelFile
