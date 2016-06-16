@@ -510,8 +510,6 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
     } else {
         prep = inputMat;
     }
-    // Mask is no longer needed
-    prepMask.release();
 
     /*********************************
      * FEATURE EXTRACTION
@@ -527,7 +525,6 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
             // Check if an all zero mask was generated, in that case, neglect it
             if(cv::countNonZero(featureMask) == 0) {
                 debug.warn("Empty mask file generated.");
-//                featureMask = cv::Mat1b::ones(prep.size());
             }
         } else {
             featureMask = cv::Mat1b::ones(prep.size());

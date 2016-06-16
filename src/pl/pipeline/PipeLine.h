@@ -16,6 +16,7 @@
 #include "PipelineConfig.h"
 #include "globals.h"
 #include "argumentprocessor.h"
+#include "CommandLineArgument.h"
 
 #include "../dimensionality_reduction/PCAStep.h"
 #include "../dimensionality_reduction/PCAConfig.h"
