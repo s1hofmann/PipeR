@@ -7,7 +7,7 @@ ArgumentProcessor::ArgumentProcessor(const std::string &programName)
     :
         mName(programName)
 {
-
+    addSwitch("help", "Explains available command line options.");
 }
 
 ArgumentProcessor::~ArgumentProcessor()
@@ -20,7 +20,7 @@ void ArgumentProcessor::addArgument(const std::string &arg,
                                     const bool optional,
                                     const std::vector<std::string> allowedValues)
 {
-    std::string flag = createFlag(arg);
+    std::string flag = createFlag(arg, optional);
     if(optional) {
         mOptionalArguments.push_back(flag);
         mOptionalArgumentDesc.push_back(desc);
@@ -39,7 +39,7 @@ void ArgumentProcessor::addArgument(const std::string &arg,
 void ArgumentProcessor::addSwitch(const std::string &arg,
                                   const std::string &desc)
 {
-    std::string flag = createFlag(arg);
+    std::string flag = createFlag(arg, true);
     mSwitches.push_back(flag);
     mSwitchDesc.push_back(desc);
 }
@@ -79,7 +79,17 @@ std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, 
                         argumentMap[parseFlag(currentArgument)] = nextArgument;
                     }
                 } else if(!notIn(currentArgument, mOptionalArguments) && notIn(nextArgument, {mArguments, mSwitches})) {
-                    argumentMap[parseFlag(currentArgument)] = nextArgument;
+                    if(!mAllowedValues[currentArgument].empty()) {
+                        if(!notIn(nextArgument, mAllowedValues[currentArgument])) {
+                            argumentMap[parseFlag(currentArgument)] = nextArgument;
+                        } else {
+                            std::stringstream s;
+                            s << "Encountered invalid option: " << currentArgument << " " << nextArgument << std::endl;
+                            throw CommandLineError(s.str(), currentMethod, currentLine);
+                        }
+                    } else {
+                        argumentMap[parseFlag(currentArgument)] = nextArgument;
+                    }
                 } else if(!notIn(currentArgument, mSwitches) && !notIn(nextArgument, {mArguments, mOptionalArguments})) {
                     argumentMap[parseFlag(currentArgument)] = "true";
                 }
@@ -87,12 +97,18 @@ std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, 
         }
     }
 
-    for(std::string arg : mArguments) {
-        if(argumentMap[parseFlag(arg)].empty()) {
-            std::stringstream s;
-            s << "Missing required argument: " << arg << std::endl;
-            throw CommandLineError(s.str(), currentMethod, currentLine);
+    if(argumentMap[parseFlag("--help")].empty()) {
+        for(std::string arg : mArguments) {
+            if(argumentMap[parseFlag(arg)].empty()) {
+                std::stringstream s;
+                s << "Missing required argument: " << arg << std::endl;
+                throw CommandLineError(s.str(), currentMethod, currentLine);
+            }
         }
+    } else {
+        std::stringstream s;
+        s << "Let me help you!" << std::endl;
+        throw CommandLineError(s.str());
     }
 
     return argumentMap;
@@ -111,13 +127,13 @@ std::string ArgumentProcessor::help()
     return s.str();
 }
 
-std::string ArgumentProcessor::createFlag(const std::string &arg) const
+std::string ArgumentProcessor::createFlag(const std::string &arg, const bool optional) const
 {
     std::stringstream f;
-    if(arg.size() > 1) {
-        f << "-" << arg[0];
+    if(optional) {
+        f << "--" << arg;
     } else {
-        f << "-" << arg;
+        f << "-" << arg[0];
     }
 
     return f.str();
@@ -125,10 +141,9 @@ std::string ArgumentProcessor::createFlag(const std::string &arg) const
 
 std::string ArgumentProcessor::parseFlag(const std::string &arg) const
 {
-    std::stringstream f;
-    f << arg[1];
+    size_t idx = arg.find_first_not_of("-");
 
-    return f.str();
+    return arg.substr(idx);
 }
 
 std::vector<std::string> ArgumentProcessor::toStringVector(int argc, char *argv[]) const
@@ -181,7 +196,9 @@ std::string ArgumentProcessor::switchString(std::vector<std::string> &switches,
     for(size_t idx = 0; idx < switches.size(); ++idx) {
         s << switches[idx] << " OPTIONAL";
         if(!desc[idx].empty()) {
-            s << "\t " << desc[idx];
+            s << "\t " << desc[idx] << std::endl;
+        } else {
+            s << std::endl;
         }
     }
 

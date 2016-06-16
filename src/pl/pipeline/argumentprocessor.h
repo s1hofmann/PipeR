@@ -42,7 +42,7 @@ private:
 
     std::string mName;
 
-    std::string createFlag(const std::string &arg) const;
+    std::string createFlag(const std::string &arg, const bool optional) const;
     std::string parseFlag(const std::string &arg) const;
 
     std::vector<std::string> toStringVector(int argc, char *argv[]) const;
