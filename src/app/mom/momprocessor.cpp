@@ -137,10 +137,38 @@ int MomProcessor::run()
                 fileSummary.setImageHeight(input.rows);
                 fileSummary.setImageWidth(input.cols);
 
+#ifdef MOM_DECO
                 // Estimate decoration niveau
-                cv::Mat niveauResults;
-//                cv::Mat niveauResults = decoPipe.run(input);
+                cv::Mat niveauResults = decoPipe.run(input);
 
+                double min, max;
+                cv::Point minIdx, maxIdx;
+                cv::minMaxLoc(niveauResults, &min, &max, &minIdx, &maxIdx);
+                int best = maxIdx.x + 1;
+                if(debugMode) {
+                    console.debug("Estimated niveau:", best);
+                }
+
+                switch(best) {
+                case 0:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_RICH);
+                    break;
+                case 1:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_GRAPHICAL);
+                    break;
+                case 2:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_STANDARD);
+                    break;
+                case 3:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
+                    break;
+                default:
+                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
+                    break;
+                }
+#endif
+
+#ifdef MOM_TEXT
                 // Process text detection
                 pl::GaussianScaleSpace sp(mOctaves, mStages);
                 std::vector<cv::Mat> scales;
@@ -166,12 +194,6 @@ int MomProcessor::run()
                         }
                     }
 
-                    if(niveauResults.empty()) {
-                        niveauResults = decoPipe.run(scales[idx]);
-                    } else {
-                        niveauResults += decoPipe.run(scales[idx]);
-                    }
-
                     cv::Mat1f score = cv::Mat1f::zeros(scales[idx].size());
 
                     for(size_t r = 0; r < height - windowSize; r += mStepSize) {
@@ -188,31 +210,6 @@ int MomProcessor::run()
                     textResult += score;
                 }
 
-                double min, max;
-                cv::Point minIdx, maxIdx;
-                std::cout << niveauResults << std::endl;
-                cv::minMaxLoc(niveauResults, &min, &max, &minIdx, &maxIdx);
-                int best = maxIdx.x;
-                std::cout << best << std::endl;
-
-                switch(best) {
-                case 0:
-                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_RICH);
-                    break;
-                case 1:
-                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_GRAPHICAL);
-                    break;
-                case 2:
-                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_STANDARD);
-                    break;
-                case 3:
-                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
-                    break;
-                default:
-                    fileSummary.setDecorationNiveau(pl::decorationNiveau::NIVEAU_NONE);
-                    break;
-                }
-
                 double maxScore = (mWindowSize / mStepSize) * scales.size();
                 cv::threshold(textResult, textResult, 0.5*maxScore, 255, CV_THRESH_BINARY);
 
@@ -227,9 +224,11 @@ int MomProcessor::run()
                     fileSummary.addTextArea(bbox);
                     cv::rectangle(input, bbox, cv::Scalar(0, 0, 255), 3);
                 }
+                if(debugMode) {
                 // TODO: Write output to temporary file
-                cv::imwrite("/home/sim0n/bbox.png", input);
-                std::cout << file << std::endl;
+//                	cv::imwrite("./bbox.png", input);
+                }
+#endif
                 folderSummary.addFile(fileSummary);
             }
             folderSummary.save(mArguments["b"], "summary.xml");
