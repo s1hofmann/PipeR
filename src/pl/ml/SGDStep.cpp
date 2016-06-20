@@ -28,14 +28,14 @@ cv::Mat SGDStep::train(const cv::Mat &input,
 
     cv::Mat1d dInput;
     cv::Mat1d dParam;
-    if(!input.type() == CV_64FC1) {
+    if(!(input.type() == CV_64FC1)) {
         input.convertTo(dInput, CV_64FC1);
     } else {
         dInput = input;
     }
 
     //Here param is supposed to hold label data
-    if(!param.type() == CV_64FC1) {
+    if(!(param.type() == CV_64FC1)) {
         param.convertTo(dParam, CV_64FC1);
     } else {
         dParam = param;
@@ -125,14 +125,14 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
 
     cv::Mat1d dInput;
     cv::Mat1d dParam;
-    if(!input.type() == CV_64FC1) {
+    if(!(input.type() == CV_64FC1)) {
         debug("Incompatible type of input data, converting.");
         input.convertTo(dInput, CV_64FC1);
     } else {
         dInput = input;
     }
 
-    if(!param.type() == CV_64FC1) {
+    if(!(param.type() == CV_64FC1)) {
         debug("Incompatible type of parameter data, converting.");
         param.convertTo(dParam, CV_64FC1);
     } else {
