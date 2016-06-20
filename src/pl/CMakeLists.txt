@@ -14,6 +14,9 @@ option (POSTPROCESSING
 option (MASKS
         "Enable masks?" ON)
 
+option (USE_TBB
+        "Enable TBB?" ON)
+
 include_directories ("core/clustering")
 add_subdirectory(core/clustering)
 set (EXTRA_LIBS ${EXTRA_LIBS} clustering_core)
@@ -66,6 +69,10 @@ if(ENCODING)
     add_subdirectory(encoding)
     set (EXTRA_LIBS ${EXTRA_LIBS} encoding)
 endif(ENCODING)
+
+if(USE_TBB)
+    add_definitions(-DUSE_TBB)
+endif(USE_TBB)
 
 include_directories ("feature_extraction")
 add_subdirectory(feature_extraction)
