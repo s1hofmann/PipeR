@@ -11,6 +11,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(SOURCE_FILES src/main.cpp)
 
+option (USE_TBB
+        "Enable TBB support?" ON)
+
+if(USE_TBB)
+    add_definitions(-DUSE_TBB)
+endif(USE_TBB)
+
 include_directories ("${PROJECT_SOURCE_DIR}/pl")
 add_subdirectory(src/pl)
 
