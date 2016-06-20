@@ -1,9 +1,9 @@
 # Application options
 option (TRAIN
-        "TRAIN application set?" ON)
+        "Enable TRAIN application?" ON)
 
 option (MOM
-        "MOM application set?" ON)
+        "Enable MOM application?" ON)
 
 if(TRAIN)
     add_definitions(-DAPP_TRAIN)
