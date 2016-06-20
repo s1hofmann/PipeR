@@ -1,31 +1,40 @@
 #include <iostream>
 
 #include <opencv2/core/core.hpp>
+
 #include "app/mom/momprocessor.h"
 #include "app/train/trainingprocessor.h"
 
-
 int main(int argc, char *argv[]) {
+    std::string app;
     if(argc < 2) {
         std::cerr << "No application specified. Aborting." << std::endl;
+        return -1;
     } else {
-        std::string app = argv[1];
+        app = argv[1];
+    }
 
-        if(!app.compare("mom") || !app.compare("MOM")) {
-            try {
-                MomProcessor mp(argc, argv);
-                return mp.run();
-            } catch(pl::CommandLineError) {
-                return MomProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
-            }
-        } else if(!app.compare("train") || !app.compare("TRAIN")) {
-            try {
-                TrainingProcessor tp(argc, argv);
-                return tp.run();
-            } catch(pl::CommandLineError) {
-                return TrainingProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
-            }
+#ifdef APP_MOM
+    if(!app.compare("mom") || !app.compare("MOM")) {
+        try {
+            MomProcessor mp(argc, argv);
+            return mp.run();
+        } catch(pl::CommandLineError) {
+            return MomProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
         }
     }
-    return 0;
+#endif
+#ifdef APP_TRAIN
+    if(!app.compare("train") || !app.compare("TRAIN")) {
+        try {
+            TrainingProcessor tp(argc, argv);
+            return tp.run();
+        } catch(pl::CommandLineError) {
+            return TrainingProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
+        }
+    }
+#endif
+
+    std::cerr << "Unknow application '" << app << "'. Maybe it's disabled?" << std::endl;
+    return -1;
 }
