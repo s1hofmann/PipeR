@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#if USE_TBB
+#ifdef USE_TBB
 #include <tbb/parallel_for.h>
 #endif
 

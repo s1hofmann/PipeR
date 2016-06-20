@@ -21,7 +21,7 @@ void RPCA::fit(const cv::Mat1f & descr)
     cv::reduce(descr, mean, 0, CV_REDUCE_AVG);
     cv::Mat1f X(descr.rows, descr.cols);
 
-#if USE_TBB
+#ifdef USE_TBB
     tbb::parallel_for(int(0), X.rows, [&](int y) {
         X.row(y) = descr.row(y) - mean;
     }
@@ -66,7 +66,7 @@ void RPCA::transform(const cv::Mat1f & descr,
     }
     // make data zero-mean
     cv::Mat1f X(descr.rows,descr.cols);
-#if USE_TBB
+#ifdef USE_TBB
         tbb::parallel_for(int(0), X.rows, [&](int i) {
             X.row(i) = descr.row(i) - mean;
         }
@@ -86,7 +86,7 @@ void RPCA::transform(const cv::Mat1f & descr,
         if ( reg > 0.0 )
             var_reg += reg;
         cv::sqrt(var_reg, var_reg);
-#if USE_TBB
+#ifdef USE_TBB
         tbb::parallel_for(int(0), X.rows, [&](int i) {
             cv::Mat1f row = X.row(i);
             row /= var_reg;
