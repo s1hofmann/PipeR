@@ -60,10 +60,12 @@ cv::Mat BOWEncodeingStep::run(const cv::Mat &input, const cv::Mat &param) const
 
 cv::Mat BOWEncodeingStep::debugTrain(const cv::Mat &input, const cv::Mat &param) const
 {
+    return this->train(input, param);
 }
 
 cv::Mat BOWEncodeingStep::debugRun(const cv::Mat &input, const cv::Mat &param) const
 {
+    return this->run(input, param);
 }
 
 cv::Mat BOWEncodeingStep::encode(const std::string &encoder, const cv::Mat &data) const
@@ -91,7 +93,7 @@ cv::Mat BOWEncodeingStep::encodePyramid(const std::string &encoder, const cv::Ma
     std::vector<cv::Mat> pyramid = dp.build(data);
     cv::Mat ret;
 
-    for(int i = 0; i < pyramid.size(); ++i) {
+    for(size_t i = 0; i < pyramid.size(); ++i) {
         if(ret.empty()) {
             ret = bow.encode(pyramid[i]);
         } else {
