@@ -8,9 +8,6 @@
 #include "filesummary.h"
 #include <cstdlib>
 
-#if USE_TBB
-#include <tbb/parallel_for.h>
-#endif
 
 class MomProcessor
 {

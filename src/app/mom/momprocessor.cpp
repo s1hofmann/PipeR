@@ -260,4 +260,5 @@ int MomProcessor::run()
         }
         return ReturnValues::RETURN_SUCCESS;
     }
+    return ReturnValues::RETURN_SUCCESS;
 }

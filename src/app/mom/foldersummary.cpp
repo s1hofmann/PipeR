@@ -24,6 +24,8 @@ bool FolderSummary::save(const std::string &path, const std::string &filename)
     QDomDocument doc = this->toXml();
     outStream << doc.toString();
     outFile.close();
+
+    return true;
 }
 
 QDomDocument FolderSummary::toXml()

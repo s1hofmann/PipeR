@@ -38,7 +38,7 @@ public:
     inline void setDecorationNiveau(const decorationNiveau niv) { niveau = niv; }
 
     inline int hasTextAreas() const { return textAreas.size(); }
-    inline std::vector<cv::Rect> getTextAreas() const { textAreas; }
+    inline std::vector<cv::Rect> getTextAreas() const { return textAreas; }
     inline void addTextArea(const cv::Rect &area) { textAreas.push_back(area); }
 
     QDomElement toXml();
