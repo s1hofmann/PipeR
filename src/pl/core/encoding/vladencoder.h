@@ -23,14 +23,14 @@ public:
      * @brief loadData: Loads clustering data neccessary for encoding.
      * @param file_name: Absolute path to a *.yml file containing the data.
      */
-    virtual void loadData(const std::string & fileName);
+    virtual void loadData(const std::string &fileName) override;
 
     /**
      * @brief encode: The actual encode method.
      * @param data: Data to encode.
      * @return cv::Mat1f containing encoded data.
      */
-    virtual cv::Mat encode(const cv::Mat & data) override;
+    virtual cv::Mat encode(const cv::Mat &data) override;
 
 private:
     cv::Mat1f mMeans;

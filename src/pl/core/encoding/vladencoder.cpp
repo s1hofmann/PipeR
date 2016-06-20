@@ -4,7 +4,7 @@
 #include <iostream>
 #include <chrono>
 
-#if USE_TBB
+#ifdef USE_TBB
 #include <tbb/parallel_for.h>
 #endif
 
@@ -18,7 +18,7 @@ VladEncoder::VladEncoder()
 
 VladEncoder::~VladEncoder() {}
 
-void VladEncoder::loadData(const std::string & file_name)
+void VladEncoder::loadData(const std::__1::string &file_name)
 {
     cv::FileStorage fs(file_name, cv::FileStorage::READ);
     if ( fs["means"].isNone() || fs["means"].empty() ){
@@ -40,10 +40,10 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
 
     cv::Mat vladEncoded(assignments.rows, data.cols, CV_32F);
 
-#if USE_TBB
+#ifdef USE_TBB
     tbb::parallel_for(int(0), assignments.rows, int(1), [&](int cluster) {
 #else
-    for(size_t cluster = 0; cluster < assignments.rows; ++cluster) {
+    for(int cluster = 0; cluster < assignments.rows; ++cluster) {
 #endif
         //Storage for every thread
         cv::Mat1f pAccumulator = cv::Mat1f::zeros(1, data.cols);
@@ -59,22 +59,22 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
             cv::add(pAccumulator, pTmp, pAccumulator);
         }
 
-        if(mNormType & NORM_MASS == 1) {
+        if((mNormType & NORM_MASS) == 1) {
              normalizeData(pAccumulator, NORM_MASS);
         }
-        if(mNormType & NORM_COMPONENT_L2 == 1) {
+        if((mNormType & NORM_COMPONENT_L2) == 1) {
             normalizeData(pAccumulator, NORM_COMPONENT_L2);
         }
         pAccumulator.copyTo(vladEncoded.row(cluster));
     }
-#if USE_TBB
+#ifdef USE_TBB
     );
 #endif
 
-    if(mNormType & NORM_SSR == 1) {
+    if((mNormType & NORM_SSR) == 1) {
         normalizeData(vladEncoded, NORM_SSR);
     }
-    if(mNormType & NORM_GLOBAL_L2 == 1) {
+    if((mNormType & NORM_GLOBAL_L2) == 1) {
         normalizeData(vladEncoded, NORM_GLOBAL_L2);
     }
 

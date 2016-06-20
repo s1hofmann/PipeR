@@ -115,6 +115,7 @@ bool PipeLine::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> ste
 bool PipeLine::setFeatureExtractionMask(const cv::Mat &mask)
 {
     this->mFeatureMask = mask;
+    return true;
 }
 
 

@@ -13,7 +13,7 @@ MaskGenerator::MaskGenerator(const std::string &name)
 
 }
 
-Json::Value MaskGenerator::readJSON(const std::__cxx11::string &file)
+Json::Value MaskGenerator::readJSON(const std::string &file)
 {
     Json::Reader reader;
     Json::Value root;

@@ -148,9 +148,8 @@ PipeLineMode PipelineConfig::str2mode(const std::string &modeString) const
         return PipeLineMode::MODE_RUN;
     } else if(modeString.compare("MODE_OPTIMIZE") == 0 || modeString.compare("optimize") == 0) {
         return PipeLineMode::MODE_OPTIMIZE;
-    } else {
-        return PipeLineMode::MODE_TRAIN;
     }
+    return PipeLineMode::MODE_TRAIN;
 }
 
 std::string PipelineConfig::mode2string(const PipeLineMode &mode) const
@@ -162,6 +161,8 @@ std::string PipelineConfig::mode2string(const PipeLineMode &mode) const
     } else if(mode == PipeLineMode::MODE_OPTIMIZE) {
         return "MODE_OPTIMIZE";
     }
+
+    return std::string();
 }
 
 std::string PipelineConfig::toString() const

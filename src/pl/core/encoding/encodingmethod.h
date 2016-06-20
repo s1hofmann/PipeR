@@ -31,7 +31,7 @@ public:
      * @param data {@link cv::Mat} data to encode.
      * @return {@link cv::Mat1f} containing encoded data.
      */
-    virtual cv::Mat encode(const cv::Mat &data) { }
+    virtual cv::Mat encode(const cv::Mat &data) = 0;
 
     /**
      * @brief loadData Method to load neccessary data to perfom encoding. (e.g. clustering data for VLAD encoding).
@@ -42,7 +42,7 @@ public:
     void setNormStrategy(std::vector<normStrategy> &normTypes) {
         mNormType = 0;
         for(auto norm : normTypes) {
-            mNormType += static_cast<int>(pow(2.0, (double)norm));
+            mNormType += static_cast<int>(pow(2.0, static_cast<double>(norm)));
         }
     }
 

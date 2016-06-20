@@ -61,7 +61,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
     }
 
     filtered[0].copyTo(combined);
-    for (int i = 1; i < filtered.size(); ++i) {
+    for (size_t i = 1; i < filtered.size(); ++i) {
         combined = cv::max(combined, filtered[i]);
     }
 
