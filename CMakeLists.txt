@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(pipeline_framework)
 
 #OpenCV
-find_package(OpenCV 3.0.0 REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 
 #C++11
