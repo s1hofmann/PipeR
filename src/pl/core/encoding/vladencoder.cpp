@@ -18,10 +18,10 @@ VladEncoder::VladEncoder()
 
 VladEncoder::~VladEncoder() {}
 
-void VladEncoder::loadData(const std::__1::string &file_name)
+void VladEncoder::loadData(const std::string &file_name)
 {
     cv::FileStorage fs(file_name, cv::FileStorage::READ);
-    if ( fs["means"].isNone() || fs["means"].empty() ){
+    if(fs["means"].isNone() || fs["means"].empty()) {
         std::stringstream s;
         s << "No node 'means' in file: " << file_name << std::endl;
         throw pl::EncodingError(s.str(), currentMethod, currentLine);
