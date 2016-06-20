@@ -20,6 +20,11 @@ add_subdirectory(src/app)
 # Used to import the EXTRA_LIBS variable from pipeline subfolder
 get_property(PIPELINE GLOBAL PROPERTY PIPELINE_LIBS)
 get_directory_property(APP_LIBS DIRECTORY src/app DEFINITION EXTRA_LIBS)
+get_directory_property(APPS DIRECTORY src/app DEFINITION APPS)
+
+foreach (app ${APPS})
+    add_definitions(-D${app})
+endforeach()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
