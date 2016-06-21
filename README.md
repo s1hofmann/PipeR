@@ -48,3 +48,13 @@ Since I like to design frameworks, I decided to build a modular framework for pa
 
 
 This list is by no means complete and will be extended in the future.
+
+## Thanks
+
+This project uses awesome open source libraries, so thank you very much for your work!
+
+- [OpenCV](https://github.com/Itseez/opencv)
+
+- [vlfeat](https://github.com/vlfeat/vlfeat)
+
+- [JsonCPP](https://github.com/open-source-parsers/jsoncpp)
