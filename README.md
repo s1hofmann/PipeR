@@ -20,31 +20,31 @@ Since doing things on your own actually helps you to learn lots of things, I sta
 Since I like to design frameworks, I decided to build a modular framework for pattern recognition pipelines in my spare-time.
 
 ## Status
-[x] Utils
-  [x] Logging
-  [x] I/O
-  [x] Commandline Arguments
+- [x] Utils
+  - [x] Logging
+  - [x] I/O
+  - [x] Commandline Arguments
 
-[ ] Core
-  [x] Clustering
-    [x] K-Means
-    [x] DBSCAN
-    [ ] GMM
-  [x] Dimensionality Reduction
-    [x] PCA
-  [ ] Encoding
-    [x] BoW
-    [x] VLAD
-    [ ] Fisher Vectors
-  [ ] Feature Extraction
-    [x] SIFT
-    [ ] Zernike Moments
-    [ ] OTC
-  [ ] Machine Learning
-    [x] Linear SVM
-  [ ] Preprocessing
-    [x] Vesselfilter
-    [ ] Binarization
+- [ ] Core
+  - [x] Clustering
+    - [x] K-Means
+    - [x] DBSCAN
+    - [ ] GMM
+  - [x] Dimensionality Reduction
+    - [x] PCA
+  - [ ] Encoding
+    - [x] BoW
+    - [x] VLAD
+    - [ ] Fisher Vectors
+  - [ ] Feature Extraction
+    - [x] SIFT
+    - [ ] Zernike Moments
+    - [ ] OTC
+  - [ ] Machine Learning
+    - [x] Linear SVM
+  - [ ] Preprocessing
+    - [x] Vesselfilter
+    - [ ] Binarization
 
 
 This list is by no means complete and will be extended in the future.
