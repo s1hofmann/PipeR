@@ -14,4 +14,5 @@ add_library(pipeline ConfigContainer
                      PipelineStep
                      globals)
 
-target_link_libraries(pipeline Qt5::Core)
+target_link_libraries(pipeline ${OpenCV_LIBS}
+                               Qt5::Core)

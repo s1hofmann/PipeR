@@ -5,4 +5,4 @@ add_library(utils_core progressbar
                        Range
                        jsoncpp)
 
-
+target_link_libraries(utils_core ${OpenCV_LIBS})
