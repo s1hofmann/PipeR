@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.3)
 project(pipeline_framework)
 
-#OpenCV
-find_package(OpenCV 3 REQUIRED)
-INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-
 #C++11
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
@@ -34,6 +30,5 @@ foreach (app ${APPS})
 endforeach()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS}
-                                      ${PIPELINE}
+target_link_libraries(${PROJECT_NAME} ${PIPELINE}
                                       ${APP_LIBS})

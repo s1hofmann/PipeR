@@ -6,6 +6,10 @@ set(CMAKE_AUTOMOC ON)
 # Find the QtCore library
 find_package(Qt5Core)
 
+#OpenCV
+find_package(OpenCV 3 REQUIRED)
+INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+
 add_library(io FileReader
                FileUtil
                FileWriter
@@ -15,4 +19,5 @@ add_library(io FileReader
                img
                yml)
 
-target_link_libraries(io Qt5::Core)
+target_link_libraries(io ${OpenCV_LIBS}
+                         Qt5::Core)
