@@ -1,3 +1,5 @@
+find_package(Threads REQUIRED)
+
 add_library(vlfeat vl/aib
                    vl/array
                    vl/covdet
@@ -42,4 +44,5 @@ add_library(vlfeat vl/aib
                    wrapper/sgdsolver
                    wrapper/svm_solver)
 
-target_link_libraries(vlfeat ${OpenCV_LIBS})
+target_link_libraries(vlfeat ${OpenCV_LIBS}
+                             ${CMAKE_THREAD_LIBS_INIT})
