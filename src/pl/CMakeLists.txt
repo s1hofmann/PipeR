@@ -68,8 +68,10 @@ if(ENCODING)
 endif(ENCODING)
 
 include_directories ("feature_extraction")
+add_subdirectory(core/feature_descriptors)
 add_subdirectory(feature_extraction)
-set (EXTRA_LIBS ${EXTRA_LIBS} feature_extraction)
+set (EXTRA_LIBS ${EXTRA_LIBS} feature_ex_core
+                              feature_extraction)
 
 include_directories ("ml")
 add_subdirectory(ml)
