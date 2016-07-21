@@ -3,12 +3,12 @@
 //
 
 #include <sstream>
-#include "SiftConfigContainer.h"
+#include "SiftExtractorConfig.h"
 
 namespace pl {
 
 
-SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
+SiftExtractorConfig::SiftExtractorConfig(const std::string &identifier,
                                          int nBestFeatures,
                                          int nOctaveLayers,
                                          double contrastThreshold,
@@ -29,13 +29,13 @@ SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
 }
 
 
-SiftConfigContainer::~SiftConfigContainer()
+SiftExtractorConfig::~SiftExtractorConfig()
 {
 
 }
 
 
-std::string SiftConfigContainer::toString() const
+std::string SiftExtractorConfig::toString() const
 {
     std::stringstream configString;
 
@@ -54,7 +54,7 @@ std::string SiftConfigContainer::toString() const
     return configString.str();
 }
 
-bool SiftConfigContainer::fromJSON(std::string &file)
+bool SiftExtractorConfig::fromJSON(std::string &file)
 {
     Json::Value root = readJSON(file);
 

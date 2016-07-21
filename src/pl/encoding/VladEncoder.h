@@ -18,7 +18,7 @@ namespace pl {
 
 class VladEncodingStep : public EncodingStep {
 public:
-    VladEncodingStep(const cv::Ptr<VladConfig> config);
+    VladEncodingStep(const cv::Ptr<ConfigContainer> config);
 
     virtual ~VladEncodingStep();
 

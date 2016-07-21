@@ -7,7 +7,7 @@
 namespace pl {
 
 
-VladEncodingStep::VladEncodingStep(const cv::Ptr<VladConfig> config)
+VladEncodingStep::VladEncodingStep(const cv::Ptr<ConfigContainer> config)
     :
         EncodingStep(config)
 {
@@ -24,10 +24,19 @@ VladEncodingStep::~VladEncodingStep()
 cv::Mat VladEncodingStep::train(const cv::Mat &input,
                                 const cv::Mat &param) const
 {
-    int clusters = this->mConfig.dynamicCast<VladConfig>()->getClusters();
-    int maxIterations = this->mConfig.dynamicCast<VladConfig>()->getIterations();
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
+    int clusters = config->getClusters();
+    int maxIterations = config->getIterations();
     std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
-    double epsilon = this->mConfig.dynamicCast<VladConfig>()->getEpsilon();
+    double epsilon = config->getEpsilon();
 
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         KMeansCluster kmeans;
@@ -46,9 +55,18 @@ cv::Mat VladEncodingStep::train(const cv::Mat &input,
 cv::Mat VladEncodingStep::run(const cv::Mat &input,
                               const cv::Mat &param) const
 {
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
     cv::Mat encoded;
-    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
-    int levels = this->mConfig.dynamicCast<VladConfig>()->getPyramidLevels();
+    std::vector<std::string> vocabs = config->getVocabs();
+    int levels = config->getPyramidLevels();
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         std::string inputFile = vocabs[runs];
 
@@ -76,10 +94,19 @@ cv::Mat VladEncodingStep::run(const cv::Mat &input,
 cv::Mat VladEncodingStep::debugTrain(const cv::Mat &input,
                                      const cv::Mat &param) const
 {
-    int clusters = this->mConfig.dynamicCast<VladConfig>()->getClusters();
-    int maxIterations = this->mConfig.dynamicCast<VladConfig>()->getIterations();
-    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
-    double epsilon = this->mConfig.dynamicCast<VladConfig>()->getEpsilon();
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
+    int clusters = config->getClusters();
+    int maxIterations = config->getIterations();
+    std::vector<std::string> vocabs = config->getVocabs();
+    double epsilon = config->getEpsilon();
 
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         KMeansCluster kmeans;
@@ -98,9 +125,18 @@ cv::Mat VladEncodingStep::debugTrain(const cv::Mat &input,
 cv::Mat VladEncodingStep::debugRun(const cv::Mat &input,
                                    const cv::Mat &param) const
 {
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
     cv::Mat encoded;
-    std::vector<std::string> vocabs = this->mConfig.dynamicCast<VladConfig>()->getVocabs();
-    int levels = this->mConfig.dynamicCast<VladConfig>()->getPyramidLevels();
+    std::vector<std::string> vocabs = config->getVocabs();
+    int levels = config->getPyramidLevels();
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         std::string inputFile = vocabs[runs];
 
@@ -126,7 +162,16 @@ cv::Mat VladEncodingStep::debugRun(const cv::Mat &input,
 
 cv::Mat VladEncodingStep::encode(const std::string &encoder, const cv::Mat &data) const
 {
-    std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
+    std::vector<normStrategy> normalization = config->getNormStrategies();
 
     VladEncoder vlad;
     vlad.setNormStrategy(normalization);
@@ -141,7 +186,16 @@ cv::Mat VladEncodingStep::encode(const std::string &encoder, const cv::Mat &data
 
 cv::Mat VladEncodingStep::encodePyramid(const std::string &encoder, const cv::Mat &data) const
 {
-    std::vector<normStrategy> normalization = this->mConfig.dynamicCast<VladConfig>()->getNormStrategies();
+    cv::Ptr<VladConfig> config;
+    try {
+        config = config_cast<VladConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
+    std::vector<normStrategy> normalization = config->getNormStrategies();
 
     VladEncoder vlad;
     vlad.setNormStrategy(normalization);
@@ -151,7 +205,7 @@ cv::Mat VladEncodingStep::encodePyramid(const std::string &encoder, const cv::Ma
         throw EncodingError(e.what(), currentMethod, currentLine);
     }
 
-    DescriptorPyramid dp(this->mConfig.dynamicCast<VladConfig>()->getPyramidLevels());
+    DescriptorPyramid dp(config->getPyramidLevels());
     std::vector<cv::Mat> pyramid = dp.build(data);
     cv::Mat ret;
 

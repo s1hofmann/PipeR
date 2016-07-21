@@ -4,6 +4,7 @@
 #include "../../pl/exception/error.h"
 #include "../../pl/core/utils/scalespace.h"
 #include "../../pl/logging/logging.h"
+#include "../../pl/exception/error.h"
 #include <cstdlib>
 
 
@@ -24,7 +25,8 @@ public:
         RETURN_FEATURE_EX_ERROR,
         RETURN_IO_ERROR,
         RETURN_ML_ERROR,
-        RETURN_OPENCV_ERROR
+        RETURN_OPENCV_ERROR,
+        RETURN_ERROR
     };
 
 private:

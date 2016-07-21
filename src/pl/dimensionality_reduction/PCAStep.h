@@ -12,7 +12,7 @@ namespace pl {
 class PCAStep : public DimensionalityReductionStep
 {
 public:
-    PCAStep(const cv::Ptr<PCAConfig> config);
+    PCAStep(const cv::Ptr<ConfigContainer> config);
 
     /**
      * @brief train

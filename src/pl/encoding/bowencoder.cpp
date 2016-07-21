@@ -3,7 +3,7 @@
 namespace pl {
 
 
-BOWEncodeingStep::BOWEncodeingStep(const cv::Ptr<BOWConfig> config)
+BOWEncodeingStep::BOWEncodeingStep(const cv::Ptr<ConfigContainer> config)
     :
         EncodingStep(config)
 {
@@ -12,10 +12,19 @@ BOWEncodeingStep::BOWEncodeingStep(const cv::Ptr<BOWConfig> config)
 
 cv::Mat BOWEncodeingStep::train(const cv::Mat &input, const cv::Mat &param) const
 {
-    int clusters = this->mConfig.dynamicCast<BOWConfig>()->getClusters();
-    int maxIterations = this->mConfig.dynamicCast<BOWConfig>()->getIterations();
-    std::vector<std::string> vocabs = this->mConfig.dynamicCast<BOWConfig>()->getVocabs();
-    double epsilon = this->mConfig.dynamicCast<BOWConfig>()->getEpsilon();
+    cv::Ptr<BOWConfig> config;
+    try {
+        config = config_cast<BOWConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
+    int clusters = config->getClusters();
+    int maxIterations = config->getIterations();
+    std::vector<std::string> vocabs = config->getVocabs();
+    double epsilon = config->getEpsilon();
 
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         KMeansCluster kmeans;
@@ -32,9 +41,18 @@ cv::Mat BOWEncodeingStep::train(const cv::Mat &input, const cv::Mat &param) cons
 
 cv::Mat BOWEncodeingStep::run(const cv::Mat &input, const cv::Mat &param) const
 {
+    cv::Ptr<BOWConfig> config;
+    try {
+        config = config_cast<BOWConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
     cv::Mat encoded;
-    std::vector<std::string> vocabs = this->mConfig.dynamicCast<BOWConfig>()->getVocabs();
-    int levels = this->mConfig.dynamicCast<BOWConfig>()->getPyramidLevels();
+    std::vector<std::string> vocabs = config->getVocabs();
+    int levels = config->getPyramidLevels();
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         std::string inputFile = vocabs[runs];
 
@@ -60,12 +78,20 @@ cv::Mat BOWEncodeingStep::run(const cv::Mat &input, const cv::Mat &param) const
 
 cv::Mat BOWEncodeingStep::debugTrain(const cv::Mat &input, const cv::Mat &param) const
 {
-    return this->train(input, param);
+    try {
+        return this->train(input, param);
+    } catch(EncodingError) {
+        throw;
+    }
 }
 
 cv::Mat BOWEncodeingStep::debugRun(const cv::Mat &input, const cv::Mat &param) const
 {
-    return this->run(input, param);
+    try {
+        return this->run(input, param);
+    } catch(EncodingError) {
+        throw;
+    }
 }
 
 cv::Mat BOWEncodeingStep::encode(const std::string &encoder, const cv::Mat &data) const
@@ -82,6 +108,15 @@ cv::Mat BOWEncodeingStep::encode(const std::string &encoder, const cv::Mat &data
 
 cv::Mat BOWEncodeingStep::encodePyramid(const std::string &encoder, const cv::Mat &data) const
 {
+    cv::Ptr<BOWConfig> config;
+    try {
+        config = config_cast<BOWConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
+    }
+
     BOWEncoder bow;
     try {
         bow.loadData(encoder);
@@ -89,7 +124,7 @@ cv::Mat BOWEncodeingStep::encodePyramid(const std::string &encoder, const cv::Ma
         throw EncodingError(e.what(), currentMethod, currentLine);
     }
 
-    DescriptorPyramid dp(this->mConfig.dynamicCast<BOWConfig>()->getPyramidLevels());
+    DescriptorPyramid dp(config->getPyramidLevels());
     std::vector<cv::Mat> pyramid = dp.build(data);
     cv::Mat ret;
 

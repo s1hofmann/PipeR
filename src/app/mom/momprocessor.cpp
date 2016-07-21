@@ -53,11 +53,11 @@ int MomProcessor::run()
     std::string file = mArguments["c"];
     pipeCfg->fromJSON(file);
 
-    pl::FileLogger logger(pipeCfg.dynamicCast<pl::PipelineConfig>()->getLogFile());
+    pl::FileLogger logger(pipeCfg->getLogFile());
     pl::ConsoleLogger console;
 
     bool debugMode = !mArguments["d"].empty();
-    pipeCfg.dynamicCast<pl::PipelineConfig>()->setDebugMode(debugMode);
+    pipeCfg->setDebugMode(debugMode);
 
     if(debugMode) {
         console.inform("Assembling pipeline(s).");
@@ -70,7 +70,7 @@ int MomProcessor::run()
     pl::PipeLine decoPipe(pipeCfg);
 
     // Create a feature detector / descriptor to the pipeline
-    cv::Ptr<pl::SiftConfigContainer> feCfg = new pl::SiftConfigContainer("sift");
+    cv::Ptr<pl::SiftExtractorConfig> feCfg = new pl::SiftExtractorConfig("sift");
     feCfg->fromJSON(file);
 
     // With an additional mask generator
@@ -78,9 +78,9 @@ int MomProcessor::run()
     vesselMask->fromJSON(file);
 
     // And attach it to the pipelines
-    textPipe.addFeatureExtractionStep(new pl::SiftDetector(feCfg), vesselMask);
+    textPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), vesselMask);
     // Deco pipeline doesn't use a mask generator
-    decoPipe.addFeatureExtractionStep(new pl::SiftDetector(feCfg), cv::Ptr<pl::MaskGenerator>());
+    decoPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
 
     // As well as a dimensionaltiy reduction step
     cv::Ptr<pl::PCAConfig> textPca = new pl::PCAConfig("text_pca");

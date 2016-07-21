@@ -12,7 +12,7 @@ VesselMask::VesselMask(const std::string &identifier,
                        const int stages,
                        const double sigma,
                        const double beta,
-                       const double c)
+                       const double c, const double threshold)
     :
         MaskGenerator(identifier),
         mOctaves(octaves),
@@ -38,7 +38,7 @@ cv::Mat VesselMask::create(const cv::Mat &input)
 
     cv::Mat result = vesselFilter.compute(input, mBeta, mC);
     cv::Mat1b mask = cv::Mat1b::zeros(input.size());
-    mask.setTo(1, result > 0.5);
+    mask.setTo(1, result > mThreshold);
 
     return mask;
 }
@@ -54,7 +54,8 @@ std::string VesselMask::toString() const {
       << "Stages: " << mStages << std::endl
       << std::endl
       << "Beta: " << mBeta << std::endl
-      << "C: " << mC << std::endl;
+      << "C: " << mC << std::endl
+      << "Threshold: " << mThreshold << std::endl;
 
     return s.str();
 }
@@ -74,6 +75,7 @@ bool VesselMask::fromJSON(const std::string &file)
         mSigma = params.get(varName(mSigma), 1).asDouble();
         mBeta = params.get(varName(mBeta), 0.5).asDouble();
         mC = params.get(varName(mC), 12).asDouble();
+        mThreshold = params.get(varName(mThreshold), 0.5).asDouble();
 
         return true;
     }

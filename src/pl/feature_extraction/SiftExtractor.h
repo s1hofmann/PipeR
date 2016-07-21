@@ -6,7 +6,7 @@
 #pragma once
 
 #include "FeatureExtractionStep.h"
-#include "SiftConfigContainer.h"
+#include "SiftExtractorConfig.h"
 #include <opencv2/xfeatures2d/nonfree.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
@@ -16,19 +16,19 @@ namespace pl {
 /**
  * @brief The SiftDetector class
  */
-class SiftDetector : public FeatureExtractionStep {
+class SiftExtractor : public FeatureExtractionStep {
 public:
     /**
      * @brief SiftDetector
      * @param config
      * @param info
      */
-    SiftDetector(const cv::Ptr<SiftConfigContainer> config);
+    SiftExtractor(const cv::Ptr<ConfigContainer> config);
 
     /**
      * @brief ~SiftDetector
      */
-    virtual ~SiftDetector();
+    virtual ~SiftExtractor();
 
     /**
      * @brief train

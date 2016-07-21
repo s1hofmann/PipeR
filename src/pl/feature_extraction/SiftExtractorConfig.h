@@ -13,7 +13,7 @@ namespace pl {
 /**
  * @brief The SiftConfigContainer class
  */
-class SiftConfigContainer : public ConfigContainer {
+class SiftExtractorConfig : public ConfigContainer {
 public:
     /**
      * @brief SiftConfigContainer
@@ -23,7 +23,7 @@ public:
      * @param edgeThreshold
      * @param sigma
      */
-    SiftConfigContainer(const std::string &identifier,
+    SiftExtractorConfig(const std::string &identifier,
                         int nBestFeatures = 0,
                         int nOctaveLayers = 3,
                         double contrastThreshold = 0.04,
@@ -34,7 +34,7 @@ public:
     /**
      * @brief ~SiftConfigContainer
      */
-    virtual ~SiftConfigContainer();
+    virtual ~SiftExtractorConfig();
 
     /**
      * @brief getBestFeatures

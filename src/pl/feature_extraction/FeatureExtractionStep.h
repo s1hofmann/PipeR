@@ -66,6 +66,21 @@ protected:
     virtual ~FeatureExtractionStep();
 
     cv::Mat augment(cv::Mat &descriptor, std::vector<cv::KeyPoint> &keypoints) const;
+
+private:
+    std::vector<std::string> cvDetectors = {
+        "FAST",
+        "STAR",
+        "SIFT",
+        "SURF",
+        "ORB",
+        "BRISK",
+        "MSER",
+        "GFTT",
+        "HARRIS",
+        "Dense",
+        "SimpleBlob"
+    };
 };
 
 

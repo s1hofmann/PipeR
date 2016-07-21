@@ -15,7 +15,7 @@ namespace pl {
 class SGDStep : public MLStep
 {
 public:
-    SGDStep(const cv::Ptr<SGDConfig> config);
+    SGDStep(const cv::Ptr<ConfigContainer> config);
 
     virtual ~SGDStep();
 

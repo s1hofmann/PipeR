@@ -4,15 +4,14 @@ namespace pl {
 
 
 PipeLine::PipeLine(cv::Ptr<PipelineConfig> config) {
-    mPipelineConfig = config;
-    mDebugMode = mPipelineConfig.dynamicCast<PipelineConfig>()->debugMode();
+    this->mPipelineConfig = config;
+    mDebugMode = mPipelineConfig->debugMode();
 }
 
 
 PipeLine::~PipeLine() {
 
 }
-
 
 unsigned long PipeLine::addPreprocessingStep(const cv::Ptr<PreprocessingStep> step,
                                              const cv::Ptr<MaskGenerator> mask) {
@@ -180,9 +179,9 @@ void PipeLine::showPipeline() {
 
     if(!this->mFeatureExtraction.second.empty()) {
         if(this->mDebugMode) {
-            std::cout << this->mFeatureExtraction.second->toString() << std::endl;
+            std::cout << "Mask: " << this->mFeatureExtraction.second->toString() << std::endl;
         } else {
-            std::cout << this->mFeatureExtraction.second->identifier() << std::endl;
+            std::cout << "Mask: " << this->mFeatureExtraction.second->identifier() << std::endl;
         }
     }
 

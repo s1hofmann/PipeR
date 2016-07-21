@@ -4,7 +4,7 @@
 namespace pl {
 
 
-SGDStep::SGDStep(const cv::Ptr<SGDConfig> config)
+SGDStep::SGDStep(const cv::Ptr<ConfigContainer> config)
     :
         MLStep(config)
 {
@@ -19,6 +19,15 @@ SGDStep::~SGDStep()
 cv::Mat SGDStep::train(const cv::Mat &input,
                        const cv::Mat &param) const
 {
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
     if(input.empty()) {
         throw MLError("Missing parameters, input empty.", currentMethod, currentLine);
     } else if(param.empty()) {
@@ -42,15 +51,15 @@ cv::Mat SGDStep::train(const cv::Mat &input,
     }
 
     cv::Mat1d weights = calculateWeights(dParam);
-    double lambda = this->mConfig.dynamicCast<SGDConfig>()->lambda();
-    double learningRate = this->mConfig.dynamicCast<SGDConfig>()->learningRate();
-    double epsilon = this->mConfig.dynamicCast<SGDConfig>()->epsilon();
-    double multiplier = this->mConfig.dynamicCast<SGDConfig>()->multiplier();
-    double bias = this->mConfig.dynamicCast<SGDConfig>()->bias();
-    vl_size iterations = this->mConfig.dynamicCast<SGDConfig>()->iterations();
-    vl_size maxIterations = this->mConfig.dynamicCast<SGDConfig>()->maxIterations();
+    double lambda = config->lambda();
+    double learningRate = config->learningRate();
+    double epsilon = config->epsilon();
+    double multiplier = config->multiplier();
+    double bias = config->bias();
+    vl_size iterations = config->iterations();
+    vl_size maxIterations = config->maxIterations();
 
-    cv::Mat1d model = this->mConfig.dynamicCast<SGDConfig>()->model();
+    cv::Mat1d model = config->model();
 
     cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(dInput,
                                                                             dParam,
@@ -86,7 +95,16 @@ cv::Mat SGDStep::train(const cv::Mat &input,
 cv::Mat SGDStep::run(const cv::Mat &input,
                      const cv::Mat &param) const
 {
-    std::vector<std::string> classifiers = this->mConfig.dynamicCast<SGDConfig>()->classifierFiles();
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    std::vector<std::string> classifiers = config->classifierFiles();
     cv::Mat1f results(1, classifiers.size());
 
     for(size_t idx = 0; idx < classifiers.size(); ++idx) {
@@ -118,9 +136,19 @@ cv::Mat SGDStep::run(const cv::Mat &input,
 cv::Mat SGDStep::debugTrain(const cv::Mat &input,
                             const cv::Mat &param) const
 {
-    if(input.empty() || param.empty()) {
-        std::cerr << "SGDStep::train: Missing parameters, aborting." << std::endl;
-        exit(-1);
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    if(input.empty()) {
+        throw MLError("Missing parameters, input empty.", currentMethod, currentLine);
+    } else if(param.empty()) {
+        throw MLError("Missing parameters, labels empty.", currentMethod, currentLine);
     }
 
     cv::Mat1d dInput;
@@ -140,22 +168,22 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
     }
 
     cv::Mat1d weights = calculateWeights(param);
-    double lambda = this->mConfig.dynamicCast<SGDConfig>()->lambda();
+    double lambda = config->lambda();
     debug("Lambda:", lambda);
-    double learningRate = this->mConfig.dynamicCast<SGDConfig>()->learningRate();
+    double learningRate = config->learningRate();
     debug("Learning rate:", learningRate);
-    double epsilon = this->mConfig.dynamicCast<SGDConfig>()->epsilon();
+    double epsilon = config->epsilon();
     debug("Epsilon:", epsilon);
-    double multiplier = this->mConfig.dynamicCast<SGDConfig>()->multiplier();
+    double multiplier = config->multiplier();
     debug("Multiplier:", multiplier);
-    double bias = this->mConfig.dynamicCast<SGDConfig>()->bias();
+    double bias = config->bias();
     debug("Bias:", bias);
-    vl_size iterations = this->mConfig.dynamicCast<SGDConfig>()->iterations();
+    vl_size iterations = config->iterations();
     debug("Iterations:", iterations);
-    vl_size maxIterations = this->mConfig.dynamicCast<SGDConfig>()->maxIterations();
+    vl_size maxIterations = config->maxIterations();
     debug("Max. iterations:", maxIterations);
 
-    cv::Mat1d model = this->mConfig.dynamicCast<SGDConfig>()->model();
+    cv::Mat1d model = config->model();
 
     cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(dInput,
                                                                             dParam,
@@ -193,7 +221,16 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
 cv::Mat SGDStep::debugRun(const cv::Mat &input,
                           const cv::Mat &param) const
 {
-    std::vector<std::string> classifiers = this->mConfig.dynamicCast<SGDConfig>()->classifierFiles();
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    std::vector<std::string> classifiers = config->classifierFiles();
     debug(classifiers.size(), "classifier(s)");
     cv::Mat1f results(1, classifiers.size());
 
@@ -215,12 +252,12 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
                     results.at<float>(idx) = input.dot(classifierData.first) + classifierData.second;
                 }
             }
-        } catch(std::runtime_error) {
+        } catch(MLError) {
             throw;
         }
     }
 
-    if(this->mConfig.dynamicCast<SGDConfig>()->binary()) {
+    if(config->binary()) {
         results.setTo(1, results > 0);
         results.setTo(-1, results < 0);
     }

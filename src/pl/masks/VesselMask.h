@@ -20,7 +20,8 @@ public:
                const int stages = 3,
                const double sigma = 1,
                const double beta = 0.5,
-               const double c = 15);
+               const double c = 15,
+               const double threshold = 0.5);
 
     ~VesselMask();
 
@@ -39,6 +40,7 @@ private:
     double mSigma;
     double mBeta;
     double mC;
+    double mThreshold;
 };
 
 

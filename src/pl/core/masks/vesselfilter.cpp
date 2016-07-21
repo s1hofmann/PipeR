@@ -61,6 +61,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
     }
 
     filtered[0].copyTo(combined);
+
     for (size_t i = 1; i < filtered.size(); ++i) {
         combined = cv::max(combined, filtered[i]);
     }
@@ -110,6 +111,7 @@ void VesselFilter::computeEigen(const cv::Mat &input,
                                                       cv::Mat1f mag;
                                                       cv::sqrt(v2x.mul(v2x) + v2y.mul(v2y), mag);
                                                       cv::Mat1f tmp = v2x.mul(1.0 / mag);
+
                                                       tmp.copyTo(v2x, mag != 0);
 
                                                       tmp = v2y.mul(1.0 / mag);

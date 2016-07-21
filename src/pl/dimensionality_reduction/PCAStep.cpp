@@ -4,7 +4,7 @@
 namespace pl {
 
 
-PCAStep::PCAStep(const cv::Ptr<PCAConfig> config)
+PCAStep::PCAStep(const cv::Ptr<ConfigContainer> config)
     :
         DimensionalityReductionStep(config)
 {
@@ -15,13 +15,22 @@ PCAStep::PCAStep(const cv::Ptr<PCAConfig> config)
 cv::Mat PCAStep::train(const cv::Mat &input,
                        const cv::Mat &param) const
 {
-    int components = std::min(this->mConfig.dynamicCast<PCAConfig>()->getComponents(), input.cols);
+    cv::Ptr<PCAConfig> config;
+    try {
+        config = config_cast<PCAConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
+    }
+
+    int components = std::min(config->getComponents(), input.cols);
     if(components <= 0) {
         components = input.cols;
     }
-    double epsilon = this->mConfig.dynamicCast<PCAConfig>()->getEpsilon();
-    bool whitening = this->mConfig.dynamicCast<PCAConfig>()->getWhitening();
-    std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
+    double epsilon = config->getEpsilon();
+    bool whitening = config->getWhitening();
+    std::string path = config->getPath();
 
     RPCA rpca(components,
               whitening,
@@ -42,7 +51,16 @@ cv::Mat PCAStep::train(const cv::Mat &input,
 cv::Mat PCAStep::run(const cv::Mat &input,
                      const cv::Mat &param) const
 {
-    std::string path = this->mConfig.dynamicCast<PCAConfig>()->getPath();
+    cv::Ptr<PCAConfig> config;
+    try {
+        config = config_cast<PCAConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
+    }
+
+    std::string path = config->getPath();
 
     RPCA rpca(path);
 
@@ -61,8 +79,12 @@ cv::Mat PCAStep::run(const cv::Mat &input,
 cv::Mat PCAStep::debugTrain(const cv::Mat &input,
                             const cv::Mat &param) const
 {
-    return this->train(input,
-                       param);
+    try {
+        return this->train(input,
+                           param);
+    } catch(DimensionalityReductionError) {
+        throw;
+    }
 }
 
 

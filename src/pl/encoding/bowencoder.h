@@ -13,7 +13,7 @@ namespace pl {
 class BOWEncodeingStep : public EncodingStep
 {
 public:
-    BOWEncodeingStep(const cv::Ptr<BOWConfig> config);
+    BOWEncodeingStep(const cv::Ptr<ConfigContainer> config);
 
     // PipelineStep interface
     virtual cv::Mat train(const cv::Mat &input, const cv::Mat &param) const override;
