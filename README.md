@@ -1,4 +1,4 @@
-# pipeline_framework
+# PipeR
 A framework for pattern recognition pipelines.
 
 ## A little more detail
