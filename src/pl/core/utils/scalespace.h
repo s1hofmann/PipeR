@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <opencv2/core/core.hpp>
-
+#include "../../pipeline/globals.h"
 
 namespace pl {
 
