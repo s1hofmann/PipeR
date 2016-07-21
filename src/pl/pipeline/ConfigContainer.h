@@ -6,11 +6,15 @@
 #pragma once
 
 #include <string>
+#include <fstream>
+#include <typeinfo>
+#include <opencv2/core/core.hpp>
+
 #include "globals.h"
 #include "../core/utils/json/json.h"
-#include <fstream>
 
 namespace pl {
+
 
 /**
  * Base class for each steps config class.
@@ -82,6 +86,21 @@ private:
      */
     std::string mIdentifier;
 };
+
+template <typename T>
+cv::Ptr<T> config_cast(cv::Ptr<ConfigContainer> other) {
+    try {
+        cv::Ptr<T> result = other.dynamicCast<T>();
+        if(result == nullptr) {
+            throw std::bad_cast();
+        } else {
+            return result;
+        }
+    } catch(std::bad_cast) {
+        throw;
+    }
+    throw std::bad_cast();
+}
 
 
 }
