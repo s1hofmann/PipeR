@@ -14,8 +14,8 @@ void Shuffler::shuffle(const cv::Mat &descriptors,
                        cv::Mat &shuffledDescriptors,
                        cv::Mat &shuffledLabels)
 {
-    shuffledDescriptors.create(descriptors.size(), CV_64F);
-    shuffledLabels.create(labels.size(), CV_64F);
+    shuffledDescriptors.create(descriptors.size(), descriptors.type());
+    shuffledLabels.create(labels.size(), labels.type());
 
     std::vector<int> idx = Range<int>::random(0, descriptors.rows);
 
