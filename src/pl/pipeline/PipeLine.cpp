@@ -374,6 +374,19 @@ void PipeLine::train(const std::vector<std::string> &input,
                                                     mPipelineConfig->maxDescriptors(),
                                                     true);
 
+    cv::Mat postProcessed;
+    if(!this->mPostprocessing.empty()) {
+        if(mDebugMode) {
+            debug.inform("Perfom post processing...");
+        }
+//        if(!this->mDebugMode) {
+//            postProcessed = this->mPostprocessing->train(allFeatures);
+//        } else {
+//            postProcessed = this->mPostprocessing->debugTrain(allFeatures);
+//        }
+    } else {
+        postProcessed = allFeatures;
+    }
 
     cv::Mat reduced;
     // Apply dimensionality reduction
@@ -382,9 +395,9 @@ void PipeLine::train(const std::vector<std::string> &input,
             debug.inform("Perfom dimensionality reduction...");
         }
         if(!this->mDebugMode) {
-            reduced = this->mDimensionalityReduction->train(allFeatures);
+            reduced = this->mDimensionalityReduction->train(postProcessed);
         } else {
-            reduced = this->mDimensionalityReduction->debugTrain(allFeatures);
+            reduced = this->mDimensionalityReduction->debugTrain(postProcessed);
         }
     } else {
         reduced = allFeatures;
@@ -411,17 +424,42 @@ void PipeLine::train(const std::vector<std::string> &input,
     }
 
     cv::Mat1d trainingData;
-    trainingData.reserve(filesWithLabels.first.size());
     cv::Mat1i trainingLabels;
-    trainingLabels.reserve(filesWithLabels.second.size());
 
+    if(mDebugMode) {
+        if(!this->mDimensionalityReduction.empty()) {
+            if(!this->mEncoding.empty()) {
+                debug.inform("Perfoming dimensionality reduction and encoding.");
+                logger.inform("Perfoming dimensionality reduction and encoding.");
+            } else {
+                debug.inform("Perfoming dimensionality reduction.");
+                logger.inform("Perfoming dimensionality reduction.");
+            }
+        } else if(!this->mEncoding.empty()) {
+            debug.inform("Performing encoding.");
+            logger.inform("Performing encoding.");
+        }
+    }
     // Concatenate descriptors as input to the SVM
     for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
         cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[idx]);
         int label = filesWithLabels.second[idx];
 
         trainingLabels.push_back(label);
-        trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+        if(!this->mDimensionalityReduction.empty()) {
+            if(!this->mEncoding.empty()) {
+                debug.debug("Encoding not empty");
+                trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+            } else {
+                debug.debug("Encoding empty");
+                trainingData.push_back(this->mDimensionalityReduction->run(desc));
+            }
+        } else if(!this->mEncoding.empty()) {
+            debug.debug("Encoding not empty");
+            trainingData.push_back(this->mEncoding->run(desc));
+        } else {
+            trainingData.push_back(desc);
+        }
     }
 
     // Permute data
@@ -432,6 +470,8 @@ void PipeLine::train(const std::vector<std::string> &input,
                       permutedData,
                       permutedLabels);
 
+    debug.inform("Training...");
+    logger.inform("Training...");
     try {
         this->mClassification->train(permutedData,
                                      permutedLabels);
@@ -439,8 +479,8 @@ void PipeLine::train(const std::vector<std::string> &input,
         logger.report(e.what());
     }
 
-    logger.inform("Training done!");
     debug.inform("Training done!");
+    logger.inform("Training done!");
 }
 
 cv::Mat PipeLine::run(const std::string &input)
