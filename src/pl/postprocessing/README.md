@@ -1,3 +1,3 @@
 # Postprocessing package
 
-Contains code for pipelines postprocessing step.
+Contains code needed for pipelines postprocessing step.
