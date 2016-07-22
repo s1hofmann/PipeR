@@ -6,4 +6,6 @@ add_library(exception BaseError
                       FeatureExError
                       IOError
                       MLError
-                      OCVError)
+                      OCVError
+                      PostProcessError
+                      PreProcessError)

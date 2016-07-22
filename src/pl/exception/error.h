@@ -9,3 +9,5 @@
 #include "IOError.h"
 #include "MLError.h"
 #include "OCVError.h"
+#include "PostProcessError.h"
+#include "PreProcessError.h"
