@@ -40,6 +40,12 @@ if(PREPROCESSING)
     set (EXTRA_LIBS ${EXTRA_LIBS} preprocessing)
 endif(PREPROCESSING)
 
+if(POSTPROCESSING)
+    include_directories ("postprocessing")
+    add_subdirectory(postprocessing)
+    set (EXTRA_LIBS ${EXTRA_LIBS} postprocessing)
+endif(POSTPROCESSING)
+
 if(MASKS)
     include_directories ("core/masks")
     add_subdirectory(core/masks)
