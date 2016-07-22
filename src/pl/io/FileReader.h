@@ -24,12 +24,12 @@
 namespace pl {
 
 
-template <class T>
+template <typename T>
 class FileReader {
-    static_assert(std::is_base_of<IOImpl, T>::value, "IOImpl type needed");
-
 public:
-    FileReader() {}
+    FileReader() {
+        static_assert(std::is_base_of<IOImpl, T>::value, "IOImpl type needed");
+    }
 
     virtual ~FileReader() {}
 

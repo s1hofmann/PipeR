@@ -13,12 +13,14 @@
 namespace pl {
 
 
-template <class T>
+template <typename T>
 class FileWriter
 {
-    static_assert(std::is_base_of<IOImpl, T>::value, "IOImpl type needed");
 public:
-    FileWriter() {}
+    FileWriter() {
+        static_assert(std::is_base_of<IOImpl, T>::value, "IOImpl type needed");
+    }
+
     virtual ~FileWriter() {}
 
     bool write(const cv::Mat &output,
