@@ -69,6 +69,8 @@ std::string PseudoPipelineStep::config() const
 }
 
 PseudoPipelineStep::PseudoPipelineStep(const cv::Ptr<ConfigContainer> config)
+    :
+        mConfig(config)
 {
 
 }
