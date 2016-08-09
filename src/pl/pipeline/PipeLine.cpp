@@ -47,7 +47,7 @@ bool PipeLine::removePreprocessingStep(const std::string name) {
 }
 
 
-bool PipeLine::removePreprocessingStep(const unsigned long index) {
+bool PipeLine::removePreprocessingStep(const size_t index) {
     if(this->mPreprocessing.empty()) {
         return true;
     }
@@ -59,8 +59,47 @@ bool PipeLine::removePreprocessingStep(const unsigned long index) {
     return false;
 }
 
+bool PipeLine::addFeatureDetectionStep(const cv::Ptr<FeatureDetectionStep> step,
+                                       const cv::Ptr<MaskGenerator> mask) {
+    std::pair<cv::Ptr<FeatureDetectionStep>, cv::Ptr<MaskGenerator>> p = std::make_pair(step, mask);
+    this->mFeatureDetection = p;
+    this->mFeatureDetectMask = cv::Mat();
 
-unsigned long PipeLine::addPostprocessingStep(const cv::Ptr<PipelineStep> step) {
+    return this->mFeatureDetection.first.empty() && this->mFeatureDetection.second.empty() && this->mFeatureDetectMask.empty();
+}
+
+bool PipeLine::addFeatureDetectionStep(const cv::Ptr<FeatureDetectionStep> step,
+                                       const cv::Mat &mask) {
+    std::pair<cv::Ptr<FeatureDetectionStep>, cv::Ptr<MaskGenerator>> p = std::make_pair(step, cv::Ptr<MaskGenerator>());
+    this->mFeatureDetection = p;
+    this->mFeatureDetectMask = mask;
+
+    return this->mFeatureDetection.first.empty() && this->mFeatureDetection.second.empty() && this->mFeatureDetectMask.empty();
+}
+
+bool PipeLine::setFeatureDetectionMask(const cv::Mat &mask)
+{
+    this->mFeatureDetectMask = mask;
+    return this->mFeatureDetectMask.empty();
+}
+
+bool PipeLine::removeFeatureDetectionStep()
+{
+    if(!this->mFeatureDetection.first.empty()) {
+        this->mFeatureDetection.first.release();
+    }
+    if(!this->mFeatureDetection.second.empty()) {
+        this->mFeatureDetection.second.release();
+    }
+    if(!this->mFeatureDetectMask.empty()) {
+        this->mFeatureDetectMask.release();
+    }
+
+    return this->mFeatureDetection.first.empty() && this->mFeatureDetection.second.empty() && this->mFeatureDetectMask.empty();
+}
+
+
+unsigned long PipeLine::addPostprocessingStep(const cv::Ptr<PostProcessingStep> step) {
     this->mPostprocessing.push_back(step);
     return this->mPostprocessing.size();
 }
@@ -81,7 +120,7 @@ bool PipeLine::removePostprocessingStep(const std::string name) {
 }
 
 
-bool PipeLine::removePostprocessingStep(const unsigned long index) {
+bool PipeLine::removePostprocessingStep(const size_t index) {
     if(this->mPostprocessing.empty()) {
         return true;
     }
@@ -98,23 +137,19 @@ bool PipeLine::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> ste
                                         const cv::Ptr<MaskGenerator> mask) {
     std::pair<cv::Ptr<FeatureExtractionStep>, cv::Ptr<MaskGenerator>> p = std::make_pair(step, mask);
     this->mFeatureExtraction = p;
-    return this->mFeatureExtraction.first.empty() && this->mFeatureExtraction.second.empty();
+    this->mFeatureExtractMask = cv::Mat();
+
+    return this->mFeatureExtraction.first.empty() && this->mFeatureExtraction.second.empty() && this->mFeatureExtractMask.empty();
 }
 
 
-bool PipeLine::addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step,
-                                        const cv::Mat &featureMask) {
+bool PipeLine::addFeatureExtraction(const cv::Ptr<FeatureExtractionStep> step,
+                                    const cv::Mat &mask) {
     std::pair<cv::Ptr<FeatureExtractionStep>, cv::Ptr<MaskGenerator>> p = std::make_pair(step, cv::Ptr<MaskGenerator>());
     this->mFeatureExtraction = p;
-    this->mFeatureMask = featureMask;
+    this->mFeatureExtractMask = mask;
 
-    return this->mFeatureExtraction.first.empty() && this->mFeatureMask.empty();
-}
-
-bool PipeLine::setFeatureExtractionMask(const cv::Mat &mask)
-{
-    this->mFeatureMask = mask;
-    return true;
+    return this->mFeatureDetection.first.empty() && this->mFeatureDetection.second.empty() && this->mFeatureDetectMask.empty();
 }
 
 
@@ -125,10 +160,11 @@ bool PipeLine::removeFeatureExtractionStep() {
     if(!this->mFeatureExtraction.second.empty()) {
         this->mFeatureExtraction.second.release();
     }
-    if(!this->mFeatureMask.empty()) {
-        this->mFeatureMask.release();
+    if(!this->mFeatureExtractMask.empty()) {
+        this->mFeatureExtractMask.release();
     }
-    return this->mFeatureExtraction.first.empty() && this->mFeatureExtraction.second.empty() && this->mFeatureMask.empty();
+
+    return this->mFeatureExtraction.first.empty() && this->mFeatureExtraction.second.empty() && this->mFeatureExtractMask.empty();
 }
 
 
@@ -164,8 +200,21 @@ void PipeLine::showPipeline() {
         }
     }
 
-    if(!this->mPreprocessing.empty()) {
-        std::cout << std::endl;
+    std::cout << "Feature detection:" << std::endl;
+
+    if(!this->mFeatureDetection.first.empty()) {
+        std::cout << "Method: " << this->mFeatureDetection.first->info() << std::endl;
+        if(this->mDebugMode) {
+            std::cout << this->mFeatureDetection.first->config() << std::endl;
+        }
+    }
+
+    if(!this->mFeatureDetection.second.empty()) {
+        if(this->mDebugMode) {
+            std::cout << "Mask: " << this->mFeatureDetection.second->toString() << std::endl;
+        } else {
+            std::cout << "Mask: " << this->mFeatureDetection.second->identifier() << std::endl;
+        }
     }
 
     std::cout << "Feature extraction:" << std::endl;
@@ -320,47 +369,93 @@ void PipeLine::train(const std::vector<std::string> &input,
             // Mask is no longer needed
             prepMask.release();
 
+            std::vector<cv::KeyPoint> keypoints;
             cv::Mat features;
             cv::Mat featureMask;
 
-            if(!this->mFeatureExtraction.first.empty()) {
+            if(!this->mFeatureDetection.first.empty() && !this->mFeatureExtraction.first.empty()) {
                 if(mDebugMode) {
-                    debug.inform("Starting feature extraction...");
+                    debug.inform("Starting feature extraction from keypoints...");
                 }
-                if(!this->mFeatureExtraction.second.empty()) {
+                if(!this->mFeatureDetectMask.empty()) {
+                    featureMask = this->mFeatureDetectMask.clone();
+                } else if(!this->mFeatureDetection.second.empty()) {
+                    featureMask = this->mFeatureDetection.second->create(prep);
+                    // Check if an all zero mask was generated, in that case, neglect it
+                    if(cv::countNonZero(featureMask) == 0) {
+                        featureMask = cv::Mat::ones(prep.size(), CV_8UC1);
+                    }
+                } else {
+                    featureMask = cv::Mat::ones(prep.size(), CV_8UC1);
+                }
+                if(!this->mDebugMode) {
+                    keypoints = this->mFeatureDetection.first->detect(prep, featureMask);
+                    features = this->mFeatureExtraction.first->compute(prep, keypoints);
+                } else {
+                    keypoints = this->mFeatureDetection.first->debugDetect(prep, featureMask);
+                    features = this->mFeatureExtraction.first->debugCompute(prep, keypoints);
+                }
+            } else if(!this->mFeatureExtraction.first.empty()) {
+                if(mDebugMode) {
+                    debug.inform("Starting global feature extraction...");
+                }
+                if(!this->mFeatureExtractMask.empty()) {
+                    featureMask = this->mFeatureExtractMask.clone();
+                } else if(!this->mFeatureExtraction.second.empty()) {
                     featureMask = this->mFeatureExtraction.second->create(prep);
                     // Check if an all zero mask was generated, in that case, neglect it
                     if(cv::countNonZero(featureMask) == 0) {
-                        featureMask = cv::Mat::ones(prep.size(), prep.type());
+                        featureMask = cv::Mat::ones(prep.size(), CV_8UC1);
                     }
                 } else {
-                    featureMask = cv::Mat::ones(prep.size(), prep.type());
+                    featureMask = cv::Mat::ones(prep.size(), CV_8UC1);
                 }
                 if(!this->mDebugMode) {
-                    features = this->mFeatureExtraction.first->train(prep, featureMask);
+                    features = this->mFeatureExtraction.first->compute(prep, featureMask);
                 } else {
-                    features = this->mFeatureExtraction.first->debugTrain(prep, featureMask);
-                }
-                if(!features.empty()) {
-                    QFileInfo info(QString::fromStdString(input[idx]));
-                    std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
-                    if(!FileUtil::saveDescriptorWithLabel(features,
-                                                          labels[idx],
-                                                          mPipelineConfig->descriptorDir(),
-                                                          descriptorFile,
-                                                          mPipelineConfig->descriptorLabelFile())) {
-                        logger.report("Unable to save descriptor", descriptorFile, ". Skipping!");
-                        continue;
-                    } else {
-                        continue;
-                    }
-                } else {
-                    logger.report("No features in file", input[idx], ". Skipping!");
+                    features = this->mFeatureExtraction.first->debugCompute(prep, featureMask);
                 }
             } else {
                 std::stringstream s;
                 s << "No feature extraction method given. Aborting." << std::endl;
                 throw FeatureExError(s.str(), currentMethod, currentLine);
+            }
+
+            if(!features.empty()) {
+                cv::Mat postProcessed;
+                if(!this->mPostprocessing.empty()) {
+                    // First postprocessing step
+                    if(!this->mDebugMode) {
+                        postProcessed = this->mPostprocessing[0]->train(features);
+                    } else {
+                        postProcessed = this->mPostprocessing[0]->debugTrain(features);
+                    }
+                    // Process additional steps
+                    for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+                        if(!this->mDebugMode) {
+                            postProcessed = this->mPostprocessing[idx]->train(postProcessed);
+                        } else {
+                            postProcessed = this->mPostprocessing[idx]->debugTrain(postProcessed);
+                        }
+                    }
+                } else {
+                    postProcessed = features;
+                }
+
+                QFileInfo info(QString::fromStdString(input[idx]));
+                std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
+                if(!FileUtil::saveDescriptorWithLabel(postProcessed,
+                                                      labels[idx],
+                                                      mPipelineConfig->descriptorDir(),
+                                                      descriptorFile,
+                                                      mPipelineConfig->descriptorLabelFile())) {
+                    logger.report("Unable to save descriptor", descriptorFile, ". Skipping!");
+                    continue;
+                } else {
+                    continue;
+                }
+            } else {
+                logger.report("No features in file", input[idx], ". Skipping!");
             }
         }
     }
@@ -374,18 +469,16 @@ void PipeLine::train(const std::vector<std::string> &input,
                                                     mPipelineConfig->maxDescriptors(),
                                                     true);
 
-    cv::Mat postProcessed;
-    if(!this->mPostprocessing.empty()) {
-        if(mDebugMode) {
-            debug.inform("Perfom post processing...");
-        }
-//        if(!this->mDebugMode) {
-//            postProcessed = this->mPostprocessing->train(allFeatures);
-//        } else {
-//            postProcessed = this->mPostprocessing->debugTrain(allFeatures);
-//        }
-    } else {
-        postProcessed = allFeatures;
+    cv::Ptr<FeatureConfig> config;
+    try {
+        config = config_cast<FeatureConfig>(this->mFeatureExtraction.first->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
+        throw FeatureExError(s.str(), currentMethod, currentLine);
+    }
+    if(config->augment()) {
+        allFeatures = allFeatures.colRange(0, allFeatures.cols - 2);
     }
 
     cv::Mat reduced;
@@ -395,9 +488,9 @@ void PipeLine::train(const std::vector<std::string> &input,
             debug.inform("Perfom dimensionality reduction...");
         }
         if(!this->mDebugMode) {
-            reduced = this->mDimensionalityReduction->train(postProcessed);
+            reduced = this->mDimensionalityReduction->train(allFeatures);
         } else {
-            reduced = this->mDimensionalityReduction->debugTrain(postProcessed);
+            reduced = this->mDimensionalityReduction->debugTrain(allFeatures);
         }
     } else {
         reduced = allFeatures;
@@ -538,6 +631,10 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
         for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
             if(!this->mPreprocessing[idx].second.empty()) {
                 prepMask = this->mPreprocessing[idx].second->create(prep);
+                if(cv::countNonZero(prepMask) == 0) {
+                    debug.warn("Empty preprocessing mask generated. Neglecting.");
+                    prepMask = cv::Mat::ones(prep.size(), prep.type());
+                }
             } else {
                 prepMask = cv::Mat::ones(prep.size(), prep.type());
             }
@@ -554,30 +651,69 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
     /*********************************
      * FEATURE EXTRACTION
      *********************************/
+    std::vector<cv::KeyPoint> keypoints;
     cv::Mat features;
     cv::Mat featureMask;
 
-    if(!this->mFeatureExtraction.first.empty()) {
-        if(!this->mFeatureMask.empty()) {
-            featureMask = mFeatureMask;
-        } else if(!this->mFeatureExtraction.second.empty()) {
-            featureMask = this->mFeatureExtraction.second->create(prep);
+    if(!this->mFeatureDetection.first.empty()) {
+        if(!this->mFeatureDetectMask.empty()) {
+            featureMask = this->mFeatureDetectMask;
+        } else if(!this->mFeatureDetection.second.empty()) {
+            featureMask = this->mFeatureDetection.second->create(prep);
             // Check if an all zero mask was generated, in that case, neglect it
             if(cv::countNonZero(featureMask) == 0) {
-                debug.warn("Empty mask file generated.");
+                debug.warn("Empty mask file generated. Neglecting.");
+                featureMask = cv::Mat1b::ones(prep.size());
             }
         } else {
             featureMask = cv::Mat1b::ones(prep.size());
         }
         if(!this->mDebugMode) {
-            features = this->mFeatureExtraction.first->run(prep, featureMask);
+            keypoints = this->mFeatureDetection.first->detect(prep, featureMask);
+            features = this->mFeatureExtraction.first->compute(prep, keypoints);
             prep.release();
         } else {
-            features = this->mFeatureExtraction.first->debugRun(prep, featureMask);
+            keypoints = this->mFeatureDetection.first->debugDetect(prep, featureMask);
+            features = this->mFeatureExtraction.first->debugCompute(prep, keypoints);
             prep.release();
         }
     } else {
         features = prep;
+    }
+
+    /*********************************
+     * POSTPROCESSING
+     *********************************/
+    cv::Mat post;
+    if(!this->mPostprocessing.empty()) {
+        // First postprocessing step
+        if(!this->mDebugMode) {
+            post = this->mPostprocessing[0]->train(features);
+        } else {
+            post = this->mPostprocessing[0]->debugTrain(features);
+        }
+        // Process additional steps
+        for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+            if(!this->mDebugMode) {
+                post = this->mPostprocessing[idx]->train(post);
+            } else {
+                post = this->mPostprocessing[idx]->debugTrain(post);
+            }
+        }
+    } else {
+        post = features;
+    }
+
+    cv::Ptr<FeatureConfig> config;
+    try {
+        config = config_cast<FeatureConfig>(this->mFeatureExtraction.first->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
+        throw FeatureExError(s.str(), currentMethod, currentLine);
+    }
+    if(config->augment()) {
+        post = post.colRange(0, post.cols - 2);
     }
 
     /*********************************

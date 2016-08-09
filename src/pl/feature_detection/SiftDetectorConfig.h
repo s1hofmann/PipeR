@@ -13,7 +13,7 @@ namespace pl {
 /**
  * @brief The SiftConfigContainer class
  */
-class SiftConfigContainer : public ConfigContainer {
+class SiftDetectorConfig : public ConfigContainer {
 public:
     /**
      * @brief SiftConfigContainer
@@ -23,24 +23,24 @@ public:
      * @param edgeThreshold
      * @param sigma
      */
-    SiftConfigContainer(const std::string &identifier,
-                        int nBestFeatures = 0,
-                        int nOctaveLayers = 3,
-                        double contrastThreshold = 0.04,
-                        double edgeThreshold = 10,
-                        double sigma = 1.6,
-                        bool augment = true);
+    SiftDetectorConfig(const std::string &identifier,
+                       int nBestFeatures = 0,
+                       int nOctaveLayers = 3,
+                       double contrastThreshold = 0.04,
+                       double edgeThreshold = 10,
+                       double sigma = 1.6,
+                       bool augment = true);
 
     /**
      * @brief ~SiftConfigContainer
      */
-    virtual ~SiftConfigContainer();
+    virtual ~SiftDetectorConfig();
 
     /**
      * @brief getBestFeatures
      * @return
      */
-    inline int getBestFeatures() const {
+    int getBestFeatures() const {
         return mBestFeatures;
     }
 
@@ -48,7 +48,7 @@ public:
      * @brief getOctaves
      * @return
      */
-    inline int getOctaves() const {
+    int getOctaves() const {
         return mOctaves;
     }
 
@@ -56,7 +56,7 @@ public:
      * @brief getContrastThresh
      * @return
      */
-    inline double getContrastThresh() const {
+    double getContrastThresh() const {
         return mContrastThresh;
     }
 
@@ -64,7 +64,7 @@ public:
      * @brief getEdgeThresh
      * @return
      */
-    inline double getEdgeThresh() const {
+    double getEdgeThresh() const {
         return mEdgeThresh;
     }
 
@@ -72,7 +72,7 @@ public:
      * @brief getSigma
      * @return
      */
-    inline double getSigma() const {
+    double getSigma() const {
         return mSigma;
     }
 
@@ -80,11 +80,11 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    inline bool augment() const {
+    bool augment() const {
         return mAugment;
     }
 
-    inline void setAugment(bool augment) {
+    void setAugment(bool augment) {
         mAugment = augment;
     }
 

@@ -3,18 +3,18 @@
 //
 
 #include <sstream>
-#include "SiftConfigContainer.h"
+#include "SiftDetectorConfig.h"
 
 namespace pl {
 
 
-SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
-                                         int nBestFeatures,
-                                         int nOctaveLayers,
-                                         double contrastThreshold,
-                                         double edgeThreshold,
-                                         double sigma,
-                                         bool augment)
+SiftDetectorConfig::SiftDetectorConfig(const std::string &identifier,
+                                       int nBestFeatures,
+                                       int nOctaveLayers,
+                                       double contrastThreshold,
+                                       double edgeThreshold,
+                                       double sigma,
+                                       bool augment)
     :
         ConfigContainer(identifier,
                         "Parameter description",
@@ -29,13 +29,13 @@ SiftConfigContainer::SiftConfigContainer(const std::string &identifier,
 }
 
 
-SiftConfigContainer::~SiftConfigContainer()
+SiftDetectorConfig::~SiftDetectorConfig()
 {
 
 }
 
 
-std::string SiftConfigContainer::toString() const
+std::string SiftDetectorConfig::toString() const
 {
     std::stringstream configString;
 
@@ -54,7 +54,7 @@ std::string SiftConfigContainer::toString() const
     return configString.str();
 }
 
-bool SiftConfigContainer::fromJSON(std::string &file)
+bool SiftDetectorConfig::fromJSON(std::string &file)
 {
     Json::Value root = readJSON(file);
 
@@ -63,8 +63,8 @@ bool SiftConfigContainer::fromJSON(std::string &file)
     } else {
         const Json::Value params = root[identifier()];
 
-        mBestFeatures = params.get(varName(mBestFeatures), 0.0).asDouble();
-        mOctaves = params.get(varName(mOctaves), 3.0).asDouble();
+        mBestFeatures = params.get(varName(mBestFeatures), 0).asInt();
+        mOctaves = params.get(varName(mOctaves), 3).asInt();
         mContrastThresh = params.get(varName(mContrastThresh), 0.04).asDouble();
         mEdgeThresh = params.get(varName(mEdgeThresh), 10.0).asDouble();
         mSigma = params.get(varName(mSigma), 1.6).asDouble();

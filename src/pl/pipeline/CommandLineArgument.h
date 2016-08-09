@@ -10,8 +10,8 @@ template <typename T>
 class CommandLineArgument
 {
 public:
-    CommandLineArgument(std::string &name,
-                        std::string &description = std::string())
+    CommandLineArgument(const std::string &name,
+                        const std::string &description = std::string())
         :
             mName(name),
             mDescription(description)
@@ -19,9 +19,9 @@ public:
 
     }
 
-    CommandLineArgument(std::string &name,
-                        T defaultValue,
-                        std::string &description = std::string())
+    CommandLineArgument(const std::string &name,
+                        const T defaultValue,
+                        const std::string &description = std::string())
         :
             mName(name),
             mDescription(description),
@@ -30,9 +30,9 @@ public:
 
     }
 
-    CommandLineArgument(std::string &name,
-                        std::vector<T> &allowedValues,
-                        std::string &description = std::string())
+    CommandLineArgument(const std::string &name,
+                        const std::vector<T> &allowedValues,
+                        const std::string &description = std::string())
         :
             mName(name),
             mDescription(description),
@@ -41,10 +41,10 @@ public:
 
     }
 
-    CommandLineArgument(std::string &name,
-                        T &defaultValue,
-                        std::vector<T> &allowedValues,
-                        std::string &description = std::string())
+    CommandLineArgument(const std::string &name,
+                        const T &defaultValue,
+                        const std::vector<T> &allowedValues,
+                        const std::string &description = std::string())
         :
             mName(name),
             mDescription(description),

@@ -14,7 +14,7 @@ namespace pl {
 /**
  * @brief The FeatureExtractionStep class
  */
-class FeatureExtractionStep : public PipelineStep {
+class FeatureExtractionStep : public PseudoPipelineStep {
 public:
     /**
      * @brief train
@@ -22,35 +22,41 @@ public:
      * @param param
      * @return
      */
-    virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &param = cv::Mat()) const = 0;
+    virtual cv::Mat compute(const cv::Mat &input,
+                            std::vector<cv::KeyPoint> &keypoints) const {
+        return cv::Mat();
+    }
 
     /**
-     * @brief run
+     * @brief compute
      * @param input
-     * @param param
      * @return
      */
-    virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &param = cv::Mat()) const = 0;
+    virtual cv::Mat compute(const cv::Mat &input,
+                            const cv::Mat &mask) const {
+        return cv::Mat();
+    }
 
     /**
-     * @brief debugTrain
+     * @brief debugCompute
      * @param input
-     * @param param
+     * @param keypoints
      * @return
      */
-    virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &param = cv::Mat()) const = 0;
+    virtual cv::Mat debugCompute(const cv::Mat &input,
+                                 std::vector<cv::KeyPoint> &keypoints) const {
+        return cv::Mat();
+    }
 
     /**
-     * @brief debugRun
+     * @brief debugCompute
      * @param input
-     * @param param
      * @return
      */
-    virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &param = cv::Mat()) const = 0;
+    virtual cv::Mat debugCompute(const cv::Mat &input,
+                                 const cv::Mat &mask) const {
+        return cv::Mat();
+    }
 
 protected:
     /**
@@ -68,7 +74,7 @@ protected:
     cv::Mat augment(cv::Mat &descriptor, std::vector<cv::KeyPoint> &keypoints) const;
 
 private:
-    std::vector<std::string> cvDetectors = {
+    std::vector<std::string> cvExtractors = {
         "FAST",
         "STAR",
         "SIFT",

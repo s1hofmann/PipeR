@@ -70,7 +70,9 @@ int MomProcessor::run()
     pl::PipeLine decoPipe(pipeCfg);
 
     // Create a feature detector / descriptor to the pipeline
+    cv::Ptr<pl::SiftDetectorConfig> fdCfg = new pl::SiftDetectorConfig("sift");
     cv::Ptr<pl::SiftExtractorConfig> feCfg = new pl::SiftExtractorConfig("sift");
+    fdCfg->fromJSON(file);
     feCfg->fromJSON(file);
 
     // With an additional mask generator
@@ -78,8 +80,10 @@ int MomProcessor::run()
     vesselMask->fromJSON(file);
 
     // And attach it to the pipelines
-    textPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), vesselMask);
+    textPipe.addFeatureDetectionStep(new pl::SiftDetector(fdCfg), vesselMask);
+    textPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
     // Deco pipeline doesn't use a mask generator
+    decoPipe.addFeatureDetectionStep(new pl::SiftDetector(fdCfg), cv::Ptr<pl::MaskGenerator>());
     decoPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
 
     // As well as a dimensionaltiy reduction step

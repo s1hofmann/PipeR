@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "../pipeline/ConfigContainer.h"
+#include "FeatureConfig.h"
 
 namespace pl {
 
@@ -13,7 +13,7 @@ namespace pl {
 /**
  * @brief The SiftConfigContainer class
  */
-class SiftExtractorConfig : public ConfigContainer {
+class SiftExtractorConfig : public FeatureConfig {
 public:
     /**
      * @brief SiftConfigContainer
@@ -40,7 +40,7 @@ public:
      * @brief getBestFeatures
      * @return
      */
-    inline int getBestFeatures() const {
+    int getBestFeatures() const {
         return mBestFeatures;
     }
 
@@ -48,7 +48,7 @@ public:
      * @brief getOctaves
      * @return
      */
-    inline int getOctaves() const {
+    int getOctaves() const {
         return mOctaves;
     }
 
@@ -56,7 +56,7 @@ public:
      * @brief getContrastThresh
      * @return
      */
-    inline double getContrastThresh() const {
+    double getContrastThresh() const {
         return mContrastThresh;
     }
 
@@ -64,7 +64,7 @@ public:
      * @brief getEdgeThresh
      * @return
      */
-    inline double getEdgeThresh() const {
+    double getEdgeThresh() const {
         return mEdgeThresh;
     }
 
@@ -72,7 +72,7 @@ public:
      * @brief getSigma
      * @return
      */
-    inline double getSigma() const {
+    double getSigma() const {
         return mSigma;
     }
 
@@ -80,11 +80,11 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    inline bool augment() const {
+    bool augment() const {
         return mAugment;
     }
 
-    inline void setAugment(bool augment) {
+    void setAugment(bool augment) {
         mAugment = augment;
     }
 

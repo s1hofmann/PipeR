@@ -48,5 +48,35 @@ std::string PipelineStep::identifier() const
     return mConfig->identifier();
 }
 
+std::string PseudoPipelineStep::info()
+{
+    return mConfig->identifier();
+}
+
+std::string PseudoPipelineStep::help()
+{
+    return mConfig->help();
+}
+
+std::string PseudoPipelineStep::usage()
+{
+    return mConfig->usage();
+}
+
+std::string PseudoPipelineStep::config() const
+{
+    return mConfig->toString();
+}
+
+PseudoPipelineStep::PseudoPipelineStep(const cv::Ptr<ConfigContainer> config)
+{
+
+}
+
+PseudoPipelineStep::~PseudoPipelineStep()
+{
+
+}
+
 
 }

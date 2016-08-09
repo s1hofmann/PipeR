@@ -22,11 +22,14 @@
 #include "../dimensionality_reduction/PCAConfig.h"
 #include "../encoding/VladEncoder.h"
 #include "../encoding/VladConfig.h"
+#include "../feature_detection/siftdetector.h"
+#include "../feature_detection/SiftDetectorConfig.h"
 #include "../feature_extraction/SiftExtractor.h"
 #include "../feature_extraction/SiftExtractorConfig.h"
 #include "../io/FileUtil.h"
 #include "../masks/VesselMask.h"
 #include "../preprocessing/BinarizationStep.h"
+#include "../postprocessing/postprocessingstep.h"
 #include "../ml/SGDConfig.h"
 #include "../ml/SGDStep.h"
 #include "../core/utils/Shuffler.h"
@@ -99,7 +102,38 @@ public:
      * @param index
      * @return
      */
-    bool removePreprocessingStep(const unsigned long index);
+    bool removePreprocessingStep(const size_t index);
+
+    /**
+     * @brief addFeatureDetectionStep
+     * @param step
+     * @param mask
+     * @return
+     */
+    bool addFeatureDetectionStep(const cv::Ptr<FeatureDetectionStep> step,
+                                 const cv::Ptr<MaskGenerator> mask);
+
+    /**
+     * @brief addFeatureDetectionStep
+     * @param step
+     * @param mask
+     * @return
+     */
+    bool addFeatureDetectionStep(const cv::Ptr<FeatureDetectionStep> step,
+                                 const cv::Mat &mask);
+
+    /**
+     * @brief setFeatureDetectionMask
+     * @param mask
+     * @return
+     */
+    bool setFeatureDetectionMask(const cv::Mat &mask);
+
+    /**
+     * @brief removeFeatureDetectionStep
+     * @return
+     */
+    bool removeFeatureDetectionStep();
 
     /**
      * @brief addFeatureExtractionStep
@@ -107,7 +141,7 @@ public:
      * @return
      */
     bool addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step,
-                                  const cv::Ptr<MaskGenerator> mask = cv::Ptr<MaskGenerator>());
+                                  const cv::Ptr<MaskGenerator> mask);
 
     /**
      * @brief addFeatureExtractionStep
@@ -116,7 +150,15 @@ public:
      * @return
      */
     bool addFeatureExtractionStep(const cv::Ptr<FeatureExtractionStep> step,
-                                  const cv::Mat &mask=cv::Mat());
+                                  const cv::Mat &mask);
+
+    /**
+     * @brief addFeatureExtraction
+     * @param step
+     * @param mask
+     * @return
+     */
+    bool addFeatureExtraction(const cv::Ptr<FeatureExtractionStep> step, const cv::Mat &mask);
 
     /**
      * @brief setFeatureExtractionMask
@@ -136,7 +178,7 @@ public:
      * @param step
      * @return
      */
-    unsigned long addPostprocessingStep(const cv::Ptr<PipelineStep> step);
+    unsigned long addPostprocessingStep(const cv::Ptr<PostProcessingStep> step);
 
     /**
      * @brief removePostprocessingStep
@@ -224,19 +266,34 @@ private:
     std::vector<std::pair<cv::Ptr<PreprocessingStep>, cv::Ptr<MaskGenerator>>> mPreprocessing;
 
     /**
+     * @brief mFeatureDetection
+     */
+    std::pair<cv::Ptr<FeatureDetectionStep>, cv::Ptr<MaskGenerator>> mFeatureDetection;
+
+    /**
      * @brief mFeatureExtraction
      */
     std::pair<cv::Ptr<FeatureExtractionStep>, cv::Ptr<MaskGenerator>> mFeatureExtraction;
 
     /**
+     * @brief mPreprocessMask
+     */
+    std::vector<cv::Mat> mPreprocessMasks;
+
+    /**
      * @brief mFeatureMask
      */
-    cv::Mat mFeatureMask;
+    cv::Mat mFeatureDetectMask;
+
+    /**
+     * @brief mFeatureExtractMask
+     */
+    cv::Mat mFeatureExtractMask;
 
     /**
      * @brief mPostprocessing
      */
-    std::vector<cv::Ptr<PipelineStep>> mPostprocessing;
+    std::vector<cv::Ptr<PostProcessingStep>> mPostprocessing;
 
     /**
      * @brief mDimensionalityReduction

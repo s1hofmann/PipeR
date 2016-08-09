@@ -85,6 +85,11 @@ public:
      */
     std::string identifier() const;
 
+    /**
+     * @brief mConfig
+     */
+    cv::Ptr<ConfigContainer> mConfig;
+
 protected:
     /**
      * @brief PipelineStep
@@ -98,10 +103,59 @@ protected:
      */
     virtual ~PipelineStep();
 
+private:
+};
+
+
+class PseudoPipelineStep {
+public:
+    /**
+     * @brief info
+     * @return
+     */
+    std::string info();
+
+    /**
+     * @brief help
+     * @return
+     */
+    std::string help();
+
+    /**
+     * @brief usage
+     * @return
+     */
+    std::string usage();
+
+    /**
+     * @brief config
+     * @return
+     */
+    std::string config() const;
+
+    /**
+     * @brief id
+     * @return
+     */
+    std::string identifier() const;
+
     /**
      * @brief mConfig
      */
     cv::Ptr<ConfigContainer> mConfig;
+
+protected:
+    /**
+     * @brief PipelineStep
+     * @param config
+     * @param info
+     */
+    PseudoPipelineStep(const cv::Ptr<ConfigContainer> config);
+
+    /**
+     * @brief ~PipelineStep
+     */
+    virtual ~PseudoPipelineStep();
 
 private:
 };

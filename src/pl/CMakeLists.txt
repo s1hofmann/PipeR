@@ -73,11 +73,20 @@ if(ENCODING)
     set (EXTRA_LIBS ${EXTRA_LIBS} encoding)
 endif(ENCODING)
 
+include_directories ("feature_detection")
+add_subdirectory(feature_detection)
+set (EXTRA_LIBS ${EXTRA_LIBS} #feature_detect_core
+                              feature_detect)
+#include_directories ("core/feature_detection")
+#add_subdirectory(core/feature_detection)
+#set (EXTRA_LIBS ${EXTRA_LIBS} #feature_detect_core)
+
 include_directories ("feature_extraction")
-add_subdirectory(core/feature_descriptors)
 add_subdirectory(feature_extraction)
-set (EXTRA_LIBS ${EXTRA_LIBS} feature_ex_core
-                              feature_extraction)
+set (EXTRA_LIBS ${EXTRA_LIBS} feature_extract)
+include_directories ("core/feature_extraction")
+add_subdirectory(core/feature_extraction)
+set (EXTRA_LIBS ${EXTRA_LIBS} feature_extract_core)
 
 include_directories ("ml")
 add_subdirectory(ml)

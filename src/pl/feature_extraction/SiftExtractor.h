@@ -31,42 +31,25 @@ public:
     virtual ~SiftExtractor();
 
     /**
-     * @brief train
+     * @brief compute
      * @param input
-     * @param mask
+     * @param keypoints
      * @return
      */
-    virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &param = cv::Mat()) const;
+    virtual cv::Mat compute(const cv::Mat &input,
+                            std::vector<cv::KeyPoint> &keypoints) const override;
 
     /**
-     * @brief run
+     * @brief debugCompute
      * @param input
-     * @param mask
+     * @param keypoints
      * @return
      */
-    virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &param = cv::Mat()) const;
-
-    /**
-     * @brief debugTrain
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &param = cv::Mat()) const;
-
-    /**
-     * @brief debugRun
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &param = cv::Mat()) const;
+    virtual cv::Mat debugCompute(const cv::Mat &input,
+                                 std::vector<cv::KeyPoint> &keypoints) const override;
 
 private:
+
 };
 
 

@@ -1,3 +1,5 @@
-add_library(feature_detection SiftDetectorConfig)
+add_library(feature_detect SiftDetectorConfig
+                           SiftDetector
+                           FeatureDetectionStep)
 
-target_link_libraries(feature_detection ${OpenCV_LIBS})
+target_link_libraries(feature_detect ${OpenCV_LIBS})

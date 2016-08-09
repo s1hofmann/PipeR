@@ -1,5 +1,6 @@
-add_library(feature_extraction FeatureExtractionStep
-                               SiftExtractorConfig
-                               SiftExtractor)
+add_library(feature_extract FeatureExtractionStep
+                            FeatureConfig
+                            SiftExtractorConfig
+                            SiftExtractor)
 
-target_link_libraries(feature_extraction ${OpenCV_LIBS})
+target_link_libraries(feature_extract ${OpenCV_LIBS})
