@@ -133,7 +133,7 @@ std::string ArgumentProcessor::createFlag(const std::string &arg, const bool opt
     if(optional) {
         f << "--" << arg;
     } else {
-        f << "-" << arg[0];
+        f << "-" << arg;
     }
 
     return f.str();
