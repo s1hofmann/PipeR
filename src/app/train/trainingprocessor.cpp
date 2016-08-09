@@ -3,14 +3,14 @@
 TrainingProcessor::TrainingProcessor(int argc, char *argv[])
 {
     pl::ArgumentProcessor ap("train");
-    ap.addArgument("c", "Pipeline config.", false);
-    ap.addArgument("i", "Label file.", false);
+    ap.addArgument("conf", "Pipeline config.", false);
+    ap.addArgument("labels", "Label file.", false);
     ap.addArgument("enc", "Encoding", true, {"vlad"});
     ap.addArgument("fdet", "Feature detector.", true, {"sift"});
     ap.addArgument("fex", "Feature descriptor.", false, {"sift"});
     ap.addArgument("fmask", "Feature mask.", true, {"vessel"});
-    ap.addArgument("r", "Dimensionality reduction.", true, {"pca"});
-    ap.addArgument("l", "Learning method.", false, {"sgd"});
+    ap.addArgument("red", "Dimensionality reduction.", true, {"pca"});
+    ap.addArgument("learn", "Learning method.", false, {"sgd"});
     ap.addSwitch("d", "Debug mode");
 
     try {
@@ -26,7 +26,7 @@ int TrainingProcessor::run()
 {
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
-    std::string file = mArguments["c"];
+    std::string file = mArguments["conf"];
     pipeCfg->fromJSON(file);
 
     pl::FileLogger logger(pipeCfg->getLogFile());
@@ -75,7 +75,7 @@ int TrainingProcessor::run()
         }
 
     //    Dimensionality reduction
-        std::string reductionMethod = mArguments["r"];
+        std::string reductionMethod = mArguments["red"];
         if(!reductionMethod.compare("pca")) {
             cv::Ptr<pl::PCAConfig> pca = new pl::PCAConfig(reductionMethod);
             pca->fromJSON(file);
@@ -83,7 +83,7 @@ int TrainingProcessor::run()
         }
 
     //    Encoding
-        std::string encodingMethod = mArguments["e"];
+        std::string encodingMethod = mArguments["enc"];
         if(!encodingMethod.compare("vlad")) {
             cv::Ptr<pl::VladConfig> encoding = new pl::VladConfig(encodingMethod);
             encoding->fromJSON(file);
@@ -91,7 +91,7 @@ int TrainingProcessor::run()
         }
 
     //    Learning algorithm
-        std::string learningAlgo = mArguments["l"];
+        std::string learningAlgo = mArguments["learn"];
         if(!learningAlgo.compare("sgd")) {
             cv::Ptr<pl::SGDConfig> sgd = new pl::SGDConfig(learningAlgo);
             sgd->fromJSON(file);
@@ -101,7 +101,7 @@ int TrainingProcessor::run()
         trainPipe.showPipeline();
         pl::FileUtil fu;
 
-        std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["i"]);
+        std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
         trainPipe.train(filesWithLabels.first, filesWithLabels.second);
     } catch(const pl::ClusterError &e) {
         console.report(e.what());
