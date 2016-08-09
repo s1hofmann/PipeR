@@ -7,8 +7,15 @@
 
 int main(int argc, char *argv[]) {
     std::string app;
+    // TODO: Let cmake take care of this list of enabled apps
+    std::vector<std::string> apps = {"mom", "train"};
+
     if(argc < 2) {
         std::cerr << "No application specified. Aborting." << std::endl;
+        std::cerr << "Known applications:" << std::endl;
+        for(std::string a : apps) {
+            std::cout << a << std::endl;
+        }
         return -1;
     } else {
         app = argv[1];
