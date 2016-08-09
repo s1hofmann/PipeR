@@ -16,6 +16,7 @@ option (USE_TBB
 
 if(USE_TBB)
     add_definitions(-DUSE_TBB)
+    set(CMAKE_CXX_FLAGS -ltbb)
 endif(USE_TBB)
 
 include_directories ("${PROJECT_SOURCE_DIR}/pl")
