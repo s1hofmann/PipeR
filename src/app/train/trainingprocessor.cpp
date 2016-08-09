@@ -5,9 +5,10 @@ TrainingProcessor::TrainingProcessor(int argc, char *argv[])
     pl::ArgumentProcessor ap("train");
     ap.addArgument("c", "Pipeline config.", false);
     ap.addArgument("i", "Label file.", false);
-    ap.addArgument("e", "Encoding", true, {"vlad"});
-    ap.addArgument("f", "Feature descriptor.", false, {"sift"});
-    ap.addArgument("m", "Feature mask.", true, {"vessel"});
+    ap.addArgument("enc", "Encoding", true, {"vlad"});
+    ap.addArgument("fdet", "Feature detector.", true, {"sift"});
+    ap.addArgument("fex", "Feature descriptor.", false, {"sift"});
+    ap.addArgument("fmask", "Feature mask.", true, {"vessel"});
     ap.addArgument("r", "Dimensionality reduction.", true, {"pca"});
     ap.addArgument("l", "Learning method.", false, {"sgd"});
     ap.addSwitch("d", "Debug mode");
@@ -46,14 +47,14 @@ int TrainingProcessor::run()
 
         // Create a feature detector / descriptor to the pipeline
         cv::Ptr<pl::ConfigContainer> fdCfg;
-        std::string featureDetector = mArguments["fd"];
+        std::string featureDetector = mArguments["fdet"];
         if(!featureDetector.compare("sift")) {
             fdCfg = new pl::SiftDetectorConfig(featureDetector);
             fdCfg->fromJSON(file);
 
-            if(!mArguments["m"].empty()) {
+            if(!mArguments["fmask"].empty()) {
                 // With an additional mask generator
-                std::string maskType = mArguments["m"];
+                std::string maskType = mArguments["fmask"];
                 if(!maskType.compare("vessel")) {
                     cv::Ptr<pl::VesselMask> vesselMask = new pl::VesselMask(maskType);
                     vesselMask->fromJSON(file);
@@ -65,22 +66,12 @@ int TrainingProcessor::run()
             }
         }
         cv::Ptr<pl::ConfigContainer> feCfg;
-        std::string featureExtractor = mArguments["fe"];
+        std::string featureExtractor = mArguments["fex"];
         if(!featureExtractor.compare("sift")) {
             feCfg = new pl::SiftExtractorConfig(featureExtractor);
             feCfg->fromJSON(file);
-            if(!mArguments["m"].empty()) {
-                // With an additional mask generator
-                std::string maskType = mArguments["m"];
-                if(!maskType.compare("vessel")) {
-                    cv::Ptr<pl::VesselMask> vesselMask = new pl::VesselMask(maskType);
-                    vesselMask->fromJSON(file);
-                    trainPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), vesselMask);
-                }
-            } else {
-                // Without mask
-                trainPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
-            }
+            // Without mask
+            trainPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
         }
 
     //    Dimensionality reduction
