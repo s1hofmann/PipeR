@@ -1,0 +1,45 @@
+{
+    "global": {
+        "mDebugMode": true,
+        "mPipeLineMode": 0,
+        "mDescriptorDir": "./descriptors",
+        "mDescriptorLabelFile": "./descriptors/labelfile.dat",
+        "mRebuildDescriptors": false,
+        "mRebuildPca": true,
+        "mRebuildClusters": true 
+    },
+    "vessel": {
+        "mOctaves": 10,
+        "mStages": 15,
+        "mSigma": 0.04,
+        "mBeta": 10,
+        "mC": 1.6
+    },
+    "sift": {
+        "mBestFeatures": 10,
+        "mOctaves": 3,
+        "mContrastThresh": 0.04,
+        "mEdgeThresh": 10,
+        "mSigma": 1.6
+    },
+    "pca": {
+        "mComponents": 64,
+        "mWhitening": true,
+        "mEpsilon": 0.0001,
+        "mPath": "./rpca.yml"
+    },
+    "vlad": {
+        "mClusters": 32,
+        "mIterations": 200,
+        "mVocabs": ["./test_cluster_0.yml", "./asdf.yml"],
+        "mNormStrategie": ["NORM_COMPONENT_L2", "NORM_GLOBAL_L2"]
+    },
+    "sgd": {
+        "mLambda": 0.0001,
+        "mLearningRate": 0.0001,
+        "mMultiplier": 100,
+        "mEpsilon": 0.0001,
+        "mMaxIterations": 100000,
+        "mClassifierFile": "./vessel_cl.yml"
+    }
+}
