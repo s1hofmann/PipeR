@@ -478,6 +478,8 @@ void PipeLine::train(const std::vector<std::string> &input,
         throw FeatureExError(s.str(), currentMethod, currentLine);
     }
     if(config->augment()) {
+        logger.debug("Truncating augmentation data.");
+        debug.debug("Truncating augmentation data.");
         allFeatures = allFeatures.colRange(0, allFeatures.cols - 2);
     }
 
@@ -713,6 +715,8 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
         throw FeatureExError(s.str(), currentMethod, currentLine);
     }
     if(config->augment()) {
+        logger.debug("Truncating augmentation data.");
+        debug.debug("Truncating augmentation data.");
         post = post.colRange(0, post.cols - 2);
     }
 

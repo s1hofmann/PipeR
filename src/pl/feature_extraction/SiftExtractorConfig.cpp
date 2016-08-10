@@ -22,8 +22,7 @@ SiftExtractorConfig::SiftExtractorConfig(const std::string &identifier,
         mOctaves(nOctaveLayers),
         mContrastThresh(contrastThreshold),
         mEdgeThresh(edgeThreshold),
-        mSigma(sigma),
-        mAugment(augment)
+        mSigma(sigma)
 {
 }
 

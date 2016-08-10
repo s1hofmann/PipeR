@@ -80,14 +80,6 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    bool augment() const {
-        return mAugment;
-    }
-
-    void setAugment(bool augment) {
-        mAugment = augment;
-    }
-
 private:
     /**
      * @brief mBestFeatures
@@ -113,11 +105,6 @@ private:
      * @brief mSigma
      */
     double mSigma;
-
-    /**
-     * @brief mAugment
-     */
-    bool mAugment;
 };
 
 

@@ -16,21 +16,21 @@ namespace pl {
 class FeatureConfig : public ConfigContainer {
 public:
     FeatureConfig(const std::string &identifier,
-                  const bool augment = true);
+                  const bool augment);
 
     /**
      * @brief ~SiftConfigContainer
      */
     virtual ~FeatureConfig();
 
-    bool augment() const;
-    void setAugment(bool augment);
+    virtual bool augment() const;
+    virtual void setAugment(bool augment);
 
     // ConfigContainer interface
     std::string toString() const;
     bool fromJSON(std::string &file);
 
-private:
+protected:
     /**
      * @brief mAugment
      */

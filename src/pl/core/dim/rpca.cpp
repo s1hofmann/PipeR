@@ -60,7 +60,7 @@ void RPCA::transform(const cv::Mat1f & descr,
         throw pl::DimensionalityReductionError(s.str(), currentMethod, currentLine);
     } else if(descr.cols != components.cols) {
         std::stringstream s;
-        s << "Input and mean data missmatch." << std::endl;
+        s << "Input and transformation data missmatch." << std::endl;
         s << "Input: " << descr.size() << " Transform: " << components.size() << std::endl;
         throw pl::DimensionalityReductionError(s.str(), currentMethod, currentLine);
     }

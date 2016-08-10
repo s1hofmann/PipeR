@@ -28,8 +28,7 @@ public:
                        int nOctaveLayers = 3,
                        double contrastThreshold = 0.04,
                        double edgeThreshold = 10,
-                       double sigma = 1.6,
-                       bool augment = true);
+                       double sigma = 1.6);
 
     /**
      * @brief ~SiftConfigContainer
@@ -80,14 +79,6 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    bool augment() const {
-        return mAugment;
-    }
-
-    void setAugment(bool augment) {
-        mAugment = augment;
-    }
-
 private:
     /**
      * @brief mBestFeatures
@@ -113,11 +104,6 @@ private:
      * @brief mSigma
      */
     double mSigma;
-
-    /**
-     * @brief mAugment
-     */
-    bool mAugment;
 };
 
 
