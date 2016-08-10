@@ -543,14 +543,11 @@ void PipeLine::train(const std::vector<std::string> &input,
         trainingLabels.push_back(label);
         if(!this->mDimensionalityReduction.empty()) {
             if(!this->mEncoding.empty()) {
-                debug.debug("Encoding not empty");
                 trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
             } else {
-                debug.debug("Encoding empty");
                 trainingData.push_back(this->mDimensionalityReduction->run(desc));
             }
         } else if(!this->mEncoding.empty()) {
-            debug.debug("Encoding not empty");
             trainingData.push_back(this->mEncoding->run(desc));
         } else {
             trainingData.push_back(desc);
