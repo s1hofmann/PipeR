@@ -33,7 +33,7 @@ void RPCA::fit(const cv::Mat1f & descr)
 #endif
 
     cv::Mat1f U, S, V;
-    cv::SVD::compute(X, S, U, V, cv::SVD::FULL_UV);
+    cv::SVD::compute(X, S, U, V);
     cv::pow(S, 2, variance);
     variance /= X.rows;
     if (n_components <= 0) {
