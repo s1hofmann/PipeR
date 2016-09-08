@@ -680,87 +680,91 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
         features = prep;
     }
 
-    /*********************************
-     * POSTPROCESSING
-     *********************************/
-    cv::Mat post;
-    if(!this->mPostprocessing.empty()) {
-        // First postprocessing step
-        if(!this->mDebugMode) {
-            post = this->mPostprocessing[0]->train(features);
-        } else {
-            post = this->mPostprocessing[0]->debugTrain(features);
-        }
-        // Process additional steps
-        for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+    if(!features.empty()) {
+        /*********************************
+         * POSTPROCESSING
+         *********************************/
+        cv::Mat post;
+        if(!this->mPostprocessing.empty()) {
+            // First postprocessing step
             if(!this->mDebugMode) {
-                post = this->mPostprocessing[idx]->train(post);
+                post = this->mPostprocessing[0]->train(features);
             } else {
-                post = this->mPostprocessing[idx]->debugTrain(post);
+                post = this->mPostprocessing[0]->debugTrain(features);
             }
-        }
-    } else {
-        post = features;
-    }
-
-    cv::Ptr<FeatureConfig> config;
-    try {
-        config = config_cast<FeatureConfig>(this->mFeatureExtraction.first->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
-        throw FeatureExError(s.str(), currentMethod, currentLine);
-    }
-    if(config->augment()) {
-        logger.debug("Truncating augmentation data.");
-        debug.debug("Truncating augmentation data.");
-        post = post.colRange(0, post.cols - 2);
-    }
-
-    /*********************************
-     * DIMENSIONALITY REDUCTION
-     *********************************/
-    cv::Mat reduced;
-    // Apply dimensionality reduction
-    if(!this->mDimensionalityReduction.empty()) {
-        if(!this->mDebugMode) {
-            reduced = this->mDimensionalityReduction->run(features);
-            features.release();
+            // Process additional steps
+            for(size_t idx = 1; idx < this->mPreprocessing.size(); ++idx) {
+                if(!this->mDebugMode) {
+                    post = this->mPostprocessing[idx]->train(post);
+                } else {
+                    post = this->mPostprocessing[idx]->debugTrain(post);
+                }
+            }
         } else {
-            reduced = this->mDimensionalityReduction->debugRun(features);
-            features.release();
+            post = features;
         }
-    } else {
-        reduced = features;
-    }
 
+        cv::Ptr<FeatureConfig> config;
+        try {
+            config = config_cast<FeatureConfig>(this->mFeatureExtraction.first->mConfig);
+        } catch(std::bad_cast) {
+            std::stringstream s;
+            s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
+            throw FeatureExError(s.str(), currentMethod, currentLine);
+        }
+        if(config->augment()) {
+            logger.debug("Truncating augmentation data.");
+            debug.debug("Truncating augmentation data.");
+            post = post.colRange(0, post.cols - 2);
+        }
 
-    /*********************************
-     * ENCODING
-     *********************************/
-    cv::Mat encoded;
-    if(!this->mEncoding.empty() && mPipelineConfig->rebuildClusters()) {
-        if(!this->mDebugMode) {
-            encoded = this->mEncoding->run(reduced);
+        /*********************************
+         * DIMENSIONALITY REDUCTION
+         *********************************/
+        cv::Mat reduced;
+        // Apply dimensionality reduction
+        if(!this->mDimensionalityReduction.empty()) {
+            if(!this->mDebugMode) {
+                reduced = this->mDimensionalityReduction->run(features);
+                features.release();
+            } else {
+                reduced = this->mDimensionalityReduction->debugRun(features);
+                features.release();
+            }
         } else {
-            encoded = this->mEncoding->debugRun(reduced);
+            reduced = features;
         }
-    } else {
-        encoded = reduced;
-    }
 
-    cv::Mat result;
-    if(!this->mClassification.empty()) {
-        if(!this->mDebugMode) {
-            result = this->mClassification->run(encoded);
+
+        /*********************************
+         * ENCODING
+         *********************************/
+        cv::Mat encoded;
+        if(!this->mEncoding.empty() && mPipelineConfig->rebuildClusters()) {
+            if(!this->mDebugMode) {
+                encoded = this->mEncoding->run(reduced);
+            } else {
+                encoded = this->mEncoding->debugRun(reduced);
+            }
         } else {
-            result = this->mClassification->debugRun(encoded);
+            encoded = reduced;
         }
-    } else {
-        result = encoded;
-    }
 
-    return result;
+        cv::Mat result;
+        if(!this->mClassification.empty()) {
+            if(!this->mDebugMode) {
+                result = this->mClassification->run(encoded);
+            } else {
+                result = this->mClassification->debugRun(encoded);
+            }
+        } else {
+            result = encoded;
+        }
+
+        return result;
+    } else {
+        return cv::Mat();
+    }
 }
 
 

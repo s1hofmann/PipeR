@@ -37,7 +37,7 @@ MomProcessor::MomProcessor(int argc, char *argv[])
         if(mArguments["thresh"].empty()) {
             mThreshold = 0.5;
         } else {
-            mThreshold = std::atoi(mArguments["thresh"].c_str());
+            mThreshold = std::atof(mArguments["thresh"].c_str());
         }
     } catch(const pl::CommandLineError &e) {
         std::cerr << e.what() << std::endl;
@@ -206,7 +206,9 @@ int MomProcessor::run()
                             cv::Range cols(c, c + windowSize);
                             cv::Mat part = scales[idx](rows, cols);
                             cv::Mat s = textPipe.run(part);
-                            score(rows, cols).setTo(s.at<float>(0));
+                            if(!s.empty()) {
+                                score(rows, cols).setTo(s.at<float>(0));
+                            }
                         }
                     }
                     cv::resize(score, score, input.size());
@@ -220,6 +222,10 @@ int MomProcessor::run()
                 cv::Mat textMask;
                 // Conversion for use with findContours
                 textResult.convertTo(textMask, CV_8UC1);
+                if(debugMode) {
+                // TODO: Write output to temporary file
+                    cv::imwrite("./binary.png", textMask);
+                }
                 std::vector<std::vector<cv::Point>> contours;
                 cv::findContours(textMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
                 for(std::vector<cv::Point> contour : contours) {
@@ -230,7 +236,7 @@ int MomProcessor::run()
                 }
                 if(debugMode) {
                 // TODO: Write output to temporary file
-//                	cv::imwrite("./bbox.png", input);
+                    cv::imwrite("./bbox.png", input);
                 }
 #endif
                 folderSummary.addFile(fileSummary);
