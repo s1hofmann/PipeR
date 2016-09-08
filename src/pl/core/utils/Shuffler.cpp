@@ -22,13 +22,13 @@ void Shuffler::shuffle(const cv::Mat &descriptors,
 #if USE_TBB
     tbb::parallel_for(int(0), descriptors.rows, [&](int i) {
         descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
-        shuffledLabels.at<int>(i) = labels.at<int>(idx[i]);
+        labels.row(i).copyTo(shuffledLabels.row(idx[i]));
     }
     );
 #else
     for(int i = 0; i < descriptors.rows; ++i) {
         descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
-        shuffledLabels.at<int>(i) = labels.at<int>(idx[i]);
+        labels.row(i).copyTo(shuffledLabels.row(idx[i]));
     }
 #endif
 }

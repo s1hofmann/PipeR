@@ -17,7 +17,9 @@ public:
               const double multiplier = 1,
               const double epsilon = 1e10-5,
               vl_size maxIterations = 10000,
-              bool binary = false);
+              vl_size iterations = 0,
+              const double bias = 0,
+              const bool binary = false);
 
     virtual ~SGDConfig();
 

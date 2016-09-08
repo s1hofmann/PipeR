@@ -167,6 +167,12 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
         dParam = param;
     }
 
+    std::cout << dInput.size() << std::endl;
+    std::cout << dParam.size() << std::endl;
+
+    std::cout << cv::countNonZero(dInput) << std::endl;
+    std::cout << cv::countNonZero(dParam) << std::endl;
+
     cv::Mat1d weights = calculateWeights(param);
     double lambda = config->lambda();
     debug("Lambda:", lambda);
@@ -206,6 +212,9 @@ cv::Mat SGDStep::debugTrain(const cv::Mat &input,
     debug("Model size:", model.size());
     bias = solver->getBias();
     debug("Bias:", bias);
+
+    std::cout << cv::countNonZero(model) << std::endl;
+    std::cout << bias << std::endl;
 
     if(!model.empty()) {
         std::string fileName = this->mConfig.dynamicCast<SGDConfig>()->classifierFiles()[0];
@@ -247,9 +256,11 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
                 if(input.type() != CV_64F) {
                     cv::Mat tmp;
                     input.convertTo(tmp, CV_64F);
-                    results.at<float>(idx) = tmp.dot(classifierData.first) + classifierData.second;
+                    double score = tmp.dot(classifierData.first) + classifierData.second;
+                    results.at<float>(idx) = score;
                 } else {
-                    results.at<float>(idx) = input.dot(classifierData.first) + classifierData.second;
+                    double score = input.dot(classifierData.first) + classifierData.second;
+                    results.at<float>(idx) = score;
                 }
             }
         } catch(MLError) {

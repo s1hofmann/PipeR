@@ -10,8 +10,10 @@ SGDConfig::SGDConfig(const std::string &identifier,
                      const double learningRate,
                      const double multiplier,
                      const double epsilon,
+                     vl_size iterations,
                      vl_size maxIterations,
-                     bool binary)
+                     const double bias,
+                     const bool binary)
     :
         ConfigContainer(identifier),
         mClassifierFiles(outputFiles),
@@ -20,6 +22,8 @@ SGDConfig::SGDConfig(const std::string &identifier,
         mMultiplier(multiplier),
         mEpsilon(epsilon),
         mMaxIterations(maxIterations),
+        mIterations(iterations),
+        mBias(bias),
         mBinary(binary)
 {
 
@@ -151,7 +155,9 @@ std::string SGDConfig::toString() const
     configString << "Lambda: " << lambda() << std::endl
                  << "Learning rate: " << learningRate() << std::endl
                  << "Epsilon: " << epsilon() << std::endl
+                 << "Bias: " << bias() << std::endl
                  << "Bias multiplier: " << multiplier() << std::endl
+                 << "Starting iterations: " << iterations() << std::endl
                  << "Max. iterations: " << maxIterations() << std::endl
                  << "Binary classification: " << binary() << std::endl;
 
@@ -171,7 +177,9 @@ bool SGDConfig::fromJSON(std::string &file)
         mLearningRate = params.get(varName(mLearningRate), 0.001).asDouble();
         mMultiplier = params.get(varName(mMultiplier), 1.0).asDouble();
         mEpsilon = params.get(varName(mEpsilon), 1e10-5).asDouble();
+        mIterations = params.get(varName(mIterations), 0).asInt();
         mMaxIterations = params.get(varName(mMaxIterations), 10000).asInt();
+        mBias = params.get(varName(mBias), 0).asDouble();
         mBinary = params.get(varName(mBinary), false).asBool();
 
         const Json::Value classifiers = params[varName(mClassifierFiles)];

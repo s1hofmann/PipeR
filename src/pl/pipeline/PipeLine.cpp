@@ -565,8 +565,13 @@ void PipeLine::train(const std::vector<std::string> &input,
     debug.inform("Training...");
     logger.inform("Training...");
     try {
-        this->mClassification->train(permutedData,
-                                     permutedLabels);
+        if(mDebugMode) {
+            this->mClassification->debugTrain(permutedData,
+                                              permutedLabels);
+        } else {
+            this->mClassification->train(permutedData,
+                                         permutedLabels);
+        }
     } catch(MLError &e) {
         logger.report(e.what());
     }
