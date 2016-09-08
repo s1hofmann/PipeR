@@ -218,8 +218,10 @@ int MomProcessor::run()
 
                     textResult = score;
                     std::stringstream s;
-                    s << "./mask_" << idx << ".png";
-                    cv::imwrite(s.str(), textResult);
+                    if(debugMode) {
+                        s << "./debug_mask_level_" << idx << ".png";
+                        cv::imwrite(s.str(), textResult);
+                    }
                 }
 
 //                double maxScore = (mWindowSize / mStepSize) * scales.size();
