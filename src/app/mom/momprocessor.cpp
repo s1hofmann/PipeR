@@ -185,6 +185,7 @@ int MomProcessor::run()
                 }
 
                 cv::Mat1f textResult = cv::Mat1f::zeros(input.size());
+                cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15));
 
                 for(int idx = scales.size() - 1; idx > -1; --idx) {
                     int windowSize = mWindowSize;
@@ -206,18 +207,23 @@ int MomProcessor::run()
                             cv::Range cols(c, c + windowSize);
                             cv::Mat part = scales[idx](rows, cols);
                             cv::Mat s = textPipe.run(part);
-                            if(!s.empty()) {
-                                score(rows, cols).setTo(s.at<float>(0));
+                            if(!s.empty() && s.at<float>(0) > 0) {
+                                score(rows, cols).setTo(255);
                             }
                         }
                     }
                     cv::resize(score, score, input.size());
+                    cv::dilate(score, score, structuringElement);
+                    textPipe.setFeatureDetectionMask(score);
 
-                    textResult += score;
+                    textResult = score;
+                    std::stringstream s;
+                    s << "./mask_" << idx << ".png";
+                    cv::imwrite(s.str(), textResult);
                 }
 
-                double maxScore = (mWindowSize / mStepSize) * scales.size();
-                cv::threshold(textResult, textResult, 0.5*maxScore, 255, CV_THRESH_BINARY);
+//                double maxScore = (mWindowSize / mStepSize) * scales.size();
+//                cv::threshold(textResult, textResult, 0.5*maxScore, 255, CV_THRESH_BINARY);
 
                 cv::Mat textMask;
                 // Conversion for use with findContours
