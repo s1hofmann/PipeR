@@ -101,7 +101,7 @@ cv::Mat DBScanFilter::debugTrain(const cv::Mat &input, const cv::Mat &param) con
             if(allDescriptors.empty()) {
                 allDescriptors = clusterDescriptor.clone();
             } else {
-                cv::hconcat(clusterDescriptor, allDescriptors);
+                cv::vconcat(clusterDescriptor, allDescriptors);
             }
         }
     }
