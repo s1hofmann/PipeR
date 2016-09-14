@@ -30,6 +30,8 @@
 #include "../masks/VesselMask.h"
 #include "../preprocessing/BinarizationStep.h"
 #include "../postprocessing/postprocessingstep.h"
+#include "../postprocessing/DBScanFilter.h"
+#include "../postprocessing/DBScanConfig.h"
 #include "../ml/SGDConfig.h"
 #include "../ml/SGDStep.h"
 #include "../core/utils/Shuffler.h"

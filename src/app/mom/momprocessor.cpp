@@ -79,8 +79,12 @@ int MomProcessor::run()
     cv::Ptr<pl::VesselMask> vesselMask = new pl::VesselMask("vessel");
     vesselMask->fromJSON(file);
 
+    cv::Ptr<pl::DBScanConfig> dbscan = new pl::DBScanConfig("dbscan");
+    dbscan->fromJSON(file);
+
     // And attach it to the pipelines
     textPipe.addFeatureDetectionStep(new pl::SiftDetector(fdCfg), vesselMask);
+    textPipe.addPostprocessingStep(new pl::DBScanFilter(dbscan));
     textPipe.addFeatureExtractionStep(new pl::SiftExtractor(feCfg), cv::Ptr<pl::MaskGenerator>());
     // Deco pipeline doesn't use a mask generator
     decoPipe.addFeatureDetectionStep(new pl::SiftDetector(fdCfg), cv::Ptr<pl::MaskGenerator>());

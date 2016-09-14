@@ -235,7 +235,9 @@ void PipeLine::showPipeline() {
     }
 
     for(size_t i = 0; i < this->mPostprocessing.size(); ++i) {
-        std::cout << "Postprocessing: " << i << ": " << this->mPostprocessing[i]->info() << std::endl;
+        std::cout << "Postprocessing: " << std::endl;
+        std::cout << i << ": " << this->mPostprocessing[i]->info() << std::endl;
+        std::cout << this->mPostprocessing[i]->config() << std::endl;
     }
 
     if(!this->mDimensionalityReduction.empty()) {
@@ -440,6 +442,22 @@ void PipeLine::train(const std::vector<std::string> &input,
                     }
                 } else {
                     postProcessed = features;
+                }
+
+                cv::Ptr<FeatureConfig> config;
+                try {
+                    config = config_cast<FeatureConfig>(this->mFeatureExtraction.first->mConfig);
+                } catch(std::bad_cast) {
+                    std::stringstream s;
+                    s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
+                    throw FeatureExError(s.str(), currentMethod, currentLine);
+                }
+                if(config->augment() && !postProcessed.empty()) {
+                    logger.debug("Truncating augmentation data.");
+                    debug.debug("Truncating augmentation data.");
+                    postProcessed = postProcessed.colRange(0, postProcessed.cols - 2);
+                } else {
+                    continue;
                 }
 
                 QFileInfo info(QString::fromStdString(input[idx]));
@@ -717,10 +735,12 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
             s << "Wrong config type: " << this->mFeatureExtraction.first->mConfig->identifier();
             throw FeatureExError(s.str(), currentMethod, currentLine);
         }
-        if(config->augment()) {
+        if(config->augment() && !post.empty()) {
             logger.debug("Truncating augmentation data.");
             debug.debug("Truncating augmentation data.");
             post = post.colRange(0, post.cols - 2);
+        } else {
+            return cv::Mat();
         }
 
         /*********************************
@@ -730,14 +750,14 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
         // Apply dimensionality reduction
         if(!this->mDimensionalityReduction.empty()) {
             if(!this->mDebugMode) {
-                reduced = this->mDimensionalityReduction->run(features);
+                reduced = this->mDimensionalityReduction->run(post);
                 features.release();
             } else {
-                reduced = this->mDimensionalityReduction->debugRun(features);
+                reduced = this->mDimensionalityReduction->debugRun(post);
                 features.release();
             }
         } else {
-            reduced = features;
+            reduced = post;
         }
 
 
