@@ -185,7 +185,8 @@ int MomProcessor::run()
                 }
 
                 cv::Mat1f textResult = cv::Mat1f::zeros(input.size());
-                cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15));
+                // Structuring element to dilate masks
+                cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
 
                 for(int idx = scales.size() - 1; idx > -1; --idx) {
                     int windowSize = mWindowSize;
