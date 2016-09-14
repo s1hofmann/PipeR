@@ -60,6 +60,8 @@ std::vector<cv::KeyPoint> SiftDetector::debugDetect(const cv::Mat &input, const 
     std::vector<cv::KeyPoint> keypoints;
     detector->detect(input, keypoints);
 
+    debug("Detected ", keypoints.size(), " keypoints.");
+
     return keypoints;
 }
 
