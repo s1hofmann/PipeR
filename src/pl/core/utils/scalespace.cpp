@@ -34,7 +34,7 @@ void GaussianScaleSpace::compute(const cv::Mat & img,
                     int newHeight = static_cast<int>(tmp.rows / f);
                     int newWidth = static_cast<int>(tmp.cols / f);
                     if(newHeight * newWidth <= 0) {
-                        info("Scalespace max. reached. Octave", o, "Sublevel:", s);
+                        inform("Scalespace max. reached. Octave", o, "Sublevel:", s);
                         return;
                     }
                     cv::resize(tmp, tmp, cv::Size(), 1.0/f, 1.0/f, cv::INTER_NEAREST);

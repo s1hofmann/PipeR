@@ -55,7 +55,7 @@ void debug(T... args) {
 
 
 template <typename... T>
-void info(T... args) {
+void inform(T... args) {
     std::cout << "INFO: ";
     write(args...);
 }

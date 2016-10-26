@@ -186,7 +186,7 @@ std::tuple<cv::Mat1d, double, vl_size> SGDStep::load(const std::string &fileName
     fs["bias"] >> bias;
 
     if(fs["iterations"].isNone() || fs["iterations"].empty()) {
-        debug("Now iteration info found, skipping.");
+        inform("No iteration info found, skipping. Maybe an old classifier format?");
         iterations = 0;
     } else {
         fs["iterations"] >> iterations;
