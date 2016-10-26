@@ -101,11 +101,11 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
 
     //Updated classifier data
     model = solver->getModelMat();
-    debug("Model size:", model.size());
+    if(debugMode) { debug("Model size:", model.size()); }
     bias = solver->getBias();
-    debug("Bias:", bias);
+    if(debugMode) { debug("Bias:", bias); }
     iterations = solver->getIterationCount();
-    debug("Iterations:", iterations);
+    if(debugMode) { debug("Iterations:", iterations); }
 
     if(!model.empty()) {
         this->save(model,

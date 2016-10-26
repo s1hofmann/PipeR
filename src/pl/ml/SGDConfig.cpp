@@ -186,8 +186,8 @@ bool SGDConfig::fromJSON(std::string &file)
         mLearningRate = params.get(varName(mLearningRate), 1.0).asDouble();
         mMultiplier = params.get(varName(mMultiplier), 1.0).asDouble();
         mEpsilon = params.get(varName(mEpsilon), 0.0).asDouble();
-        mIterations = params.get(varName(mIterations), 0).asInt();
-        mMaxIterations = params.get(varName(mMaxIterations), 0).asInt();
+        mIterations = params.get(varName(mIterations), 0).asUInt64();
+        mMaxIterations = params.get(varName(mMaxIterations), 0).asUInt64();
         mBinary = params.get(varName(mBinary), false).asBool();
         mFolds = params.get(varName(mFolds), 5).asInt();
 

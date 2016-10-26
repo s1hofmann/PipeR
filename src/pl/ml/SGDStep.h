@@ -42,6 +42,37 @@ private:
      */
     std::tuple<cv::Mat1d, double, vl_size> load() const;
 
+    template<typename T>
+    T load(const std::string &fileName, const std::string &identifier) {
+        cv::FileStorage fs(fileName, cv::FileStorage::READ);
+        if(fs[identifier].isNone() || fs[identifier].empty()) {
+            std::stringstream s;
+            s << "Error. Unable to load data from file: " << fileName << ". Aborting." << std::endl;
+            throw MLError(s.str(), currentMethod, currentLine);
+        }
+
+        T value;
+        fs[identifier] >> value;
+
+        fs.release();
+
+        return value;
+    }
+
+    template<typename T>
+    T load(const std::string &identifier) {
+        cv::Ptr<SGDConfig> config;
+        try {
+            config = config_cast<SGDConfig>(this->mConfig);
+        } catch(std::bad_cast) {
+            std::stringstream s;
+            s << "Wrong config type: " << this->mConfig->identifier();
+            throw MLError(s.str(), currentMethod, currentLine);
+        }
+
+        return this->load<T>(config->classifierFiles()[0], identifier);
+    }
+
     /**
      * @brief save Saves classifier data to given file
      * @param fileName Output file
@@ -61,6 +92,29 @@ private:
     void save(const cv::Mat1d &model,
               const double bias,
               const double iterations) const;
+
+    template<typename T>
+    void save(const std::string &fileName, const std::string &identifier, const T &value) {
+        cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
+
+        fs << identifier << value;
+
+        fs.release();
+    }
+
+    template<typename T>
+    void save(const std::string &identifier, const T &value) {
+        cv::Ptr<SGDConfig> config;
+        try {
+            config = config_cast<SGDConfig>(this->mConfig);
+        } catch(std::bad_cast) {
+            std::stringstream s;
+            s << "Wrong config type: " << this->mConfig->identifier();
+            throw MLError(s.str(), currentMethod, currentLine);
+        }
+
+        this->save<T>(config->classifierFiles()[0], identifier, value);
+    }
 };
 
 
