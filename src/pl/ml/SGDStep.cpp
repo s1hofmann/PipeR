@@ -173,20 +173,24 @@ std::tuple<cv::Mat1d, double, vl_size> SGDStep::load(const std::string &fileName
     cv::FileStorage fs(fileName, cv::FileStorage::READ);
 
     if ((fs["model"].isNone() || fs["model"].empty()) ||
-        (fs["bias"].isNone() || fs["bias"].empty()) ||
-        (fs["iterations"].isNone() || fs["iterations"].empty())) {
+        (fs["bias"].isNone() || fs["bias"].empty())) {
         std::stringstream s;
         s << "Error. Unable to load classifier data from file: " << fileName << ". Aborting." << std::endl;
         throw MLError(s.str(), currentMethod, currentLine);
     }
-
     cv::Mat1d model;
     double bias;
     double iterations;
 
     fs["model"] >> model;
     fs["bias"] >> bias;
-    fs["iterations"] >> iterations;
+
+    if(fs["iterations"].isNone() || fs["iterations"].empty()) {
+        debug("Now iteration info found, skipping.");
+        iterations = 0;
+    } else {
+        fs["iterations"] >> iterations;
+    }
 
     fs.release();
 
