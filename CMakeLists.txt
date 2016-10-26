@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.3)
-project(pipeline_framework)
+project(piper)
 
 #OpenCV
 find_package(OpenCV 3 REQUIRED)
