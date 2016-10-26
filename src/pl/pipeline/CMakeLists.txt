@@ -15,4 +15,5 @@ add_library(pipeline ConfigContainer
                      globals)
 
 target_link_libraries(pipeline ${OpenCV_LIBS}
-                               Qt5::Core)
+                               Qt5::Core
+                               ml)
