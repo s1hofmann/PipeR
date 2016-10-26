@@ -33,6 +33,106 @@ std::string PipelineStep::usage()
 }
 
 
+cv::Mat PipelineStep::train(const cv::Mat &input,
+                            const cv::Mat &param) const
+{
+    try {
+        return this->trainImpl(false, input, param);
+    } catch(const pl::ClusterError &e) {
+        throw;
+    } catch(const pl::DimensionalityReductionError &e) {
+        throw;
+    } catch(const pl::EncodingError &e) {
+        throw;
+    } catch(const pl::FeatureExError &e) {
+        throw;
+    } catch(const pl::IOError &e) {
+        throw;
+    } catch(const pl::MLError &e) {
+        throw;
+    } catch(const pl::OCVError &e) {
+        throw;
+    } catch(const cv::Exception &e) {
+        throw;
+    }
+}
+
+
+cv::Mat PipelineStep::debugTrain(const cv::Mat &input,
+                                 const cv::Mat &param) const
+{
+    try {
+        return this->trainImpl(true, input, param);
+    } catch(const pl::ClusterError &e) {
+        throw;
+    } catch(const pl::DimensionalityReductionError &e) {
+        throw;
+    } catch(const pl::EncodingError &e) {
+        throw;
+    } catch(const pl::FeatureExError &e) {
+        throw;
+    } catch(const pl::IOError &e) {
+        throw;
+    } catch(const pl::MLError &e) {
+        throw;
+    } catch(const pl::OCVError &e) {
+        throw;
+    } catch(const cv::Exception &e) {
+        throw;
+    }
+}
+
+
+cv::Mat PipelineStep::run(const cv::Mat &input,
+                          const cv::Mat &param) const
+{
+    try {
+        return this->runImpl(false, input, param);
+    } catch(const pl::ClusterError &e) {
+        throw;
+    } catch(const pl::DimensionalityReductionError &e) {
+        throw;
+    } catch(const pl::EncodingError &e) {
+        throw;
+    } catch(const pl::FeatureExError &e) {
+        throw;
+    } catch(const pl::IOError &e) {
+        throw;
+    } catch(const pl::MLError &e) {
+        throw;
+    } catch(const pl::OCVError &e) {
+        throw;
+    } catch(const cv::Exception &e) {
+        throw;
+    }
+}
+
+
+cv::Mat PipelineStep::debugRun(const cv::Mat &input,
+                               const cv::Mat &param) const
+{
+    try {
+        return this->runImpl(true, input, param);
+    } catch(const pl::ClusterError) {
+        throw;
+    } catch(const pl::DimensionalityReductionError &e) {
+        throw;
+    } catch(const pl::EncodingError &e) {
+        throw;
+    } catch(const pl::FeatureExError &e) {
+        throw;
+    } catch(const pl::IOError &e) {
+        throw;
+    } catch(const pl::MLError &e) {
+        throw;
+    } catch(const pl::OCVError &e) {
+        throw;
+    } catch(const cv::Exception &e) {
+        throw;
+    }
+}
+
+
 std::string PipelineStep::info()
 {
     return mConfig->identifier();

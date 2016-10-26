@@ -16,40 +16,27 @@ namespace pl {
 class PreprocessingStep : public PipelineStep {
 public:
     /**
-     * @brief train
+     * @brief runImpl
+     * @param debugMode
      * @param input
-     * @param mask
+     * @param param
      * @return
      */
-    virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &mask = cv::Mat()) const = 0;
+    virtual cv::Mat runImpl(const bool debugMode,
+                            const cv::Mat &input,
+                            const cv::Mat &param) const = 0;
+
 
     /**
-     * @brief run
+     * @brief trainImpl
+     * @param debugMode
      * @param input
-     * @param mask
+     * @param param
      * @return
      */
-    virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &mask = cv::Mat()) const = 0;
-
-    /**
-     * @brief debugTrain
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &mask = cv::Mat()) const = 0;
-
-    /**
-     * @brief debugRun
-     * @param input
-     * @param mask
-     * @return
-     */
-    virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &mask = cv::Mat()) const = 0;
+    virtual cv::Mat trainImpl(const bool debugMode,
+                              const cv::Mat &input,
+                              const cv::Mat &param) const = 0;
 
 protected:
     /**

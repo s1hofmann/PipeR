@@ -73,7 +73,7 @@ void VlFeatWrapper::SVMSolver::setStartIterationCount(const vl_size count) const
     vl_svm_set_iteration_number(this->svm, count);
 }
 
-vl_size VlFeatWrapper::SVMSolver::getStartIterationCount() const
+vl_size VlFeatWrapper::SVMSolver::getIterationCount() const
 {
     return vl_svm_get_iteration_number(this->svm);
 }

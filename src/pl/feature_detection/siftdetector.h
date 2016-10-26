@@ -18,8 +18,7 @@ public:
     virtual ~SiftDetector();
 
     // FeatureDetectionStep interface
-    std::vector<cv::KeyPoint> detect(const cv::Mat &input, const cv::Mat &mask) const;
-    std::vector<cv::KeyPoint> debugDetect(const cv::Mat &input, const cv::Mat &mask) const;
+    virtual std::vector<cv::KeyPoint> detectImpl(const bool debugMode, const cv::Mat &input, const cv::Mat &mask) const override;
 };
 
 

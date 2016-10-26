@@ -87,9 +87,9 @@ public:
     void setStartIterationCount(const vl_size count) const;
 
     /**
-     * @brief getStartIterationCount: Returns the initial iteration value for a warm start
+     * @brief getIterationCount: Returns the initial iteration value for a warm start
      */
-    vl_size getStartIterationCount() const;
+    vl_size getIterationCount() const;
 
     /**
      * @brief getCurrentIterationCount: Get index of current iteration step.

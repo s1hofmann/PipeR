@@ -10,36 +10,7 @@ BOWEncodeingStep::BOWEncodeingStep(const cv::Ptr<ConfigContainer> config)
 
 }
 
-cv::Mat BOWEncodeingStep::train(const cv::Mat &input, const cv::Mat &param) const
-{
-    cv::Ptr<BOWConfig> config;
-    try {
-        config = config_cast<BOWConfig>(this->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mConfig->identifier();
-        throw EncodingError(s.str(), currentMethod, currentLine);
-    }
-
-    int clusters = config->getClusters();
-    int maxIterations = config->getIterations();
-    std::vector<std::string> vocabs = config->getVocabs();
-    double epsilon = config->getEpsilon();
-
-    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
-        KMeansCluster kmeans;
-        kmeans.cluster(input,
-                       clusters,
-                       maxIterations,
-                       epsilon);
-
-        kmeans.dump(vocabs[runs]);
-    }
-
-    return cv::Mat();
-}
-
-cv::Mat BOWEncodeingStep::run(const cv::Mat &input, const cv::Mat &param) const
+cv::Mat BOWEncodeingStep::runImpl(const bool debugMode, const cv::Mat &input, const cv::Mat &param) const
 {
     cv::Ptr<BOWConfig> config;
     try {
@@ -76,22 +47,33 @@ cv::Mat BOWEncodeingStep::run(const cv::Mat &input, const cv::Mat &param) const
     return encoded;
 }
 
-cv::Mat BOWEncodeingStep::debugTrain(const cv::Mat &input, const cv::Mat &param) const
+cv::Mat BOWEncodeingStep::trainImpl(const bool debugMode, const cv::Mat &input, const cv::Mat &param) const
 {
+    cv::Ptr<BOWConfig> config;
     try {
-        return this->train(input, param);
-    } catch(EncodingError) {
-        throw;
+        config = config_cast<BOWConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw EncodingError(s.str(), currentMethod, currentLine);
     }
-}
 
-cv::Mat BOWEncodeingStep::debugRun(const cv::Mat &input, const cv::Mat &param) const
-{
-    try {
-        return this->run(input, param);
-    } catch(EncodingError) {
-        throw;
+    int clusters = config->getClusters();
+    int maxIterations = config->getIterations();
+    std::vector<std::string> vocabs = config->getVocabs();
+    double epsilon = config->getEpsilon();
+
+    for(size_t runs = 0; runs < vocabs.size(); ++runs) {
+        KMeansCluster kmeans;
+        kmeans.cluster(input,
+                       clusters,
+                       maxIterations,
+                       epsilon);
+
+        kmeans.dump(vocabs[runs]);
     }
+
+    return cv::Mat();
 }
 
 cv::Mat BOWEncodeingStep::encode(const std::string &encoder, const cv::Mat &data) const

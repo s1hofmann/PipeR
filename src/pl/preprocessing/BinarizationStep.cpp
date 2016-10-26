@@ -19,35 +19,19 @@ BinarizationStep::~BinarizationStep()
 
 }
 
-
-cv::Mat BinarizationStep::train(const cv::Mat &input,
-                                const cv::Mat &mask) const
+cv::Mat BinarizationStep::runImpl(const bool debugMode,
+                                  const cv::Mat &input,
+                                  const cv::Mat &param) const
 {
-    //TODO Implementation, obviously
     return input;
 }
 
 
-cv::Mat BinarizationStep::run(const cv::Mat &input,
-                              const cv::Mat &mask) const
+cv::Mat BinarizationStep::trainImpl(const bool debugMode,
+                                    const cv::Mat &input,
+                                    const cv::Mat &param) const
 {
-    return this->train(input, mask);
-}
-
-
-cv::Mat BinarizationStep::debugTrain(const cv::Mat &input,
-                                     const cv::Mat &mask) const
-{
-    std::cout << "Debug mode" << std::endl;
-    return this->train(input, mask);
-}
-
-
-cv::Mat BinarizationStep::debugRun(const cv::Mat &input,
-                                   const cv::Mat &mask) const
-{
-    std::cout << "Debug mode" << std::endl;
-    return this->debugTrain(input, mask);
+    return input;
 }
 
 

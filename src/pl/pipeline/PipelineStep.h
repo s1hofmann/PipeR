@@ -30,7 +30,7 @@ public:
      * @return
      */
     virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &param = cv::Mat()) const = 0;
+                          const cv::Mat &param = cv::Mat()) const;
 
     /**
      * @brief run
@@ -39,7 +39,7 @@ public:
      * @return
      */
     virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &param = cv::Mat()) const = 0;
+                        const cv::Mat &param = cv::Mat()) const;
 
     /**
      * @brief debugTrain
@@ -48,7 +48,7 @@ public:
      * @return
      */
     virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &param= cv::Mat()) const = 0;
+                               const cv::Mat &param= cv::Mat()) const;
 
     /**
      * @brief debugRun
@@ -57,7 +57,31 @@ public:
      * @return
      */
     virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &param = cv::Mat()) const = 0;
+                             const cv::Mat &param = cv::Mat()) const;
+
+
+    /**
+     * @brief runImpl
+     * @param debug
+     * @param input
+     * @param param
+     * @return
+     */
+    virtual cv::Mat runImpl(const bool debugMode,
+                            const cv::Mat &input,
+                            const cv::Mat &param = cv::Mat()) const = 0;
+
+
+    /**
+     * @brief trainImpl
+     * @param debug
+     * @param input
+     * @param param
+     * @return
+     */
+    virtual cv::Mat trainImpl(const bool debugMode,
+                              const cv::Mat &input,
+                              const cv::Mat &param = cv::Mat()) const = 0;
 
     /**
      * @brief info

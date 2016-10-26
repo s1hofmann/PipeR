@@ -24,7 +24,7 @@ public:
      */
     virtual cv::Mat compute(const cv::Mat &input,
                             std::vector<cv::KeyPoint> &keypoints) const {
-        return cv::Mat();
+        return this->computeImpl(false, input, keypoints);
     }
 
     /**
@@ -34,7 +34,7 @@ public:
      */
     virtual cv::Mat compute(const cv::Mat &input,
                             const cv::Mat &mask) const {
-        return cv::Mat();
+        return this->computeImpl(false, input, mask);
     }
 
     /**
@@ -45,7 +45,7 @@ public:
      */
     virtual cv::Mat debugCompute(const cv::Mat &input,
                                  std::vector<cv::KeyPoint> &keypoints) const {
-        return cv::Mat();
+        return this->computeImpl(true, input, keypoints);
     }
 
     /**
@@ -55,8 +55,16 @@ public:
      */
     virtual cv::Mat debugCompute(const cv::Mat &input,
                                  const cv::Mat &mask) const {
-        return cv::Mat();
+        return this->computeImpl(true, input, mask);
     }
+
+    virtual cv::Mat computeImpl(const bool debugMode,
+                                const cv::Mat &input,
+                                std::vector<cv::KeyPoint> &keypoints) const = 0;
+
+    virtual cv::Mat computeImpl(const bool debugMode,
+                                const cv::Mat &input,
+                                const cv::Mat &mask) const = 0;
 
 protected:
     /**

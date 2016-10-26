@@ -37,9 +37,7 @@
     "sgd": {
         "mLambda": 0.0001,
         "mLearningRate": 0.0001,
-        "mMultiplier": 100,
-        "mEpsilon": 0.0001,
-        "mMaxIterations": 100000,
+        "mMultiplier": 10,
         "mClassifierFile": "./vessel_cl.yml"
     }
 }

@@ -8,8 +8,13 @@ namespace pl {
 class FeatureDetectionStep : public PseudoPipelineStep
 {
 public:
-    virtual std::vector<cv::KeyPoint> detect(const cv::Mat &input, const cv::Mat &mask) const = 0;
-    virtual std::vector<cv::KeyPoint> debugDetect(const cv::Mat &input, const cv::Mat &mask) const = 0;
+    virtual std::vector<cv::KeyPoint> detect(const cv::Mat &input, const cv::Mat &mask) const;
+
+    virtual std::vector<cv::KeyPoint> debugDetect(const cv::Mat &input, const cv::Mat &mask) const;
+
+    virtual std::vector<cv::KeyPoint> detectImpl(const bool debugMode,
+                                                 const cv::Mat &input,
+                                                 const cv::Mat &mask) const = 0;
 
 protected:
     FeatureDetectionStep(cv::Ptr<ConfigContainer> config);

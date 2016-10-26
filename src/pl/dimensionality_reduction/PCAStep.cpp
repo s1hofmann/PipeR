@@ -11,9 +11,38 @@ PCAStep::PCAStep(const cv::Ptr<ConfigContainer> config)
 
 }
 
+PCAStep::~PCAStep()
+{
 
-cv::Mat PCAStep::train(const cv::Mat &input,
-                       const cv::Mat &param) const
+}
+
+cv::Mat PCAStep::runImpl(const bool debugMode, const cv::Mat &input, const cv::Mat &param) const
+{
+    cv::Ptr<PCAConfig> config;
+    try {
+        config = config_cast<PCAConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
+    }
+
+    std::string path = config->getPath();
+
+    RPCA rpca(path);
+
+    cv::Mat1f result;
+    try {
+        rpca.transform(input,
+                       result);
+    } catch(DimensionalityReductionError) {
+        throw;
+    }
+
+    return result;
+}
+
+cv::Mat PCAStep::trainImpl(const bool debugMode, const cv::Mat &input, const cv::Mat &param) const
 {
     cv::Ptr<PCAConfig> config;
     try {
@@ -45,66 +74,6 @@ cv::Mat PCAStep::train(const cv::Mat &input,
                    result);
 
     return result;
-}
-
-
-cv::Mat PCAStep::run(const cv::Mat &input,
-                     const cv::Mat &param) const
-{
-    cv::Ptr<PCAConfig> config;
-    try {
-        config = config_cast<PCAConfig>(this->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mConfig->identifier();
-        throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
-    }
-
-    std::string path = config->getPath();
-
-    RPCA rpca(path);
-
-    cv::Mat1f result;
-    try {
-        rpca.transform(input,
-                       result);
-    } catch(DimensionalityReductionError) {
-        throw;
-    }
-
-    return result;
-}
-
-
-cv::Mat PCAStep::debugTrain(const cv::Mat &input,
-                            const cv::Mat &param) const
-{
-    try {
-        return this->train(input,
-                           param);
-    } catch(DimensionalityReductionError) {
-        throw;
-    }
-}
-
-
-cv::Mat PCAStep::debugRun(const cv::Mat &input,
-                          const cv::Mat &param) const
-{
-    try {
-        return this->run(input,
-                         param);
-    } catch(DimensionalityReductionError) {
-        throw;
-    }
-}
-
-
-
-
-PCAStep::~PCAStep()
-{
-
 }
 
 

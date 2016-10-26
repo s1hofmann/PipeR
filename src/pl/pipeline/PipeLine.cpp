@@ -528,7 +528,6 @@ void PipeLine::train(const std::vector<std::string> &input,
             this->mEncoding->debugTrain(reduced);
         }
     }
-
     // Load descriptors with corresponding labels
     std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
 
@@ -536,18 +535,30 @@ void PipeLine::train(const std::vector<std::string> &input,
         debug.inform("Starting training.", "Data size:", filesWithLabels.first.size());
     }
 
+    cv::Ptr<MLConfig> mlConfig;
+    try {
+        mlConfig = config_cast<MLConfig>(this->mClassification->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mClassification->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+    if(mlConfig->folds()) {
+    } else {
+        logger.report("Invalid fold size. Skipping crossvalidation.");
+        debug.report("Invalid fold size. Skipping crossvalidation.");
+    }
+
     cv::Mat1d trainingData;
     cv::Mat1i trainingLabels;
 
     if(mDebugMode) {
-        if(!this->mDimensionalityReduction.empty()) {
-            if(!this->mEncoding.empty()) {
-                debug.inform("Perfoming dimensionality reduction and encoding.");
-                logger.inform("Perfoming dimensionality reduction and encoding.");
-            } else {
-                debug.inform("Perfoming dimensionality reduction.");
-                logger.inform("Perfoming dimensionality reduction.");
-            }
+        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+            debug.inform("Perfoming dimensionality reduction and encoding.");
+            logger.inform("Perfoming dimensionality reduction and encoding.");
+        } else if(!this->mDimensionalityReduction.empty()) {
+            debug.inform("Perfoming dimensionality reduction.");
+            logger.inform("Perfoming dimensionality reduction.");
         } else if(!this->mEncoding.empty()) {
             debug.inform("Performing encoding.");
             logger.inform("Performing encoding.");
@@ -559,12 +570,10 @@ void PipeLine::train(const std::vector<std::string> &input,
         int label = filesWithLabels.second[idx];
 
         trainingLabels.push_back(label);
-        if(!this->mDimensionalityReduction.empty()) {
-            if(!this->mEncoding.empty()) {
-                trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
-            } else {
-                trainingData.push_back(this->mDimensionalityReduction->run(desc));
-            }
+        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+            trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+        } else if(!this->mDimensionalityReduction.empty()) {
+            trainingData.push_back(this->mDimensionalityReduction->run(desc));
         } else if(!this->mEncoding.empty()) {
             trainingData.push_back(this->mEncoding->run(desc));
         } else {

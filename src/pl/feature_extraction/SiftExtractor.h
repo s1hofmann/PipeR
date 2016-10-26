@@ -30,26 +30,16 @@ public:
      */
     virtual ~SiftExtractor();
 
-    /**
-     * @brief compute
-     * @param input
-     * @param keypoints
-     * @return
-     */
-    virtual cv::Mat compute(const cv::Mat &input,
-                            std::vector<cv::KeyPoint> &keypoints) const override;
+    // FeatureExtractionStep interface
+    virtual cv::Mat computeImpl(const bool debugMode,
+                                const cv::Mat &input,
+                                std::vector<cv::KeyPoint> &keypoints) const override;
 
-    /**
-     * @brief debugCompute
-     * @param input
-     * @param keypoints
-     * @return
-     */
-    virtual cv::Mat debugCompute(const cv::Mat &input,
-                                 std::vector<cv::KeyPoint> &keypoints) const override;
+    virtual cv::Mat computeImpl(const bool debugMode,
+                                const cv::Mat &input,
+                                const cv::Mat &mask) const override;
 
 private:
-
 };
 
 

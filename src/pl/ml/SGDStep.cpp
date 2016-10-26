@@ -16,8 +16,9 @@ SGDStep::~SGDStep()
 }
 
 
-cv::Mat SGDStep::train(const cv::Mat &input,
-                       const cv::Mat &param) const
+cv::Mat SGDStep::trainImpl(const bool debugMode,
+                           const cv::Mat &input,
+                           const cv::Mat &param) const
 {
     cv::Ptr<SGDConfig> config;
     try {
@@ -38,6 +39,7 @@ cv::Mat SGDStep::train(const cv::Mat &input,
     cv::Mat1d dInput;
     cv::Mat1d dParam;
     if(!(input.type() == CV_64FC1)) {
+        if(debugMode) { debug("Incompatible type of input data, converting."); }
         input.convertTo(dInput, CV_64FC1);
     } else {
         dInput = input;
@@ -45,190 +47,79 @@ cv::Mat SGDStep::train(const cv::Mat &input,
 
     //Here param is supposed to hold label data
     if(!(param.type() == CV_64FC1)) {
+        if(debugMode) { debug("Incompatible type of parameter data, converting."); }
         param.convertTo(dParam, CV_64FC1);
     } else {
         dParam = param;
     }
-
-    cv::Mat1d weights = calculateWeights(dParam);
-    double lambda = config->lambda();
-    double learningRate = config->learningRate();
-    double epsilon = config->epsilon();
-    double multiplier = config->multiplier();
-    double bias = config->bias();
-    vl_size iterations = config->iterations();
-    vl_size maxIterations = config->maxIterations();
-
-    cv::Mat1d model = config->model();
-
-    cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(dInput,
-                                                                            dParam,
-                                                                            lambda);
-
-    if(!model.empty()) { solver->setModel(model); }
-    if(bias > 0) { solver->setBias(bias); }
-
-    if(learningRate > 0) { solver->setBiasLearningRate(learningRate); }
-    if(epsilon > 0) { solver->setEpsilon(epsilon); }
-    if(multiplier > 0) { solver->setBiasMultiplier(multiplier); }
-    if(iterations > 0) { solver->setStartIterationCount(iterations); }
-    if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
-    if(!weights.empty()) { solver->setWeights(weights); }
-
-    solver->train();
-
-    //Updated classifier data
-    model = solver->getModelMat();
-    bias = solver->getBias();
-
-    if(!model.empty()) {
-        std::string fileName = this->mConfig.dynamicCast<SGDConfig>()->classifierFiles()[0];
-        this->save(fileName,
-                   model,
-                   bias);
-    }
-
-    return cv::Mat();
-}
-
-
-cv::Mat SGDStep::run(const cv::Mat &input,
-                     const cv::Mat &param) const
-{
-    cv::Ptr<SGDConfig> config;
-    try {
-        config = config_cast<SGDConfig>(this->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mConfig->identifier();
-        throw MLError(s.str(), currentMethod, currentLine);
-    }
-
-    std::vector<std::string> classifiers = config->classifierFiles();
-    cv::Mat1f results(1, classifiers.size());
-
-    for(size_t idx = 0; idx < classifiers.size(); ++idx) {
-        std::string classifierFile = classifiers[idx];
-        try {
-            std::pair<cv::Mat1d, double> classifierData = this->load(classifierFile);
-            if(input.cols != classifierData.first.cols) {
-                std::stringstream s;
-                s << "Data doesn't fit trained model." << std::endl;
-                throw MLError(s.str(), currentMethod, currentLine);
-            } else {
-                if(input.type() != CV_64F) {
-                    cv::Mat tmp;
-                    input.convertTo(tmp, CV_64F);
-                    results.at<float>(idx) = tmp.dot(classifierData.first) + classifierData.second;
-                } else {
-                    results.at<float>(idx) = input.dot(classifierData.first) + classifierData.second;
-                }
-            }
-        } catch(MLError) {
-            throw;
-        }
-    }
-
-    return results;
-}
-
-
-cv::Mat SGDStep::debugTrain(const cv::Mat &input,
-                            const cv::Mat &param) const
-{
-    cv::Ptr<SGDConfig> config;
-    try {
-        config = config_cast<SGDConfig>(this->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mConfig->identifier();
-        throw MLError(s.str(), currentMethod, currentLine);
-    }
-
-    if(input.empty()) {
-        throw MLError("Missing parameters, input empty.", currentMethod, currentLine);
-    } else if(param.empty()) {
-        throw MLError("Missing parameters, labels empty.", currentMethod, currentLine);
-    }
-
-    cv::Mat1d dInput;
-    cv::Mat1d dParam;
-    if(!(input.type() == CV_64FC1)) {
-        debug("Incompatible type of input data, converting.");
-        input.convertTo(dInput, CV_64FC1);
-    } else {
-        dInput = input;
-    }
-
-    if(!(param.type() == CV_64FC1)) {
-        debug("Incompatible type of parameter data, converting.");
-        param.convertTo(dParam, CV_64FC1);
-    } else {
-        dParam = param;
-    }
-
-    std::cout << dInput.size() << std::endl;
-    std::cout << dParam.size() << std::endl;
-
-    std::cout << cv::countNonZero(dInput) << std::endl;
-    std::cout << cv::countNonZero(dParam) << std::endl;
 
     cv::Mat1d weights = calculateWeights(param);
     double lambda = config->lambda();
-    debug("Lambda:", lambda);
+    if(debugMode) { debug("Lambda:", lambda); }
     double learningRate = config->learningRate();
-    debug("Learning rate:", learningRate);
+    if(debugMode) { debug("Learning rate:", learningRate); }
     double epsilon = config->epsilon();
-    debug("Epsilon:", epsilon);
+    if(debugMode) { debug("Epsilon:", epsilon); }
     double multiplier = config->multiplier();
-    debug("Multiplier:", multiplier);
-    double bias = config->bias();
-    debug("Bias:", bias);
+    if(debugMode) { debug("Multiplier:", multiplier); }
     vl_size iterations = config->iterations();
-    debug("Iterations:", iterations);
+    if(debugMode) { debug("Iterations:", iterations); }
     vl_size maxIterations = config->maxIterations();
-    debug("Max. iterations:", maxIterations);
-
-    cv::Mat1d model = config->model();
+    if(debugMode) { debug("Max. iterations:", maxIterations); }
 
     cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(dInput,
                                                                             dParam,
                                                                             lambda);
 
-    if(!model.empty()) { solver->setModel(model); }
-
-    if(bias > 0) { solver->setBias(bias); }
+    // Bias learning rate and multiplier
     if(learningRate > 0) { solver->setBiasLearningRate(learningRate); }
-    if(epsilon > 0) { solver->setEpsilon(epsilon); }
     if(multiplier > 0) { solver->setBiasMultiplier(multiplier); }
-    if(iterations > 0) { solver->setStartIterationCount(iterations); }
-    if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
+    // Sample weights
     if(!weights.empty()) { solver->setWeights(weights); }
 
+    try {
+        std::tuple<cv::Mat1d, double, vl_size> warmStartData = this->load(config->classifierFiles()[0]);
+        if(!std::get<0>(warmStartData).empty()) {
+            solver->setModel(std::get<0>(warmStartData));
+        }
+        solver->setBias(std::get<1>(warmStartData));
+        solver->setStartIterationCount(std::get<2>(warmStartData));
+        if(debugMode) { debug("Warm starting training."); }
+    } catch(MLError & e) {
+        if(debugMode) { debug("Starting training."); }
+    }
+
+    // If user defined values for iterations, stopping epsilon and max iterations are present, override settings
+    if(iterations > 0) { solver->setStartIterationCount(iterations); }
+    if(epsilon > 0) { solver->setEpsilon(epsilon); }
+    if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
+
     solver->train();
+
+    cv::Mat1d model;
+    double bias = 0;
 
     //Updated classifier data
     model = solver->getModelMat();
     debug("Model size:", model.size());
     bias = solver->getBias();
     debug("Bias:", bias);
-
-    std::cout << cv::countNonZero(model) << std::endl;
-    std::cout << bias << std::endl;
+    iterations = solver->getIterationCount();
+    debug("Iterations:", iterations);
 
     if(!model.empty()) {
-        std::string fileName = this->mConfig.dynamicCast<SGDConfig>()->classifierFiles()[0];
-        this->save(fileName,
-                   model,
-                   bias);
+        this->save(model,
+                   bias,
+                   iterations);
     }
 
     return cv::Mat();
 }
 
 
-cv::Mat SGDStep::debugRun(const cv::Mat &input,
-                          const cv::Mat &param) const
+cv::Mat SGDStep::runImpl(const bool debugMode,
+                         const cv::Mat &input,
+                         const cv::Mat &param) const
 {
     cv::Ptr<SGDConfig> config;
     try {
@@ -245,10 +136,10 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
 
     for(size_t idx = 0; idx < classifiers.size(); ++idx) {
         std::string classifierFile = classifiers[idx];
-        debug("Loading classifier", classifierFile);
+        if(debugMode) { debug("Loading classifier", classifierFile); }
         try {
-            std::pair<cv::Mat1d, double> classifierData = this->load(classifierFile);
-            if(input.cols != classifierData.first.cols) {
+            std::tuple<cv::Mat1d, double, vl_size> classifierData = this->load(classifierFile);
+            if(input.cols != std::get<0>(classifierData).cols) {
                 std::stringstream s;
                 s << "Data doesn't fit trained model." << std::endl;
                 throw MLError(s.str(), currentMethod, currentLine);
@@ -256,10 +147,10 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
                 if(input.type() != CV_64F) {
                     cv::Mat tmp;
                     input.convertTo(tmp, CV_64F);
-                    double score = tmp.dot(classifierData.first) + classifierData.second;
+                    double score = tmp.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
                     results.at<float>(idx) = score;
                 } else {
-                    double score = input.dot(classifierData.first) + classifierData.second;
+                    double score = input.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
                     results.at<float>(idx) = score;
                 }
             }
@@ -277,12 +168,13 @@ cv::Mat SGDStep::debugRun(const cv::Mat &input,
 }
 
 
-std::pair<cv::Mat1d, double> SGDStep::load(const std::string &fileName) const
+std::tuple<cv::Mat1d, double, vl_size> SGDStep::load(const std::string &fileName) const
 {
     cv::FileStorage fs(fileName, cv::FileStorage::READ);
 
     if ((fs["model"].isNone() || fs["model"].empty()) ||
-        (fs["bias"].isNone() || fs["bias"].empty())) {
+        (fs["bias"].isNone() || fs["bias"].empty()) ||
+        (fs["iterations"].isNone() || fs["iterations"].empty())) {
         std::stringstream s;
         s << "Error. Unable to load classifier data from file: " << fileName << ". Aborting." << std::endl;
         throw MLError(s.str(), currentMethod, currentLine);
@@ -290,26 +182,65 @@ std::pair<cv::Mat1d, double> SGDStep::load(const std::string &fileName) const
 
     cv::Mat1d model;
     double bias;
+    double iterations;
 
     fs["model"] >> model;
     fs["bias"] >> bias;
+    fs["iterations"] >> iterations;
 
     fs.release();
 
-    return std::make_pair(model, bias);
+    return std::make_tuple(model, bias, static_cast<vl_size>(iterations));
 }
 
 
 void SGDStep::save(const std::string &fileName,
                    const cv::Mat1d &model,
-                   const double bias) const
+                   const double bias,
+                   const double iterations) const
 {
     cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
 
     fs << "model" << model;
     fs << "bias" << bias;
+    fs << "iterations" << iterations;
 
     fs.release();
+}
+
+
+std::tuple<cv::Mat1d, double, vl_size> SGDStep::load() const
+{
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    return this->load(config->classifierFiles()[0]);
+}
+
+
+void SGDStep::save(const cv::Mat1d &model,
+                   const double bias,
+                   const double iterations) const
+{
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    this->save(config->classifierFiles()[0],
+               model,
+               bias,
+               iterations);
 }
 
 

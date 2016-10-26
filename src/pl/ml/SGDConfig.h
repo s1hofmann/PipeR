@@ -1,24 +1,25 @@
 #pragma once
 
-#include "../pipeline/ConfigContainer.h"
+#include "MLConfig.h"
 #include "../core/vlfeat/wrapper/sgdsolver.h"
 #include <opencv2/core/core.hpp>
 
 namespace pl {
 
 
-class SGDConfig : public ConfigContainer
+class SGDConfig : public MLConfig
 {
 public:
     SGDConfig(const std::string &identifier,
               const std::vector<std::string> &outputFiles = std::vector<std::string>(),
               const double lambda = 0.01,
-              const double learningRate = 0.001,
+              const double learningRate = 0.1,
               const double multiplier = 1,
               const double epsilon = 1e10-5,
               vl_size maxIterations = 10000,
               vl_size iterations = 0,
               const double bias = 0,
+              const int folds = 5,
               const bool binary = false);
 
     virtual ~SGDConfig();

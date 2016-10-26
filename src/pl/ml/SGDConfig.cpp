@@ -13,9 +13,10 @@ SGDConfig::SGDConfig(const std::string &identifier,
                      vl_size iterations,
                      vl_size maxIterations,
                      const double bias,
+                     const int folds,
                      const bool binary)
     :
-        ConfigContainer(identifier),
+        MLConfig(identifier, folds),
         mClassifierFiles(outputFiles),
         mLambda(lambda),
         mLearningRate(learningRate),
@@ -153,13 +154,21 @@ std::string SGDConfig::toString() const
     }
 
     configString << "Lambda: " << lambda() << std::endl
-                 << "Learning rate: " << learningRate() << std::endl
-                 << "Epsilon: " << epsilon() << std::endl
-                 << "Bias: " << bias() << std::endl
                  << "Bias multiplier: " << multiplier() << std::endl
-                 << "Starting iterations: " << iterations() << std::endl
-                 << "Max. iterations: " << maxIterations() << std::endl
-                 << "Binary classification: " << binary() << std::endl;
+                 << "Bias learning rate: " << learningRate() << std::endl;
+    if(iterations()) {
+        configString << "Starting iterations: " << iterations() << std::endl;
+    }
+    if(epsilon()) {
+        configString << "Epsilon: " << epsilon() << std::endl;
+    }
+    if(maxIterations()) {
+        configString << "Max. iterations: " << maxIterations() << std::endl;
+    }
+    if(mFolds > 1) {
+        configString << mFolds << "-fold crossvalidation" << std::endl;
+    }
+    configString << "Binary classification: " << binary() << std::endl;
 
     return configString.str();
 }
@@ -173,19 +182,19 @@ bool SGDConfig::fromJSON(std::string &file)
     } else {
         const Json::Value params = root[identifier()];
 
-        mLambda = params.get(varName(mLambda), 0.001).asDouble();
-        mLearningRate = params.get(varName(mLearningRate), 0.001).asDouble();
+        mLambda = params.get(varName(mLambda), 0.0001).asDouble();
+        mLearningRate = params.get(varName(mLearningRate), 1.0).asDouble();
         mMultiplier = params.get(varName(mMultiplier), 1.0).asDouble();
-        mEpsilon = params.get(varName(mEpsilon), 1e10-5).asDouble();
+        mEpsilon = params.get(varName(mEpsilon), 0.0).asDouble();
         mIterations = params.get(varName(mIterations), 0).asInt();
-        mMaxIterations = params.get(varName(mMaxIterations), 10000).asInt();
-        mBias = params.get(varName(mBias), 0).asDouble();
+        mMaxIterations = params.get(varName(mMaxIterations), 0).asInt();
         mBinary = params.get(varName(mBinary), false).asBool();
+        mFolds = params.get(varName(mFolds), 5).asInt();
 
         const Json::Value classifiers = params[varName(mClassifierFiles)];
 
         if(classifiers.size()) {
-            for(int idx = 0; idx < classifiers.size(); ++idx) {
+            for(unsigned int idx = 0; idx < classifiers.size(); ++idx) {
                 mClassifierFiles.push_back(classifiers[idx].asString());
             }
         } else {

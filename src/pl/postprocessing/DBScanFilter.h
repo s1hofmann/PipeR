@@ -19,33 +19,32 @@ public:
     virtual ~DBScanFilter();
 
     /**
-     * @brief train Performs DBSCAN clustering on augmented keypoints and neglects small clusters. Used to filter keypoints.
-     * @param input cv::Mat containing augmented keypoints. Coordinates are assumed to be stored as (x,y) in the last to columns of the matrix.
+     * @brief runImpl
+     * @param debug
+     * @param input
      * @param param
-     * @return Filtered keypoints, without augmentation
+     * @return
      */
-    virtual cv::Mat train(const cv::Mat &input,
-                          const cv::Mat &param = cv::Mat()) const override;
+    virtual cv::Mat runImpl(const bool debugMode,
+                            const cv::Mat &input,
+                            const cv::Mat &param) const override;
+
 
     /**
-     * @brief run
+     * @brief trainImpl
+     * @param debug
+     * @param input
+     * @param param
+     * @return
      */
-    virtual cv::Mat run(const cv::Mat &input,
-                        const cv::Mat &param = cv::Mat()) const override;
-
-    /**
-     * @brief debugTrain
-     */
-    virtual cv::Mat debugTrain(const cv::Mat &input,
-                               const cv::Mat &param = cv::Mat()) const override;
-
-    /**
-     * @brief debugRun
-     */
-    virtual cv::Mat debugRun(const cv::Mat &input,
-                             const cv::Mat &param = cv::Mat()) const override;
+    virtual cv::Mat trainImpl(const bool debugMode,
+                              const cv::Mat &input,
+                              const cv::Mat &param) const override;
 
 private:
+
+    // PipelineStep interface
+public:
 };
 
 

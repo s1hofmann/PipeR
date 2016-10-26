@@ -15,12 +15,13 @@ class BOWEncodeingStep : public EncodingStep
 public:
     BOWEncodeingStep(const cv::Ptr<ConfigContainer> config);
 
-    // PipelineStep interface
-    virtual cv::Mat train(const cv::Mat &input, const cv::Mat &param) const override;
-    virtual cv::Mat run(const cv::Mat &input, const cv::Mat &param) const override;
-    virtual cv::Mat debugTrain(const cv::Mat &input, const cv::Mat &param) const override;
-    virtual cv::Mat debugRun(const cv::Mat &input, const cv::Mat &param) const override;
+    virtual cv::Mat runImpl(const bool debugMode,
+                            const cv::Mat &input,
+                            const cv::Mat &param) const;
 
+    virtual cv::Mat trainImpl(const bool debugMode,
+                              const cv::Mat &input,
+                              const cv::Mat &param) const;
 private:
     cv::Mat encode(const std::string &encoder, const cv::Mat &data) const;
 
