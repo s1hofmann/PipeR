@@ -86,8 +86,10 @@ bool BOWConfig::fromJSON(std::string &file)
 
         const Json::Value vocabs = params[varName(mVocabs)];
         if(vocabs.empty()) {
+            mVocabs.clear();
             mVocabs.push_back("./cluster_0.yml");
         } else {
+            mVocabs.clear();
             for(int idx = 0; idx < vocabs.size(); ++idx) {
                 mVocabs.push_back(vocabs[idx].asString());
             }
