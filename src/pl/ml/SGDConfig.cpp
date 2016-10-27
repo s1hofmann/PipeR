@@ -182,7 +182,7 @@ bool SGDConfig::fromJSON(std::string &file)
         const Json::Value learningRates = params[varName(mLearningRates)];
         const Json::Value multipliers = params[varName(mMultipliers)];
 
-        if(classifiers.size()) {
+        if(!classifiers.empty()) {
             for(unsigned int idx = 0; idx < classifiers.size(); ++idx) {
                 mClassifierFiles.push_back(classifiers[idx].asString());
             }
@@ -191,7 +191,7 @@ bool SGDConfig::fromJSON(std::string &file)
             mClassifierFiles.push_back("./trainedClassifier.yml");
         }
 
-        if(lambdas.size()) {
+        if(!lambdas.empty()) {
             for(unsigned int idx = 0; idx < lambdas.size(); ++idx) {
                 mLambdas.push_back(lambdas[idx].asDouble());
             }
@@ -200,7 +200,7 @@ bool SGDConfig::fromJSON(std::string &file)
             mLambdas.push_back(0.0001);
         }
 
-        if(learningRates.size()) {
+        if(!learningRates.empty()) {
             for(unsigned int idx = 0; idx < learningRates.size(); ++idx) {
                 mLearningRates.push_back(learningRates[idx].asDouble());
             }
@@ -209,7 +209,7 @@ bool SGDConfig::fromJSON(std::string &file)
             mLambdas.push_back(1.0);
         }
 
-        if(multipliers.size()) {
+        if(!multipliers.empty()) {
             for(unsigned int idx = 0; idx < multipliers.size(); ++idx) {
                 mMultipliers.push_back(multipliers[idx].asDouble());
             }
