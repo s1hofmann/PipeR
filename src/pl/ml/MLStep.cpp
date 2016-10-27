@@ -6,9 +6,10 @@
 
 namespace pl {
 
+
 MLStep::MLStep(const cv::Ptr<ConfigContainer> config)
     :
-        PipelineStep(config)
+        PseudoPipelineStep(config)
 {
 
 }

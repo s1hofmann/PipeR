@@ -37,9 +37,8 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    int maxDescriptors() const;
-
-    void setMaxDescriptors(int value);
+    unsigned int maxDescriptors() const;
+    void setMaxDescriptors(unsigned int value);
 
     bool rebuildPca() const;
     void setRebuildPca(bool rebuildPca);
@@ -61,12 +60,17 @@ public:
 
     std::string mode2string(const PipeLineMode &mode) const;
 
-    std::string getLogFile() const;
-
+    std::string logFile() const;
     void setLogFile(const std::string &value);
 
-    std::string getOutputDirectory() const;
+    std::string outputDirectory() const;
     void setOutputDirectory(const std::string &outputDirectory);
+
+    unsigned int maxFiles() const;
+    void setMaxFiles(unsigned int maxFiles);
+
+    int randomSeed() const;
+    void setRandomSeed(int randomSeed);
 
 private:
     /**
@@ -92,7 +96,7 @@ private:
     /**
      * @brief maxDescriptors
      */
-    int mMaxDescriptors;
+    unsigned int mMaxDescriptors;
 
     /**
      * @brief mRebuildDescriptors
@@ -123,6 +127,12 @@ private:
      * @brief logFile
      */
     std::string mLogFile;
+
+
+    /**
+     * @brief mRandomSeed
+     */
+    int mRandomSeed;
 };
 
 

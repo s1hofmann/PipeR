@@ -311,7 +311,7 @@ bool PipeLine::removeClassificationStep() {
 
 void PipeLine::train(const std::vector<std::string> &input,
                      const std::vector<int> &labels) const {
-    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
     if(input.size() != labels.size()) {
@@ -543,14 +543,6 @@ void PipeLine::train(const std::vector<std::string> &input,
         s << "Wrong config type: " << this->mClassification->mConfig->identifier();
         throw MLError(s.str(), currentMethod, currentLine);
     }
-    if(mlConfig->folds()) {
-    } else {
-        logger.report("Invalid fold size. Skipping crossvalidation.");
-        debug.report("Invalid fold size. Skipping crossvalidation.");
-    }
-
-    cv::Mat1d trainingData;
-    cv::Mat1i trainingLabels;
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
@@ -564,52 +556,114 @@ void PipeLine::train(const std::vector<std::string> &input,
             logger.inform("Performing encoding.");
         }
     }
-    // Concatenate descriptors as input to the SVM
-    for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
-        cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[idx]);
-        int label = filesWithLabels.second[idx];
 
-        trainingLabels.push_back(label);
-        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-            trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
-        } else if(!this->mDimensionalityReduction.empty()) {
-            trainingData.push_back(this->mDimensionalityReduction->run(desc));
-        } else if(!this->mEncoding.empty()) {
-            trainingData.push_back(this->mEncoding->run(desc));
-        } else {
-            trainingData.push_back(desc);
+    if(mlConfig->folds()) {
+        logger.report("Starting crossvalidation.");
+        debug.report("Starting crossvalidation.");
+
+        // Creates randomized indices for n folds of training and test files
+        auto crossvalIndices = CrossValidation::createFolds(filesWithLabels.first.size(), mlConfig->folds());
+        // Storage for training folds
+        std::vector<std::pair<cv::Mat1d, cv::Mat1i>> trainingData;
+        // Storage for test folds
+        std::vector<std::pair<cv::Mat1d, cv::Mat1i>> testData;
+
+        for(size_t fold = 0; fold < mlConfig->folds(); ++fold) {
+            // Containers for training and test data
+            cv::Mat1d trainingDescriptors;
+            cv::Mat1i trainingLabels;
+            cv::Mat1d testDescriptors;
+            cv::Mat1i testLabels;
+
+            // Processes training data which are accessed via indices stored in the first element of the fold pair
+            for(size_t idx = 0; idx < crossvalIndices[fold].first.size(); ++idx) {
+                cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[crossvalIndices[fold].first[idx]]);
+                int label = filesWithLabels.second[crossvalIndices[fold].first[idx]];
+
+                trainingLabels.push_back(label);
+                if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+                    trainingDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                } else if(!this->mDimensionalityReduction.empty()) {
+                    trainingDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                } else if(!this->mEncoding.empty()) {
+                    trainingDescriptors.push_back(this->mEncoding->run(desc));
+                } else {
+                    trainingDescriptors.push_back(desc);
+                }
+            }
+            trainingData.push_back(std::make_pair(trainingDescriptors, trainingLabels));
+
+            // Processes test data which are accessed via indices stored in the second element of the fold pair
+            for(size_t idx = 0; idx < crossvalIndices[fold].second.size(); ++idx) {
+                cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[crossvalIndices[fold].second[idx]]);
+                int label = filesWithLabels.second[crossvalIndices[fold].second[idx]];
+
+                testLabels.push_back(label);
+                if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+                    testDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                } else if(!this->mDimensionalityReduction.empty()) {
+                    testDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                } else if(!this->mEncoding.empty()) {
+                    testDescriptors.push_back(this->mEncoding->run(desc));
+                } else {
+                    testDescriptors.push_back(desc);
+                }
+            }
+            testData.push_back(std::make_pair(testDescriptors, testLabels));
         }
-    }
+    } else {
+        logger.report("Starting training.");
+        debug.report("Starting training.");
+        cv::Mat1d trainingData;
+        cv::Mat1i trainingLabels;
 
-    // Permute data
-    cv::Mat permutedData;
-    cv::Mat permutedLabels;
-    Shuffler::shuffle(trainingData,
-                      trainingLabels,
-                      permutedData,
-                      permutedLabels);
+        // Concatenate descriptors as input to the SVM
+        for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
+            cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[idx]);
+            int label = filesWithLabels.second[idx];
 
-    debug.inform("Training...");
-    logger.inform("Training...");
-    try {
-        if(mDebugMode) {
-            this->mClassification->debugTrain(permutedData,
-                                              permutedLabels);
-        } else {
-            this->mClassification->train(permutedData,
-                                         permutedLabels);
+            trainingLabels.push_back(label);
+            if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+                trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+            } else if(!this->mDimensionalityReduction.empty()) {
+                trainingData.push_back(this->mDimensionalityReduction->run(desc));
+            } else if(!this->mEncoding.empty()) {
+                trainingData.push_back(this->mEncoding->run(desc));
+            } else {
+                trainingData.push_back(desc);
+            }
         }
-    } catch(MLError &e) {
-        logger.report(e.what());
-    }
 
-    debug.inform("Training done!");
-    logger.inform("Training done!");
+        // Permute data
+        cv::Mat permutedData;
+        cv::Mat permutedLabels;
+        Shuffler::shuffle(trainingData,
+                          trainingLabels,
+                          permutedData,
+                          permutedLabels);
+
+        debug.inform("Training...");
+        logger.inform("Training...");
+        try {
+            if(mDebugMode) {
+                this->mClassification->debugTrain(permutedData,
+                                                  permutedLabels);
+            } else {
+                this->mClassification->train(permutedData,
+                                             permutedLabels);
+            }
+        } catch(MLError &e) {
+            logger.report(e.what());
+        }
+
+        debug.inform("Training done!");
+        logger.inform("Training done!");
+    }
 }
 
 cv::Mat PipeLine::run(const std::string &input)
 {
-    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
     //Load image file
@@ -635,7 +689,7 @@ cv::Mat PipeLine::run(const std::string &input)
 
 cv::Mat PipeLine::run(const cv::Mat &inputMat)
 {
-    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->getLogFile());
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
     mCurrentInput = inputMat.clone();
@@ -787,9 +841,9 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
         cv::Mat result;
         if(!this->mClassification.empty()) {
             if(!this->mDebugMode) {
-                result = this->mClassification->run(encoded);
+                result = this->mClassification->predict(encoded);
             } else {
-                result = this->mClassification->debugRun(encoded);
+                result = this->mClassification->debugPredict(encoded);
             }
         } else {
             result = encoded;

@@ -18,7 +18,7 @@ SGDStep::~SGDStep()
 
 cv::Mat SGDStep::trainImpl(const bool debugMode,
                            const cv::Mat &input,
-                           const cv::Mat &param) const
+                           const cv::Mat &labels) const
 {
     cv::Ptr<SGDConfig> config;
     try {
@@ -31,7 +31,7 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
 
     if(input.empty()) {
         throw MLError("Missing parameters, input empty.", currentMethod, currentLine);
-    } else if(param.empty()) {
+    } else if(labels.empty()) {
         throw MLError("Missing parameters, labels empty.", currentMethod, currentLine);
     }
 
@@ -45,15 +45,14 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
         dInput = input;
     }
 
-    //Here param is supposed to hold label data
-    if(!(param.type() == CV_64FC1)) {
+    if(!(labels.type() == CV_64FC1)) {
         if(debugMode) { debug("Incompatible type of parameter data, converting."); }
-        param.convertTo(dParam, CV_64FC1);
+        labels.convertTo(dParam, CV_64FC1);
     } else {
-        dParam = param;
+        dParam = labels;
     }
 
-    cv::Mat1d weights = calculateWeights(param);
+    cv::Mat1d weights = calculateWeights(labels);
     double lambda = config->lambda();
     if(debugMode) { debug("Lambda:", lambda); }
     double learningRate = config->learningRate();
@@ -117,9 +116,16 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
 }
 
 
-cv::Mat SGDStep::runImpl(const bool debugMode,
-                         const cv::Mat &input,
-                         const cv::Mat &param) const
+cv::Mat SGDStep::optimizeImpl(const bool debugMode,
+                              const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &training,
+                              const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &test) const
+{
+
+}
+
+
+cv::Mat SGDStep::predictImpl(const bool debugMode,
+                             const cv::Mat &input) const
 {
     cv::Ptr<SGDConfig> config;
     try {
@@ -131,7 +137,7 @@ cv::Mat SGDStep::runImpl(const bool debugMode,
     }
 
     std::vector<std::string> classifiers = config->classifierFiles();
-    debug(classifiers.size(), "classifier(s)");
+    if(debugMode) { debug(classifiers.size(), "classifier(s)"); }
     cv::Mat1f results(1, classifiers.size());
 
     for(size_t idx = 0; idx < classifiers.size(); ++idx) {

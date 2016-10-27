@@ -25,9 +25,11 @@ public:
 
     virtual unsigned long write(const cv::Mat &output,
                                 const std::string &outPath,
-                                const std::string &fileName) const = 0;
+                                const std::string &fileName,
+                                const std::string &prefix = std::string()) const = 0;
 
-    virtual cv::Mat read(const std::string &input) const = 0;
+    virtual cv::Mat read(const std::string &input,
+                         const std::string &prefix = std::string()) const = 0;
 };
 
 

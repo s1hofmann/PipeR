@@ -2,7 +2,7 @@
 
 
 #include <vector>
-#include "Range.h"
+
 
 namespace pl {
 
@@ -19,7 +19,7 @@ public:
     UniqueNumber(T start = 0, T step = 1.0, bool rev = false)
     {
         reverse = rev;
-        stepSize = abs(step);
+        stepSize = (step <= 0) ? 1.0 : step;
         rev ? number = start+stepSize : number = start-stepSize;
     }
     T operator()() { return reverse ? (number-=stepSize) : (number+=stepSize); }
@@ -41,8 +41,10 @@ public:
     {
         if(!std::is_integral<T>::value) { return std::vector<T>(); }
 
-        T delta = abs(to-from);
-        T stepSize = abs(step);
+
+        T delta = to-from;
+        delta *= (delta < 0) ? -1 : 1;
+        T stepSize = (step <= 0) ? 1.0 : step;
 
         std::vector<T> ret;
         if(step == 0) {
@@ -54,7 +56,7 @@ public:
                 ret.resize((delta/stepSize)+1);
             }
         } else {
-            ret.resize(abs(to-from));
+            ret.resize(delta);
         }
         if(from == to) {
             return std::vector<T>();

@@ -61,7 +61,8 @@ public:
      * @param labelFile File to read data from
      * @return std::pair<std::vector<std::string>, std::vector<int>>
      */
-    static std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile);
+    static std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile,
+                                                                                       const unsigned int maxFiles = 0);
 
     /**
      * @brief saveImage Utility function to save a cv::Mat as image
@@ -72,14 +73,16 @@ public:
      */
     static bool saveImage(const cv::Mat &image,
                           const std::string &outputPath,
-                          const std::string &imageFileName);
+                          const std::string &imageFileName,
+                          const std::string &prefix = std::string());
 
     /**
      * @brief loadImage Utility function to load an image into a cv::Mat object
      * @param fileName std::string containing the absolute path to the file
      * @return Success: cv::Mat object containing the image\n Failure: Empty cv::Mat
      */
-    static cv::Mat loadImage(const std::string &fileName);
+    static cv::Mat loadImage(const std::string &fileName,
+                             const std::string &prefix = std::string());
 
     /**
      * @brief saveBinary Utility function to save a cv::Mat in binary format
@@ -90,7 +93,8 @@ public:
      */
     static bool saveBinary(const cv::Mat &data,
                            const std::string &outputPath,
-                           const std::string &fileName);
+                           const std::string &fileName,
+                           const std::string &prefix = std::string());
 
     static cv::Mat loadBinary(const std::string &inputPath,
                               const std::string &fileName);
@@ -106,7 +110,8 @@ public:
      */
     static bool saveYML(const cv::Mat &data,
                         const std::string &outputPath,
-                        const std::string &fileName);
+                        const std::string &fileName,
+                        const std::string &prefix = std::string());
 
     /**
      * @brief saveDescriptorWithLabel Utility function which saves a descriptor in binary format and appends its label to a labelfile
@@ -121,7 +126,8 @@ public:
                                         const int label,
                                         const std::string &outputPath,
                                         const std::string &descriptorFileName,
-                                        const std::string &labelFileName);
+                                        const std::string &labelFileName,
+                                        const std::string &prefix = std::string());
 
     /**
      * @brief saveDescriptor Utility function which saves a descriptor in binary format
@@ -132,7 +138,8 @@ public:
      */
     static bool saveDescriptor(const cv::Mat &descriptor,
                                const std::string &outputPath,
-                               const std::string &fileName);
+                               const std::string &fileName,
+                               const std::string &prefix = std::string());
 
     /**
      * @brief loadDescriptors Utility function which loads maxDescriptors from a given set of files
@@ -201,7 +208,7 @@ private:
     static bool appendDescriptor(const std::string &labelFileName,
                                  const std::string &outputPath,
                                  const std::string &fileName,
-                                 const int label);
+                                 const int label, const std::__1::string &prefix);
 };
 
 

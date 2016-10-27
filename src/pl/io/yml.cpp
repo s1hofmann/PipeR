@@ -23,7 +23,8 @@ YML::~YML()
 
 unsigned long YML::write(const cv::Mat &output,
                          const std::string &outPath,
-                         const std::string &fileName) const
+                         const std::string &fileName,
+                         const std::string &prefix) const
 {
     if(output.empty()) {
         std::stringstream s;
@@ -42,7 +43,12 @@ unsigned long YML::write(const cv::Mat &output,
     }
 
     QDir d(QString::fromStdString(outPath));
-    QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << fileName;
+    QString absFile = d.absoluteFilePath(QString::fromStdString(s.str()));
 
     try {
         cv::FileStorage fs(absFile.toStdString(), cv::FileStorage::WRITE);
@@ -55,7 +61,7 @@ unsigned long YML::write(const cv::Mat &output,
 }
 
 
-cv::Mat YML::read(const std::string &input) const
+cv::Mat YML::read(const std::string &input, const std::__1::string &prefix) const
 {
     if(input.empty()) {
         std::stringstream s;
@@ -64,7 +70,12 @@ cv::Mat YML::read(const std::string &input) const
     }
 
     cv::Mat descr;
-    cv::FileStorage fs(input, cv::FileStorage::READ);
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << input;
+    cv::FileStorage fs(s.str(), cv::FileStorage::READ);
     fs["descriptors"] >> descr;
     fs.release();
 

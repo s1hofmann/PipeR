@@ -24,7 +24,8 @@ BIN::~BIN()
 
 unsigned long BIN::write(const cv::Mat &output,
                          const std::string &outPath,
-                         const std::string &fileName) const
+                         const std::string &fileName,
+                         const std::string &prefix) const
 {
     if(output.empty()) {
         std::stringstream s;
@@ -54,7 +55,12 @@ unsigned long BIN::write(const cv::Mat &output,
     }
 
     QDir d(QString::fromStdString(outPath));
-    QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << fileName;
+    QString absFile = d.absoluteFilePath(QString::fromStdString(s.str()));
     QFile file(absFile);
     if(!file.open(QIODevice::WriteOnly | QIODevice::QIODevice::Unbuffered)) {
         std::stringstream s;
@@ -108,14 +114,19 @@ unsigned long BIN::write(const cv::Mat &output,
 }
 
 
-cv::Mat BIN::read(const std::string &input) const
+cv::Mat BIN::read(const std::string &input, const std::string &prefix) const
 {
     if(input.empty()) {
         std::stringstream s;
         s << "No filename given." << std::endl;
         throw IOError(s.str(), currentMethod, currentLine);
     }
-    QFile file(QString::fromStdString(input));
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << input;
+    QFile file(QString::fromStdString(s.str()));
     if(!file.open(QIODevice::ReadOnly | QIODevice::QIODevice::Unbuffered)) {
         std::stringstream s;
         s << "Unable to open file " << input << "." << std::endl;

@@ -45,7 +45,8 @@ std::vector<std::string> FileUtil::getFiles(const std::string &path,
 }
 
 
-std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile)
+std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile,
+                                                                                      const unsigned int maxFiles)
 {
     QFile f(QString::fromStdString(labelFile));
 
@@ -55,7 +56,7 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
     if(f.exists()) {
         if (f.open(QIODevice::ReadOnly)) {
            QTextStream in(&f);
-           while (!in.atEnd())
+           while(!in.atEnd() && (maxFiles <= 0 || (maxFiles > 0 && path.size() < maxFiles)))
            {
               QString line = in.readLine();
               QStringList parts = line.split(" ");
@@ -81,14 +82,16 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
 
 bool FileUtil::saveImage(const cv::Mat &image,
                          const std::string &outputPath,
-                         const std::string &imageFileName)
+                         const std::string &imageFileName,
+                         const std::string &prefix)
 {
     FileWriter<IMG> imageWriter;
 
     try {
         bool result = imageWriter.write(image,
                                         outputPath,
-                                        imageFileName);
+                                        imageFileName,
+                                        prefix);
 
         return result;
     } catch(std::runtime_error) {
@@ -97,23 +100,27 @@ bool FileUtil::saveImage(const cv::Mat &image,
 }
 
 
-cv::Mat FileUtil::loadImage(const std::string &fileName)
+cv::Mat FileUtil::loadImage(const std::string &fileName,
+                            const std::string &prefix)
 {
     FileReader<IMG> imageReader;
 
-    return imageReader.read(fileName);
+    return imageReader.read(fileName,
+                            prefix);
 }
 
 
 bool FileUtil::saveBinary(const cv::Mat &data,
                           const std::string &outputPath,
-                          const std::string &fileName)
+                          const std::string &fileName,
+                          const std::string &prefix)
 {
     FileWriter<BIN> binaryWriter;
 
     return binaryWriter.write(data,
                               outputPath,
-                              fileName);
+                              fileName,
+                              prefix);
 }
 
 
@@ -147,7 +154,7 @@ cv::Mat FileUtil::loadBinary(const std::string &fileName)
 
 bool FileUtil::saveYML(const cv::Mat &data,
                        const std::string &outputPath,
-                       const std::string &fileName)
+                       const std::string &fileName, const std::__1::string &prefix)
 {
     FileWriter<YML> ymlWriter;
 
@@ -165,18 +172,19 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
                                        const int label,
                                        const std::string &outputPath,
                                        const std::string &descriptorFileName,
-                                       const std::string &labelFileName)
+                                       const std::string &labelFileName, const std::string &prefix)
 {
     FileWriter<BIN> writer;
 
     if(!descriptor.empty()) {
         QDir outputDir(QString::fromStdString(outputPath));
         if(outputDir.exists()) {
-            if(writer.write(descriptor, outputPath, descriptorFileName)) {
+            if(writer.write(descriptor, outputPath, descriptorFileName, prefix)) {
                 if(appendDescriptor(labelFileName,
                                     outputPath,
                                     descriptorFileName,
-                                    label)) {
+                                    label,
+                                    prefix)) {
                     return true;
                 } else {
                     return false;
@@ -197,14 +205,15 @@ bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
 
 bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
                               const std::string &outputPath,
-                              const std::string &fileName)
+                              const std::string &fileName,
+                              const std::string &prefix)
 {
     FileWriter<BIN> writer;
 
     if(!descriptor.empty()) {
         QDir outputDir(QString::fromStdString(outputPath));
         if(outputDir.exists()) {
-            if(writer.write(descriptor, outputPath, fileName)) {
+            if(writer.write(descriptor, outputPath, fileName, prefix)) {
                 return true;
             } else {
                 return false;
@@ -376,10 +385,16 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName,
 bool FileUtil::appendDescriptor(const std::string &labelFileName,
                                 const std::string &outputPath,
                                 const std::string &fileName,
-                                const int label)
+                                const int label,
+                                const std::string &prefix)
 {
     QDir d(QString::fromStdString(outputPath));
-    QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << fileName;
+    QString absFile = d.absoluteFilePath(QString::fromStdString(s.str()));
     QFileInfo labelFileInfo(QString::fromStdString(labelFileName));
     QFile fileHandler(labelFileInfo.absoluteFilePath());
 

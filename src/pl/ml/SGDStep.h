@@ -20,13 +20,16 @@ public:
     virtual ~SGDStep();
 
     // PipelineStep interface
-    virtual cv::Mat runImpl(const bool debugMode,
-                            const cv::Mat &input,
-                            const cv::Mat &param) const override;
+    virtual cv::Mat predictImpl(const bool debugMode,
+                                const cv::Mat &input) const;
 
     virtual cv::Mat trainImpl(const bool debugMode,
                               const cv::Mat &input,
-                              const cv::Mat &param) const override;
+                              const cv::Mat &labels) const;
+
+    virtual cv::Mat optimizeImpl(const bool debugMode,
+                                 const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &training,
+                                 const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &test) const;
 
 private:
     /**
@@ -115,6 +118,9 @@ private:
 
         this->save<T>(config->classifierFiles()[0], identifier, value);
     }
+
+    // MLStep interface
+public:
 };
 
 

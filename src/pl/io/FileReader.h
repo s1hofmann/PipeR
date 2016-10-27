@@ -33,12 +33,14 @@ public:
 
     virtual ~FileReader() {}
 
-    virtual cv::Mat read(const std::string &input) const
+    virtual cv::Mat read(const std::string &input,
+                         const std::string &prefix = std::string()) const
     {
         T reader;
 
         try {
-            return reader.read(input);
+            return reader.read(input,
+                               prefix);
         } catch(std::runtime_error) {
             throw;
         }

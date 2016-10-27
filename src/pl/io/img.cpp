@@ -23,8 +23,9 @@ IMG::~IMG()
 
 
 unsigned long IMG::write(const cv::Mat &output,
-                const std::string &outPath,
-                const std::string &fileName) const
+                         const std::string &outPath,
+                         const std::string &fileName,
+                         const std::string &prefix) const
 {
     if(output.empty()) {
         std::stringstream s;
@@ -43,7 +44,12 @@ unsigned long IMG::write(const cv::Mat &output,
     }
 
     QDir d(QString::fromStdString(outPath));
-    QString absFile = d.absoluteFilePath(QString::fromStdString(fileName));
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << fileName;
+    QString absFile = d.absoluteFilePath(QString::fromStdString(s.str()));
 
     std::vector<int> parameters;
 
@@ -57,7 +63,7 @@ unsigned long IMG::write(const cv::Mat &output,
 }
 
 
-cv::Mat IMG::read(const std::string &input) const
+cv::Mat IMG::read(const std::string &input, const std::__1::string &prefix) const
 {
     if(input.empty()) {
         std::stringstream s;
@@ -65,7 +71,12 @@ cv::Mat IMG::read(const std::string &input) const
         throw IOError(s.str(), currentMethod, currentLine);
     }
 
-    cv::Mat img = cv::imread(input, CV_LOAD_IMAGE_UNCHANGED);
+    std::stringstream s;
+    if(!prefix.empty()) {
+        s << prefix << "_";
+    }
+    s << input;
+    cv::Mat img = cv::imread(s.str(), CV_LOAD_IMAGE_UNCHANGED);
 
     if(img.empty()) {
         warning(input, "is and empty image.");

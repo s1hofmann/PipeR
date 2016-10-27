@@ -20,9 +20,11 @@ public:
     // IOImpl interface
     unsigned long write(const cv::Mat &output,
                         const std::string &outPath,
-                        const std::string &fileName) const;
+                        const std::string &fileName,
+                        const std::string &prefix = std::string()) const;
 
-    cv::Mat read(const std::string &input) const;
+    cv::Mat read(const std::string &input,
+                 const std::string &prefix = std::string()) const;
 };
 
 

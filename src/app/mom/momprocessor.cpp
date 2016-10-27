@@ -53,7 +53,7 @@ int MomProcessor::run()
     std::string file = mArguments["c"];
     pipeCfg->fromJSON(file);
 
-    pl::FileLogger logger(pipeCfg->getLogFile());
+    pl::FileLogger logger(pipeCfg->logFile());
     pl::ConsoleLogger console;
 
     bool debugMode = !mArguments["d"].empty();

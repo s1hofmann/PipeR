@@ -14,6 +14,7 @@ SGDConfig::SGDConfig(const std::string &identifier,
                      vl_size maxIterations,
                      const double bias,
                      const int folds,
+                     const bool platt,
                      const bool binary)
     :
         MLConfig(identifier, folds),
@@ -25,6 +26,7 @@ SGDConfig::SGDConfig(const std::string &identifier,
         mMaxIterations(maxIterations),
         mIterations(iterations),
         mBias(bias),
+        mPlattScale(platt),
         mBinary(binary)
 {
 
@@ -168,7 +170,18 @@ std::string SGDConfig::toString() const
     if(mFolds > 1) {
         configString << mFolds << "-fold crossvalidation" << std::endl;
     }
-    configString << "Binary classification: " << binary() << std::endl;
+    configString << "Binary classification: ";
+    if(binary()) {
+        configString << "True" << std::endl;
+    } else {
+        configString << "False" << std::endl;
+    }
+    configString << "Probabilistic output: ";
+    if(plattScale()) {
+        configString << "True" << std::endl;
+    } else {
+        configString << "False" << std::endl;
+    }
 
     return configString.str();
 }
@@ -190,6 +203,7 @@ bool SGDConfig::fromJSON(std::string &file)
         mMaxIterations = params.get(varName(mMaxIterations), 0).asUInt64();
         mBinary = params.get(varName(mBinary), false).asBool();
         mFolds = params.get(varName(mFolds), 5).asInt();
+        mPlattScale = params.get(varName(mPlattScale), false).asBool();
 
         const Json::Value classifiers = params[varName(mClassifierFiles)];
 
@@ -214,6 +228,16 @@ bool SGDConfig::binary() const
 void SGDConfig::setBinary(bool binary)
 {
     mBinary = binary;
+}
+
+bool SGDConfig::plattScale() const
+{
+    return mPlattScale;
+}
+
+void SGDConfig::setPlattScale(bool plattScale)
+{
+    mPlattScale = plattScale;
 }
 
 

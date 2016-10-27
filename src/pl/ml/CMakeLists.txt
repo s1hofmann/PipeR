@@ -5,4 +5,5 @@ add_library(ml MLStep
                crossvalidation)
 
 target_link_libraries(ml exception
-                         vlfeat)
+                         vlfeat
+                         utils_core)

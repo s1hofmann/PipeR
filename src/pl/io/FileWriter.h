@@ -25,13 +25,15 @@ public:
 
     bool write(const cv::Mat &output,
                const std::string &path,
-               const std::string &fileName) const
+               const std::string &fileName,
+               const std::string &prefix = std::string()) const
     {
         T writer;
         try {
             unsigned long result = writer.write(output,
                                                 path,
-                                                fileName);
+                                                fileName,
+                                                prefix);
 
             return (result > 0) ? true : false;
         } catch(std::runtime_error) {

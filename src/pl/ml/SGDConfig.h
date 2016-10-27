@@ -20,6 +20,7 @@ public:
               vl_size iterations = 0,
               const double bias = 0,
               const int folds = 5,
+              const bool platt = false,
               const bool binary = false);
 
     virtual ~SGDConfig();
@@ -59,6 +60,9 @@ public:
     bool binary() const;
     void setBinary(bool binary);
 
+    bool plattScale() const;
+    void setPlattScale(bool plattScale);
+
 private:
     double mLambda;
     double mLearningRate;
@@ -66,6 +70,7 @@ private:
     double mEpsilon;
     double mBias;
     bool mBinary;
+    bool mPlattScale;
 
     cv::Mat1d mModel;
 

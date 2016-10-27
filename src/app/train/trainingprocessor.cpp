@@ -29,7 +29,7 @@ int TrainingProcessor::run()
     std::string file = mArguments["conf"];
     pipeCfg->fromJSON(file);
 
-    pl::FileLogger logger(pipeCfg->getLogFile());
+    pl::FileLogger logger(pipeCfg->logFile());
     pl::ConsoleLogger console;
 
     bool debugMode = !mArguments["d"].empty();

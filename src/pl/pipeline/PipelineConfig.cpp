@@ -70,17 +70,18 @@ bool PipelineConfig::fromJSON(std::string &file)
         mPipelineMode = str2mode(modeString);
         mDebugMode = params.get(varName(mDebugMode), false).asBool();
         mLogFile = params.get(varName(mLogFile), "./pipeline.log").asString();
+        mRandomSeed = params.get(varName(mRandomSeed), 42).asInt();
 
         return true;
     }
 }
 
-int PipelineConfig::maxDescriptors() const
+unsigned int PipelineConfig::maxDescriptors() const
 {
     return mMaxDescriptors;
 }
 
-void PipelineConfig::setMaxDescriptors(int value)
+void PipelineConfig::setMaxDescriptors(unsigned int value)
 {
     mMaxDescriptors = value;
 }
@@ -177,6 +178,7 @@ std::string PipelineConfig::toString() const
 
     configString << "Descriptor directory: " << mDescriptorDir << std::endl;
     configString << "Descriptor labelfile: " << mDescriptorLabelFile << std::endl;
+    configString << "Max. descriptors: " << mMaxDescriptors << std::endl;
 
     std::cout << std::endl;
 
@@ -187,7 +189,7 @@ std::string PipelineConfig::toString() const
     return configString.str();
 }
 
-std::string PipelineConfig::getLogFile() const
+std::string PipelineConfig::logFile() const
 {
     return mLogFile;
 }
@@ -197,7 +199,7 @@ void PipelineConfig::setLogFile(const std::string &value)
     mLogFile = value;
 }
 
-std::string PipelineConfig::getOutputDirectory() const
+std::string PipelineConfig::outputDirectory() const
 {
     return mOutputDir;
 }
@@ -205,6 +207,16 @@ std::string PipelineConfig::getOutputDirectory() const
 void PipelineConfig::setOutputDirectory(const std::string &outputDirectory)
 {
     mOutputDir = outputDirectory;
+}
+
+int PipelineConfig::randomSeed() const
+{
+    return mRandomSeed;
+}
+
+void PipelineConfig::setRandomSeed(int randomSeed)
+{
+    mRandomSeed = randomSeed;
 }
 
 
