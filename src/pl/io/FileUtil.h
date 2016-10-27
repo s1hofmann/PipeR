@@ -61,7 +61,7 @@ public:
      * @param labelFile File to read data from
      * @return std::pair<std::vector<std::string>, std::vector<int>>
      */
-    static std::vector<std::pair<std::__1::string, int> > getFilesFromLabelFile(const std::string &labelFile,
+    static std::vector<std::pair<std::string, int> > getFilesFromLabelFile(const std::string &labelFile,
                                                                                        const unsigned int maxFiles = 0);
 
     /**
