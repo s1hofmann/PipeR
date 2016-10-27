@@ -183,37 +183,45 @@ bool SGDConfig::fromJSON(std::string &file)
         const Json::Value multipliers = params[varName(mMultipliers)];
 
         if(!classifiers.empty()) {
+            mClassifierFiles.clear();
             for(unsigned int idx = 0; idx < classifiers.size(); ++idx) {
                 mClassifierFiles.push_back(classifiers[idx].asString());
             }
         } else {
+            mClassifierFiles.clear();
             warning("No classifier file specified, using fallback value.");
             mClassifierFiles.push_back("./trainedClassifier.yml");
         }
 
         if(!lambdas.empty()) {
+            mLambdas.clear();
             for(unsigned int idx = 0; idx < lambdas.size(); ++idx) {
                 mLambdas.push_back(lambdas[idx].asDouble());
             }
         } else {
+            mLambdas.clear();
             warning("No regularization parameter specified, using fallback value.");
             mLambdas.push_back(0.0001);
         }
 
         if(!learningRates.empty()) {
+            mLearningRates.clear();
             for(unsigned int idx = 0; idx < learningRates.size(); ++idx) {
                 mLearningRates.push_back(learningRates[idx].asDouble());
             }
         } else {
+            mLearningRates.clear();
             warning("No bias learning rate parameter specified, using fallback value.");
             mLambdas.push_back(1.0);
         }
 
         if(!multipliers.empty()) {
+            mMultipliers.clear();
             for(unsigned int idx = 0; idx < multipliers.size(); ++idx) {
                 mMultipliers.push_back(multipliers[idx].asDouble());
             }
         } else {
+            mMultipliers.clear();
             warning("No biars multiplier parameter specified, using fallback value.");
             mLambdas.push_back(1.0);
         }

@@ -119,8 +119,10 @@ bool VladConfig::fromJSON(std::string &file)
 
         const Json::Value vocabs = params[varName(mVocabs)];
         if(vocabs.empty()) {
+            mVocabs.clear();
             mVocabs.push_back("./cluster_0.yml");
         } else {
+            mVocabs.clear();
             for(int idx = 0; idx < vocabs.size(); ++idx) {
                 mVocabs.push_back(vocabs[idx].asString());
             }
@@ -128,19 +130,22 @@ bool VladConfig::fromJSON(std::string &file)
 
         const Json::Value norm = params[varName(mNormStrategies)];
 
-        for(int idx = 0; idx < norm.size(); ++idx) {
-            std::string strategy = norm[idx].asString();
+        if(!norm.empty()) {
+            mNormStrategies.clear();
+            for(int idx = 0; idx < norm.size(); ++idx) {
+                std::string strategy = norm[idx].asString();
 
-            if(!strategy.compare(varName(NORM_COMPONENT_L2))) {
-                mNormStrategies.push_back(NORM_COMPONENT_L2);
-            } else if(!strategy.compare(varName(NORM_GLOBAL_L2))) {
-                mNormStrategies.push_back(NORM_GLOBAL_L2);
-            } else if(!strategy.compare(varName(NORM_MASS))) {
-                mNormStrategies.push_back(NORM_MASS);
-            } else if(!strategy.compare(varName(NORM_SSR))) {
-                mNormStrategies.push_back(NORM_SSR);
-            } else {
-                warning("Unknown norm strategy, skipping.");
+                if(!strategy.compare(varName(NORM_COMPONENT_L2))) {
+                    mNormStrategies.push_back(NORM_COMPONENT_L2);
+                } else if(!strategy.compare(varName(NORM_GLOBAL_L2))) {
+                    mNormStrategies.push_back(NORM_GLOBAL_L2);
+                } else if(!strategy.compare(varName(NORM_MASS))) {
+                    mNormStrategies.push_back(NORM_MASS);
+                } else if(!strategy.compare(varName(NORM_SSR))) {
+                    mNormStrategies.push_back(NORM_SSR);
+                } else {
+                    warning("Unknown norm strategy, skipping.");
+                }
             }
         }
 
