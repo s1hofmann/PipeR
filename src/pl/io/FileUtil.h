@@ -46,7 +46,7 @@ public:
      * @param labelFile Labelfile to read data from
      * @return std::pair<std::vector<cv::Mat>, std::vector<int>>
      */
-    static std::pair<std::vector<cv::Mat>, std::vector<int>> loadImagesFromLabelFile(const std::string &labelFile);
+    static std::vector<std::pair<cv::Mat, int>> loadImagesFromLabelFile(const std::string &labelFile);
 
     /**
      * @brief getFiles Returns an std::vector of std::string objects containing all files in a given folder.
@@ -61,7 +61,7 @@ public:
      * @param labelFile File to read data from
      * @return std::pair<std::vector<std::string>, std::vector<int>>
      */
-    static std::pair<std::vector<std::string>, std::vector<int>> getFilesFromLabelFile(const std::string &labelFile,
+    static std::vector<std::pair<std::__1::string, int> > getFilesFromLabelFile(const std::string &labelFile,
                                                                                        const unsigned int maxFiles = 0);
 
     /**

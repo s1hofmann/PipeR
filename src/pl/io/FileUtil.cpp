@@ -45,24 +45,22 @@ std::vector<std::string> FileUtil::getFiles(const std::string &path,
 }
 
 
-std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile,
-                                                                                      const unsigned int maxFiles)
+std::vector<std::pair<std::string, int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile,
+                                                                         const unsigned int maxFiles)
 {
     QFile f(QString::fromStdString(labelFile));
 
-    std::vector<std::string> path;
-    std::vector<int> labels;
+    std::vector<std::pair<std::string, int>> files;
 
     if(f.exists()) {
         if (f.open(QIODevice::ReadOnly)) {
            QTextStream in(&f);
-           while(!in.atEnd() && (maxFiles <= 0 || (maxFiles > 0 && path.size() < maxFiles)))
+           while(!in.atEnd() && (maxFiles <= 0 || (maxFiles > 0 && files.size() < maxFiles)))
            {
               QString line = in.readLine();
               QStringList parts = line.split(" ");
               if(parts.size() == 2) {
-                  path.push_back(parts[0].toStdString());
-                  labels.push_back(parts[1].toInt());
+                  files.push_back(std::make_pair(parts[0].toStdString(), parts[1].toInt()));
               } else {
                   warning("Incompatible lable format. Skipping.");
                   continue;
@@ -76,7 +74,7 @@ std::pair<std::vector<std::string>, std::vector<int>> FileUtil::getFilesFromLabe
         throw IOError(s.str(), currentMethod, currentLine);
     }
 
-    return std::make_pair(path, labels);
+    return files;
 }
 
 
@@ -233,15 +231,15 @@ cv::Mat FileUtil::loadDescriptors(const std::string &descriptorDir,
                                   const int maxDescriptors,
                                   bool random)
 {
-    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = getFilesFromLabelFile(labelFile);
+    std::vector<std::pair<std::string, int>> filesWithLabels = getFilesFromLabelFile(labelFile);
 
-    int maxDescriptorsPerFile = maxDescriptors / filesWithLabels.first.size();
+    int maxDescriptorsPerFile = maxDescriptors / filesWithLabels.size();
 
     cv::Mat allDescriptors;
     int idx = 0;
 
-    while((allDescriptors.rows < maxDescriptors || maxDescriptors <= 0) && idx < filesWithLabels.first.size()) {
-        cv::Mat desc = loadBinary(filesWithLabels.first[idx]);
+    while((allDescriptors.rows < maxDescriptors || maxDescriptors <= 0) && idx < filesWithLabels.size()) {
+        cv::Mat desc = loadBinary(filesWithLabels[idx].first);
 
         int rows;
         if(maxDescriptors <= 0) {
@@ -318,28 +316,26 @@ std::string FileUtil::buildPath(const std::string &path,
     return info.absoluteFilePath().toStdString();
 }
 
-std::pair<std::vector<cv::Mat>, std::vector<int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
+std::vector<std::pair<cv::Mat, int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     FileReader<IMG> reader;
-    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = getFilesFromLabelFile(labelFile);
+    std::vector<std::pair<std::string, int>> filesWithLabels = getFilesFromLabelFile(labelFile);
 
     try {
-        std::vector<cv::Mat> loadedImages;
-        std::vector<int> loadedLabels;
+        std::vector<std::pair<cv::Mat, int>> loadedFiles;
 
-        for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
+        for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
             QFileInfo qf(QString::fromStdString(labelFile));
             QDir baseDir = qf.absoluteDir();
-            QString imageFile(baseDir.absoluteFilePath(QString::fromStdString(filesWithLabels.first[idx])));
+            QString imageFile(baseDir.absoluteFilePath(QString::fromStdString(filesWithLabels[idx].first)));
             cv::Mat image = reader.read(imageFile.toStdString());
 
             if(!image.empty()) {
-                loadedImages.push_back(image);
-                loadedLabels.push_back(filesWithLabels.second[idx]);
+                loadedFiles.push_back(std::make_pair(image, filesWithLabels[idx].second));
             }
         }
 
-        return std::make_pair(loadedImages, loadedLabels);
+        return loadedFiles;
     } catch (cv::Exception &e) {
         throw IOError(e.what(), currentMethod, currentLine);
     }

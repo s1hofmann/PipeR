@@ -101,8 +101,8 @@ int TrainingProcessor::run()
         trainPipe.showPipeline();
         pl::FileUtil fu;
 
-        std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
-        trainPipe.train(filesWithLabels.first, filesWithLabels.second);
+        std::vector<std::pair<std::string, int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
+        trainPipe.train(filesWithLabels);
     } catch(const pl::ClusterError &e) {
         console.report(e.what());
         logger.report(e.what());

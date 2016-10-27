@@ -28,9 +28,8 @@ public:
                               const cv::Mat &labels) const;
 
     virtual cv::Mat optimizeImpl(const bool debugMode,
-                                 const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &training,
-                                 const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &test) const;
-
+                                 const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
+                                 const std::vector<std::pair<cv::Mat, int>> &data) const;
 private:
     /**
      * @brief load Loads classifier data from a given file
@@ -118,6 +117,9 @@ private:
 
         this->save<T>(config->classifierFiles()[0], identifier, value);
     }
+
+    // MLStep interface
+public:
 };
 
 

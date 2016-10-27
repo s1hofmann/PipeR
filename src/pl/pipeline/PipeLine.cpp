@@ -309,28 +309,21 @@ bool PipeLine::removeClassificationStep() {
 }
 
 
-void PipeLine::train(const std::vector<std::string> &input,
-                     const std::vector<int> &labels) const {
+void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) const {
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
-
-    if(input.size() != labels.size()) {
-        std::stringstream s;
-        s << "Data and labels missmatch. Aborting." << std::endl;
-        throw BaseError(s.str(), currentMethod, currentLine);
-    }
 
     if(mPipelineConfig->rebuildDescriptors()) {
         for(size_t idx = 0; idx < input.size(); ++idx) {
             //Load image file
-            cv::Mat inputMat = FileUtil::loadImage(input[idx]);
+            cv::Mat inputMat = FileUtil::loadImage(input[idx].first);
 
             //Skip empty images
             if(inputMat.empty()) {
                 continue;
             }
 
-            logger.inform("Processing file:", input[idx]);
+            logger.inform("Processing file:", input[idx].first);
 
             cv::Mat prep;
             cv::Mat prepMask;
@@ -460,10 +453,10 @@ void PipeLine::train(const std::vector<std::string> &input,
                     continue;
                 }
 
-                QFileInfo info(QString::fromStdString(input[idx]));
+                QFileInfo info(QString::fromStdString(input[idx].first));
                 std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
                 if(!FileUtil::saveDescriptorWithLabel(postProcessed,
-                                                      labels[idx],
+                                                      input[idx].second,
                                                       mPipelineConfig->descriptorDir(),
                                                       descriptorFile,
                                                       mPipelineConfig->descriptorLabelFile())) {
@@ -473,7 +466,7 @@ void PipeLine::train(const std::vector<std::string> &input,
                     continue;
                 }
             } else {
-                logger.report("No features in file", input[idx], ". Skipping!");
+                logger.report("No features in file", input[idx].first, ". Skipping!");
             }
         }
     }
@@ -529,20 +522,7 @@ void PipeLine::train(const std::vector<std::string> &input,
         }
     }
     // Load descriptors with corresponding labels
-    std::pair<std::vector<std::string>, std::vector<int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
-
-    if(mDebugMode) {
-        debug.inform("Starting training.", "Data size:", filesWithLabels.first.size());
-    }
-
-    cv::Ptr<MLConfig> mlConfig;
-    try {
-        mlConfig = config_cast<MLConfig>(this->mClassification->mConfig);
-    } catch(std::bad_cast) {
-        std::stringstream s;
-        s << "Wrong config type: " << this->mClassification->mConfig->identifier();
-        throw MLError(s.str(), currentMethod, currentLine);
-    }
+    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
@@ -557,93 +537,58 @@ void PipeLine::train(const std::vector<std::string> &input,
         }
     }
 
+    std::vector<std::pair<cv::Mat, int>> encodedDescriptorsWithLabels;
+    for(auto pair : filesWithLabels) {
+        cv::Mat desc = FileUtil::loadBinary(pair.first);
+        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+            if(!mDebugMode) {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(this->mDimensionalityReduction->run(desc)), pair.second));
+            } else {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)), pair.second));
+            }
+        } else if(!this->mDimensionalityReduction.empty()) {
+            if(!mDebugMode) {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->run(desc), pair.second));
+            } else {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->debugRun(desc), pair.second));
+            }
+        } else if(!this->mEncoding.empty()) {
+            if(!mDebugMode) {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(desc), pair.second));
+            } else {
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(desc), pair.second));
+            }
+        } else {
+            encodedDescriptorsWithLabels.push_back(std::make_pair(desc, pair.second));
+        }
+    }
+    if(mDebugMode) {
+        debug.inform("Starting training.", "Data size:", filesWithLabels.size());
+    }
+
+    cv::Ptr<MLConfig> mlConfig;
+    try {
+        mlConfig = config_cast<MLConfig>(this->mClassification->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mClassification->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
     if(mlConfig->folds()) {
         logger.report("Starting crossvalidation.");
         debug.report("Starting crossvalidation.");
 
         // Creates randomized indices for n folds of training and test files
-        auto crossvalIndices = CrossValidation::createFolds(filesWithLabels.first.size(), mlConfig->folds());
-        // Storage for training folds
-        std::vector<std::pair<cv::Mat1d, cv::Mat1i>> trainingData;
-        // Storage for test folds
-        std::vector<std::pair<cv::Mat1d, cv::Mat1i>> testData;
-
-        for(size_t fold = 0; fold < mlConfig->folds(); ++fold) {
-            // Containers for training and test data
-            cv::Mat1d trainingDescriptors;
-            cv::Mat1i trainingLabels;
-            cv::Mat1d testDescriptors;
-            cv::Mat1i testLabels;
-
-            // Processes training data which are accessed via indices stored in the first element of the fold pair
-            for(size_t idx = 0; idx < crossvalIndices[fold].first.size(); ++idx) {
-                cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[crossvalIndices[fold].first[idx]]);
-                int label = filesWithLabels.second[crossvalIndices[fold].first[idx]];
-
-                trainingLabels.push_back(label);
-                if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                    if(!mDebugMode) {
-                        trainingDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
-                    } else {
-                        trainingDescriptors.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
-                    }
-                } else if(!this->mDimensionalityReduction.empty()) {
-                    if(!mDebugMode) {
-                        trainingDescriptors.push_back(this->mDimensionalityReduction->run(desc));
-                    } else {
-                        trainingDescriptors.push_back(this->mDimensionalityReduction->debugRun(desc));
-                    }
-                } else if(!this->mEncoding.empty()) {
-                    if(!mDebugMode) {
-                        trainingDescriptors.push_back(this->mEncoding->run(desc));
-                    } else {
-                        trainingDescriptors.push_back(this->mEncoding->debugRun(desc));
-                    }
-                } else {
-                    trainingDescriptors.push_back(desc);
-                }
-            }
-            trainingData.push_back(std::make_pair(trainingDescriptors, trainingLabels));
-
-            // Processes test data which are accessed via indices stored in the second element of the fold pair
-            for(size_t idx = 0; idx < crossvalIndices[fold].second.size(); ++idx) {
-                cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[crossvalIndices[fold].second[idx]]);
-                int label = filesWithLabels.second[crossvalIndices[fold].second[idx]];
-
-                testLabels.push_back(label);
-                if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                    if(!mDebugMode) {
-                        testDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
-                    } else {
-                        testDescriptors.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
-                    }
-                } else if(!this->mDimensionalityReduction.empty()) {
-                    if(!mDebugMode) {
-                        testDescriptors.push_back(this->mDimensionalityReduction->run(desc));
-                    } else {
-                        testDescriptors.push_back(this->mDimensionalityReduction->debugRun(desc));
-                    }
-                } else if(!this->mEncoding.empty()) {
-                    if(!mDebugMode) {
-                        testDescriptors.push_back(this->mEncoding->run(desc));
-                    } else {
-                        testDescriptors.push_back(this->mEncoding->debugRun(desc));
-                    }
-                } else {
-                    testDescriptors.push_back(desc);
-                }
-            }
-            testData.push_back(std::make_pair(testDescriptors, testLabels));
-
-            debug.inform("Crossvalidating...");
-            logger.inform("Crossvalidating...");
-            if(!mDebugMode) {
-                this->mClassification->optimize(trainingData,
-                                                testData);
-            } else {
-                this->mClassification->debugOptimize(trainingData,
-                                                     testData);
-            }
+        auto crossvalIndices = CrossValidation::createFolds(encodedDescriptorsWithLabels.size(), mlConfig->folds());
+        debug.inform("Crossvalidating...");
+        logger.inform("Crossvalidating...");
+        if(!mDebugMode) {
+            this->mClassification->optimize(crossvalIndices,
+                                            encodedDescriptorsWithLabels);
+        } else {
+            this->mClassification->debugOptimize(crossvalIndices,
+                                                 encodedDescriptorsWithLabels);
         }
     } else {
         logger.report("Starting training.");
@@ -652,9 +597,9 @@ void PipeLine::train(const std::vector<std::string> &input,
         cv::Mat1i trainingLabels;
 
         // Concatenate descriptors as input to the SVM
-        for(size_t idx = 0; idx < filesWithLabels.first.size(); ++idx) {
-            cv::Mat desc = FileUtil::loadBinary(filesWithLabels.first[idx]);
-            int label = filesWithLabels.second[idx];
+        for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
+            cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
+            int label = filesWithLabels[idx].second;
 
             trainingLabels.push_back(label);
             if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {

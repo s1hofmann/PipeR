@@ -60,8 +60,7 @@ public:
      * @brief train
      * @param mask
      */
-    void train(const std::vector<std::string> &input,
-               const std::vector<int> &labels) const;
+    void train(const std::vector<std::pair<std::string, int>> &input) const;
 
     /**
      * @brief run

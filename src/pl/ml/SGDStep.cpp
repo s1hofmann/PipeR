@@ -115,10 +115,9 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
     return cv::Mat();
 }
 
-
 cv::Mat SGDStep::optimizeImpl(const bool debugMode,
-                              const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &training,
-                              const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &test) const
+                              const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
+                              const std::vector<std::pair<cv::Mat, int>> &data) const
 {
     cv::Ptr<SGDConfig> config;
     try {
@@ -127,6 +126,76 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
         std::stringstream s;
         s << "Wrong config type: " << this->mConfig->identifier();
         throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    std::vector<double> lambdas = config->lambdas();
+    std::vector<double> learningRates = config->learningRates();
+    std::vector<double> multipliers = config->multipliers();
+
+    double bestLambda;
+    double bestLearningRate;
+    double bestMultiplier;
+    double bestF = 0;
+
+    for(double lambda : lambdas) {
+        for(double lr : learningRates) {
+            for(double mul : multipliers) {
+                if(debugMode) {
+                    debug("Lambda:", lambda);
+                    debug("Learning rate:", lr);
+                    debug("Multiplier:", mul);
+                }
+
+                unsigned int tp = 0;
+                unsigned int tn = 0;
+                unsigned int fp = 0;
+                unsigned int fn = 0;
+
+                std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
+                std::vector<cv::Mat1d> trainingsLabelCache(config->folds());
+                std::vector<cv::Mat1d> testDescriptorCache(config->folds());
+                std::vector<cv::Mat1d> testLabelCache(config->folds());
+
+                // Iterate over folds
+                for(size_t fold = 0; fold < config->folds(); ++fold) {
+                    if(trainingsDescriptorCache[fold].empty() ||
+                       trainingsLabelCache[fold].empty()) {
+                        cv::Mat tmpDesc;
+                        cv::Mat tmpIdx;
+                        for(auto idx : indices.first[fold]) {
+                            tmpDesc.push_back(data[idx].first);
+                            tmpIdx.push_back(data[idx].second);
+                        }
+                        tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
+                        tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
+                    }
+                    if(testDescriptorCache[fold].empty() ||
+                       testLabelCache[fold].empty()) {
+                        cv::Mat tmpDesc;
+                        cv::Mat tmpIdx;
+                        for(auto idx : indices.second[fold]) {
+                            tmpDesc.push_back(data[idx].first);
+                            tmpIdx.push_back(data[idx].second);
+                        }
+                        tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
+                        tmpIdx.convertTo(testLabelCache[fold], CV_64F);
+                    }
+
+                    cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
+                                                                                            trainingsDescriptorCache[fold],
+                                                                                            lambda);
+
+                    // Bias learning rate and multiplier
+                    solver->setBiasLearningRate(lr);
+                    solver->setBiasMultiplier(mul);
+                    // Sample weights
+                    cv::Mat1d weights = calculateWeights(trainingsLabelCache[fold]);
+                    solver->setWeights(weights);
+
+                    solver->train();
+                }
+            }
+        }
     }
 }
 
