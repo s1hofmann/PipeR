@@ -118,9 +118,6 @@ private:
 
         this->save<T>(config->classifierFiles()[0], identifier, value);
     }
-
-    // MLStep interface
-public:
 };
 
 

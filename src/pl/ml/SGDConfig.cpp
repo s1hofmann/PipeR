@@ -19,9 +19,9 @@ SGDConfig::SGDConfig(const std::string &identifier,
     :
         MLConfig(identifier, folds),
         mClassifierFiles(outputFiles),
-        mLambda(lambda),
-        mLearningRate(learningRate),
-        mMultiplier(multiplier),
+        mLambdas(lambda),
+        mLearningRates(learningRate),
+        mMultipliers(multiplier),
         mEpsilon(epsilon),
         mMaxIterations(maxIterations),
         mIterations(iterations),
@@ -36,42 +36,6 @@ SGDConfig::SGDConfig(const std::string &identifier,
 SGDConfig::~SGDConfig()
 {
 
-}
-
-
-double SGDConfig::lambda() const
-{
-    return mLambda;
-}
-
-
-void SGDConfig::setLambda(double lambda)
-{
-    mLambda = lambda;
-}
-
-
-double SGDConfig::learningRate() const
-{
-    return mLearningRate;
-}
-
-
-void SGDConfig::setLearningRate(double learningRate)
-{
-    mLearningRate = learningRate;
-}
-
-
-double SGDConfig::multiplier() const
-{
-    return mMultiplier;
-}
-
-
-void SGDConfig::setMultiplier(double multiplier)
-{
-    mMultiplier = multiplier;
 }
 
 
@@ -155,9 +119,21 @@ std::string SGDConfig::toString() const
         configString << "Classifier file: " << mClassifierFiles[idx] << std::endl;
     }
 
-    configString << "Lambda: " << lambda() << std::endl
-                 << "Bias multiplier: " << multiplier() << std::endl
-                 << "Bias learning rate: " << learningRate() << std::endl;
+    configString << "Lambda(s): ";
+    for(double l : mLambdas) {
+        configString << l << " ";
+    }
+    configString << std::endl;
+    configString << "Bias multiplier(s): ";
+    for(double m : mMultipliers) {
+        configString << m << " ";
+    }
+    configString << std::endl;
+    configString << "Bias learning rate(s): ";
+    for(double l : mLearningRates) {
+        configString << l << " ";
+    }
+    configString << std::endl;
     if(iterations()) {
         configString << "Starting iterations: " << iterations() << std::endl;
     }
@@ -195,9 +171,6 @@ bool SGDConfig::fromJSON(std::string &file)
     } else {
         const Json::Value params = root[identifier()];
 
-        mLambda = params.get(varName(mLambda), 0.0001).asDouble();
-        mLearningRate = params.get(varName(mLearningRate), 1.0).asDouble();
-        mMultiplier = params.get(varName(mMultiplier), 1.0).asDouble();
         mEpsilon = params.get(varName(mEpsilon), 0.0).asDouble();
         mIterations = params.get(varName(mIterations), 0).asUInt64();
         mMaxIterations = params.get(varName(mMaxIterations), 0).asUInt64();
@@ -206,6 +179,9 @@ bool SGDConfig::fromJSON(std::string &file)
         mPlattScale = params.get(varName(mPlattScale), false).asBool();
 
         const Json::Value classifiers = params[varName(mClassifierFiles)];
+        const Json::Value lambdas = params[varName(mLambdas)];
+        const Json::Value learningRates = params[varName(mLearningRates)];
+        const Json::Value multipliers = params[varName(mMultipliers)];
 
         if(classifiers.size()) {
             for(unsigned int idx = 0; idx < classifiers.size(); ++idx) {
@@ -216,6 +192,32 @@ bool SGDConfig::fromJSON(std::string &file)
             mClassifierFiles.push_back("./trainedClassifier.yml");
         }
 
+        if(lambdas.size()) {
+            for(unsigned int idx = 0; idx < lambdas.size(); ++idx) {
+                mLambdas.push_back(lambdas[idx].asDouble());
+            }
+        } else {
+            warning("No regularization parameter specified, using fallback value.");
+            mLambdas.push_back(0.0001);
+        }
+
+        if(learningRates.size()) {
+            for(unsigned int idx = 0; idx < learningRates.size(); ++idx) {
+                mLearningRates.push_back(learningRates[idx].asDouble());
+            }
+        } else {
+            warning("No bias learning rate parameter specified, using fallback value.");
+            mLambdas.push_back(1.0);
+        }
+
+        if(multipliers.size()) {
+            for(unsigned int idx = 0; idx < multipliers.size(); ++idx) {
+                mMultipliers.push_back(multipliers[idx].asDouble());
+            }
+        } else {
+            warning("No biars multiplier parameter specified, using fallback value.");
+            mLambdas.push_back(1.0);
+        }
         return true;
     }
 }
@@ -238,6 +240,36 @@ bool SGDConfig::plattScale() const
 void SGDConfig::setPlattScale(bool plattScale)
 {
     mPlattScale = plattScale;
+}
+
+std::vector<double> SGDConfig::lambdas() const
+{
+    return mLambdas;
+}
+
+void SGDConfig::setLambdas(const std::vector<double> &lambdas)
+{
+    mLambdas = lambdas;
+}
+
+std::vector<double> SGDConfig::learningRates() const
+{
+    return mLearningRates;
+}
+
+void SGDConfig::setLearningRates(const std::vector<double> &learningRates)
+{
+    mLearningRates = learningRates;
+}
+
+std::vector<double> SGDConfig::multipliers() const
+{
+    return mMultipliers;
+}
+
+void SGDConfig::setMultipliers(const std::vector<double> &multipliers)
+{
+    mMultipliers = multipliers;
 }
 
 

@@ -582,11 +582,23 @@ void PipeLine::train(const std::vector<std::string> &input,
 
                 trainingLabels.push_back(label);
                 if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                    trainingDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                    if(!mDebugMode) {
+                        trainingDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                    } else {
+                        trainingDescriptors.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
+                    }
                 } else if(!this->mDimensionalityReduction.empty()) {
-                    trainingDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                    if(!mDebugMode) {
+                        trainingDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                    } else {
+                        trainingDescriptors.push_back(this->mDimensionalityReduction->debugRun(desc));
+                    }
                 } else if(!this->mEncoding.empty()) {
-                    trainingDescriptors.push_back(this->mEncoding->run(desc));
+                    if(!mDebugMode) {
+                        trainingDescriptors.push_back(this->mEncoding->run(desc));
+                    } else {
+                        trainingDescriptors.push_back(this->mEncoding->debugRun(desc));
+                    }
                 } else {
                     trainingDescriptors.push_back(desc);
                 }
@@ -600,16 +612,38 @@ void PipeLine::train(const std::vector<std::string> &input,
 
                 testLabels.push_back(label);
                 if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                    testDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                    if(!mDebugMode) {
+                        testDescriptors.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                    } else {
+                        testDescriptors.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
+                    }
                 } else if(!this->mDimensionalityReduction.empty()) {
-                    testDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                    if(!mDebugMode) {
+                        testDescriptors.push_back(this->mDimensionalityReduction->run(desc));
+                    } else {
+                        testDescriptors.push_back(this->mDimensionalityReduction->debugRun(desc));
+                    }
                 } else if(!this->mEncoding.empty()) {
-                    testDescriptors.push_back(this->mEncoding->run(desc));
+                    if(!mDebugMode) {
+                        testDescriptors.push_back(this->mEncoding->run(desc));
+                    } else {
+                        testDescriptors.push_back(this->mEncoding->debugRun(desc));
+                    }
                 } else {
                     testDescriptors.push_back(desc);
                 }
             }
             testData.push_back(std::make_pair(testDescriptors, testLabels));
+
+            debug.inform("Crossvalidating...");
+            logger.inform("Crossvalidating...");
+            if(!mDebugMode) {
+                this->mClassification->optimize(trainingData,
+                                                testData);
+            } else {
+                this->mClassification->debugOptimize(trainingData,
+                                                     testData);
+            }
         }
     } else {
         logger.report("Starting training.");
@@ -624,11 +658,23 @@ void PipeLine::train(const std::vector<std::string> &input,
 
             trainingLabels.push_back(label);
             if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                if(!mDebugMode) {
+                    trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+                } else {
+                    trainingData.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
+                }
             } else if(!this->mDimensionalityReduction.empty()) {
-                trainingData.push_back(this->mDimensionalityReduction->run(desc));
+                if(!mDebugMode) {
+                    trainingData.push_back(this->mDimensionalityReduction->run(desc));
+                } else {
+                    trainingData.push_back(this->mDimensionalityReduction->debugRun(desc));
+                }
             } else if(!this->mEncoding.empty()) {
-                trainingData.push_back(this->mEncoding->run(desc));
+                if(!mDebugMode) {
+                    trainingData.push_back(this->mEncoding->run(desc));
+                } else {
+                    trainingData.push_back(this->mEncoding->debugRun(desc));
+                }
             } else {
                 trainingData.push_back(desc);
             }

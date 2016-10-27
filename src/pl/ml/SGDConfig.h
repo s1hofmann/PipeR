@@ -25,14 +25,14 @@ public:
 
     virtual ~SGDConfig();
 
-    double lambda() const;
-    void setLambda(double lambda);
+    std::vector<double> lambdas() const;
+    void setLambdas(const std::vector<double> &lambdas);
 
-    double learningRate() const;
-    void setLearningRate(double learningRate);
+    std::vector<double> learningRates() const;
+    void setLearningRates(const std::vector<double> &learningRates);
 
-    double multiplier() const;
-    void setMultiplier(double multiplier);
+    std::vector<double> multipliers() const;
+    void setMultipliers(const std::vector<double> &multipliers);
 
     double epsilon() const;
     void setEpsilon(double epsilon);
@@ -64,9 +64,9 @@ public:
     void setPlattScale(bool plattScale);
 
 private:
-    double mLambda;
-    double mLearningRate;
-    double mMultiplier;
+    std::vector<double> mLambdas;
+    std::vector<double> mLearningRates;
+    std::vector<double> mMultipliers;
     double mEpsilon;
     double mBias;
     bool mBinary;

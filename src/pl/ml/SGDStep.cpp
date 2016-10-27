@@ -53,13 +53,13 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
     }
 
     cv::Mat1d weights = calculateWeights(labels);
-    double lambda = config->lambda();
+    double lambda = config->lambdas()[0];
     if(debugMode) { debug("Lambda:", lambda); }
-    double learningRate = config->learningRate();
+    double learningRate = config->learningRates()[0];
     if(debugMode) { debug("Learning rate:", learningRate); }
     double epsilon = config->epsilon();
     if(debugMode) { debug("Epsilon:", epsilon); }
-    double multiplier = config->multiplier();
+    double multiplier = config->multipliers()[0];
     if(debugMode) { debug("Multiplier:", multiplier); }
     vl_size iterations = config->iterations();
     if(debugMode) { debug("Iterations:", iterations); }
@@ -120,7 +120,14 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                               const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &training,
                               const std::vector<std::pair<cv::Mat1d, cv::Mat1i>> &test) const
 {
-
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
 }
 
 
