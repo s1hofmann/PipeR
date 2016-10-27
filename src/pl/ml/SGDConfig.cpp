@@ -19,9 +19,6 @@ SGDConfig::SGDConfig(const std::string &identifier,
     :
         MLConfig(identifier, folds),
         mClassifierFiles(outputFiles),
-        mLambdas(lambda),
-        mLearningRates(learningRate),
-        mMultipliers(multiplier),
         mEpsilon(epsilon),
         mMaxIterations(maxIterations),
         mIterations(iterations),
@@ -29,7 +26,9 @@ SGDConfig::SGDConfig(const std::string &identifier,
         mPlattScale(platt),
         mBinary(binary)
 {
-
+    mLambdas.push_back(lambda);
+    mLearningRates.push_back(learningRate);
+    mMultipliers.push_back(multiplier);
 }
 
 
