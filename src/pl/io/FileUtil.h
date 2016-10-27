@@ -208,7 +208,7 @@ private:
     static bool appendDescriptor(const std::string &labelFileName,
                                  const std::string &outputPath,
                                  const std::string &fileName,
-                                 const int label, const std::__1::string &prefix);
+                                 const int label, const std::string &prefix);
 };
 
 

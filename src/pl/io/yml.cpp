@@ -61,7 +61,7 @@ unsigned long YML::write(const cv::Mat &output,
 }
 
 
-cv::Mat YML::read(const std::string &input, const std::__1::string &prefix) const
+cv::Mat YML::read(const std::string &input, const std::string &prefix) const
 {
     if(input.empty()) {
         std::stringstream s;

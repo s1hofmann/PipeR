@@ -63,7 +63,7 @@ unsigned long IMG::write(const cv::Mat &output,
 }
 
 
-cv::Mat IMG::read(const std::string &input, const std::__1::string &prefix) const
+cv::Mat IMG::read(const std::string &input, const std::string &prefix) const
 {
     if(input.empty()) {
         std::stringstream s;
