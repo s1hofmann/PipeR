@@ -154,7 +154,7 @@ cv::Mat FileUtil::loadBinary(const std::string &fileName)
 
 bool FileUtil::saveYML(const cv::Mat &data,
                        const std::string &outputPath,
-                       const std::string &fileName, const std::__1::string &prefix)
+                       const std::string &fileName, const std::string &prefix)
 {
     FileWriter<YML> ymlWriter;
 
