@@ -148,7 +148,6 @@ cv::Mat1d VlFeatWrapper::SVMSolver::predict(cv::Mat1d features) const
 
     for(int r = 0; r < tmpFeatures.rows; ++r) {
         double result = model.dot(tmpFeatures.row(r));
-        std::cout << result << std::endl;
         biasMat.at<double>(r) += result;
     }
 
