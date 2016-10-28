@@ -6,6 +6,7 @@
 #pragma once
 
 #include "../pipeline/PipelineStep.h"
+#include "metrics.h"
 
 #include <opencv2/core/core.hpp>
 
