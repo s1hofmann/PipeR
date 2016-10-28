@@ -132,9 +132,9 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<double> learningRates = config->learningRates();
     std::vector<double> multipliers = config->multipliers();
 
-    double bestLambda;
-    double bestLearningRate;
-    double bestMultiplier;
+    double bestLambda = 0;
+    double bestLearningRate = 0;
+    double bestMultiplier = 0;
     double bestF = 0;
 
     for(double lambda : lambdas) {
@@ -223,9 +223,21 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     if(debugMode) { debug("F1 score:", f); }
                     avgF += f;
                 }
+                avgF /= config->folds();
+
+                if(avgF > bestF) {
+                    bestLambda = lambda;
+                    bestLearningRate = lr;
+                    bestMultiplier = mul;
+                }
             }
         }
     }
+
+    debug("Best lambda:", bestLambda);
+    debug("Best learning rate:", bestLearningRate);
+    debug("Best multiplier:", bestMultiplier);
+
     return cv::Mat();
 }
 
