@@ -146,10 +146,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     debug("Multiplier:", mul);
                 }
 
-                unsigned int tp = 0;
-                unsigned int tn = 0;
-                unsigned int fp = 0;
-                unsigned int fn = 0;
+                double avgF = 0;
 
                 std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
                 std::vector<cv::Mat1d> trainingsLabelCache(config->folds());
@@ -167,8 +164,16 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                             tmpDesc.push_back(data[idx].first);
                             tmpIdx.push_back(data[idx].second);
                         }
-                        tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
-                        tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
+                        if(tmpDesc.type() != CV_64F) {
+                            tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
+                        } else {
+                            trainingsDescriptorCache[fold] = tmpDesc;
+                        }
+                        if(tmpIdx.type() != CV_64F) {
+                            tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
+                        } else {
+                            trainingsLabelCache[fold] = tmpIdx;
+                        }
                     }
                     if(testDescriptorCache[fold].empty() ||
                        testLabelCache[fold].empty()) {
@@ -179,8 +184,16 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                             tmpDesc.push_back(data[idx].first);
                             tmpIdx.push_back(data[idx].second);
                         }
-                        tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
-                        tmpIdx.convertTo(testLabelCache[fold], CV_64F);
+                        if(tmpDesc.type() != CV_64F) {
+                            tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
+                        } else {
+                            testDescriptorCache[fold] = tmpDesc;
+                        }
+                        if(tmpIdx.type() != CV_64F) {
+                            tmpIdx.convertTo(testLabelCache[fold], CV_64F);
+                        } else {
+                            testLabelCache[fold] = tmpIdx;
+                        }
                     }
 
                     if(debugMode) { debug("Setting up SVM."); }
@@ -198,6 +211,16 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
 
                     if(debugMode) { debug("Training..."); }
                     solver->train();
+
+                    cv::Mat1d predictions = solver->predict(testDescriptorCache[fold]);
+                    double negativeLabel, positiveLabel;
+                    cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
+                    predictions.setTo(negativeLabel, predictions < 0);
+                    predictions.setTo(positiveLabel, predictions >= 0);
+
+                    double f = Metrics::f1(predictions, testLabelCache[fold]);
+                    if(debugMode) { debug("F1 score:", f); }
+                    avgF += f;
                 }
             }
         }
@@ -220,7 +243,7 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
 
     std::vector<std::string> classifiers = config->classifierFiles();
     if(debugMode) { debug(classifiers.size(), "classifier(s)"); }
-    cv::Mat1f results(1, classifiers.size());
+    cv::Mat1d results(1, classifiers.size());
 
     for(size_t idx = 0; idx < classifiers.size(); ++idx) {
         std::string classifierFile = classifiers[idx];
@@ -236,10 +259,10 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
                     cv::Mat tmp;
                     input.convertTo(tmp, CV_64F);
                     double score = tmp.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
-                    results.at<float>(idx) = score;
+                    results.at<double>(idx) = score;
                 } else {
                     double score = input.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
-                    results.at<float>(idx) = score;
+                    results.at<double>(idx) = score;
                 }
             }
         } catch(MLError) {

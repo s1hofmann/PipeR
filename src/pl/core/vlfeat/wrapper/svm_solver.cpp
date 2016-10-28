@@ -137,10 +137,12 @@ cv::Mat1d VlFeatWrapper::SVMSolver::predict(cv::Mat1d features) const
 {
     cv::Mat1d model = getModelMat();
     double bias = getBias();
+    cv::Mat1d biasMat = cv::Mat1d(1, features.rows);
+    biasMat.setTo(bias);
 
-    cv::Mat1d results = model*(features.t())+bias;
+    cv::Mat1d result = model.dot(features)+biasMat;
 
-    return results;
+    return result;
 }
 
 double VlFeatWrapper::SVMSolver::getBias() const
