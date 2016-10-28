@@ -14,7 +14,8 @@ ConfigContainer::ConfigContainer(const std::string &identifier,
     :
         mIdentifier(identifier),
         mUsageText(usage),
-        mHelpText(help)
+        mHelpText(help),
+        mJsonFile(std::string())
 {
 
 }
@@ -31,16 +32,54 @@ Json::Value ConfigContainer::readJSON(const std::string &file)
 
     if(parsingSuccessfull) {
         ifs.close();
+        mJsonFile = file;
         return root;
     } else {
         return Json::Value();
     }
 }
 
+bool ConfigContainer::writeJSON(const Json::Value &json) const
+{
+    if(!mJsonFile.empty()) {
+        std::ofstream ofs;
+        ofs.open(mJsonFile, std::ofstream::out);
+        ofs << json;
+        ofs.close();
+        return true;
+    }
+    return false;
+}
 
 ConfigContainer::~ConfigContainer()
 {
 
+}
+
+std::string ConfigContainer::jsonFile() const
+{
+    return mJsonFile;
+}
+
+void ConfigContainer::setJsonFile(const std::string &jsonFile)
+{
+    mJsonFile = jsonFile;
+}
+
+Json::Value ConfigContainer::getConfigFile()
+{
+    if(!mJsonFile.empty()) {
+        return readJSON(mJsonFile);
+    }
+    return Json::Value();
+}
+
+bool ConfigContainer::updateConfigFile(const Json::Value &newConfig) const
+{
+    if(!newConfig.empty()) {
+        return writeJSON(newConfig);
+    }
+    return false;
 }
 
 

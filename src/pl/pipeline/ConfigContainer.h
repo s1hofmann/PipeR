@@ -53,6 +53,12 @@ public:
      */
     virtual bool fromJSON(std::string &file) = 0;
 
+    std::string jsonFile() const;
+    void setJsonFile(const std::string &jsonFile);
+
+    Json::Value getConfigFile();
+    bool updateConfigFile(const Json::Value &newConfig) const;
+
 protected:
     /**
      * @brief ConfigContainer
@@ -64,6 +70,8 @@ protected:
                     const std::string &help = "No help text provided, I'm sorry.");
 
     Json::Value readJSON(const std::string &file);
+
+    bool writeJSON(const Json::Value &json) const;
 
     /**
      * @brief ~ConfigContainer
@@ -85,6 +93,11 @@ private:
      * @brief mIdentifier
      */
     std::string mIdentifier;
+
+    /**
+     * @brief mJsonFile
+     */
+    std::string mJsonFile;
 };
 
 template <typename T>

@@ -229,6 +229,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     bestLambda = lambda;
                     bestLearningRate = lr;
                     bestMultiplier = mul;
+                    bestF = avgF;
                 }
             }
         }
@@ -238,6 +239,15 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     debug("Best lambda:", bestLambda);
     debug("Best learning rate:", bestLearningRate);
     debug("Best multiplier:", bestMultiplier);
+
+    Json::Value conf = config->getConfigFile();
+    conf["mLambdas"].clear();
+    conf["mLambdas"].append(bestLambda);
+    conf["mLearningRates"].clear();
+    conf["mLearningRates"].append(bestLearningRate);
+    conf["mMultipliers"].clear();
+    conf["mMultipliers"].append(bestMultiplier);
+    config->updateConfigFile(conf);
 
     return cv::Mat();
 }

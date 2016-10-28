@@ -77,7 +77,7 @@ double Metrics::f1(const cv::Mat1d predictions, const cv::Mat1d labels)
     double p = precision(predictions, labels);
     double r = recall(predictions, labels);
 
-    return 2 * ((p * r) / (p + r));
+    return 2 * (p * r) / (p + r);
 }
 
 
