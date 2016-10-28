@@ -2,7 +2,8 @@ add_library(ml MLStep
                SGDStep
                MLConfig
                SGDConfig
-               crossvalidation)
+               crossvalidation
+               metrics)
 
 target_link_libraries(ml exception
                          vlfeat
