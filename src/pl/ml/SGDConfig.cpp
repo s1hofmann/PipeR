@@ -84,7 +84,7 @@ vl_size SGDConfig::iterations() const
 bool SGDConfig::setIterations(const vl_size &iterations)
 {
     mIterations = iterations;
-    return setConfigParameter<vl_size>(varName(mIterations), iterations);
+    return setConfigParameter<int>(varName(mIterations), static_cast<int>(iterations));
 }
 
 
@@ -97,7 +97,7 @@ vl_size SGDConfig::maxIterations() const
 bool SGDConfig::setMaxIterations(const vl_size &maxIterations)
 {
     mMaxIterations = maxIterations;
-    return setConfigParameter<vl_size>(varName(mMaxIterations), maxIterations);
+    return setConfigParameter<int>(varName(mMaxIterations), static_cast<int>(maxIterations));
 }
 
 
