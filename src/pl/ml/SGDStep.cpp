@@ -234,6 +234,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
         }
     }
 
+    debug("Best F1 score:", bestF);
     debug("Best lambda:", bestLambda);
     debug("Best learning rate:", bestLearningRate);
     debug("Best multiplier:", bestMultiplier);
