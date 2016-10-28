@@ -137,6 +137,11 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     double bestMultiplier = 0;
     double bestF = 0;
 
+    std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
+    std::vector<cv::Mat1d> trainingsLabelCache(config->folds());
+    std::vector<cv::Mat1d> testDescriptorCache(config->folds());
+    std::vector<cv::Mat1d> testLabelCache(config->folds());
+
     for(double lambda : lambdas) {
         for(double lr : learningRates) {
             for(double mul : multipliers) {
@@ -147,11 +152,6 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                 }
 
                 double avgF = 0;
-
-                std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
-                std::vector<cv::Mat1d> trainingsLabelCache(config->folds());
-                std::vector<cv::Mat1d> testDescriptorCache(config->folds());
-                std::vector<cv::Mat1d> testLabelCache(config->folds());
 
                 // Iterate over folds
                 for(size_t fold = 0; fold < config->folds(); ++fold) {
