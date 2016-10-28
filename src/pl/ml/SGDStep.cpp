@@ -202,6 +202,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
             }
         }
     }
+    return cv::Mat();
 }
 
 
