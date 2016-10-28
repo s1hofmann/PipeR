@@ -24,6 +24,8 @@ Since I like to design frameworks, I decided to build a modular framework for pa
   - [x] Logging
   - [x] I/O
   - [x] Commandline Arguments
+  - [x] k-fold crossvalidation
+  - [ ] Platt scaling
 
 - [ ] Core
   - [x] Clustering
