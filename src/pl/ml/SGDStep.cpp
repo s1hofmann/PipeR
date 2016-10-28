@@ -241,12 +241,12 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     debug("Best multiplier:", bestMultiplier);
 
     Json::Value conf = config->getConfigFile();
-    conf["mLambdas"].clear();
-    conf["mLambdas"].append(bestLambda);
-    conf["mLearningRates"].clear();
-    conf["mLearningRates"].append(bestLearningRate);
-    conf["mMultipliers"].clear();
-    conf["mMultipliers"].append(bestMultiplier);
+    conf[config->identifier()]["mLambdas"].clear();
+    conf[config->identifier()]["mLambdas"].append(bestLambda);
+    conf[config->identifier()]["mLearningRates"].clear();
+    conf[config->identifier()]["mLearningRates"].append(bestLearningRate);
+    conf[config->identifier()]["mMultipliers"].clear();
+    conf[config->identifier()]["mMultipliers"].append(bestMultiplier);
     config->updateConfigFile(conf);
 
     return cv::Mat();
