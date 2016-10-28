@@ -73,7 +73,6 @@ public:
     bool setConfigParameter(const std::string &id, const T value) {
         Json::Value conf = getConfigFile();
         if(!conf.empty()) {
-            conf[identifier()][id].clear();
             conf[identifier()][id] = value;
             return updateConfigFile(conf);
         }
