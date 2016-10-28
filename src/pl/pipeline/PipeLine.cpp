@@ -527,11 +527,11 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-            debug.inform("Perfoming dimensionality reduction and encoding.");
-            logger.inform("Perfoming dimensionality reduction and encoding.");
+            debug.inform("Performing dimensionality reduction and encoding.");
+            logger.inform("Performing dimensionality reduction and encoding.");
         } else if(!this->mDimensionalityReduction.empty()) {
-            debug.inform("Perfoming dimensionality reduction.");
-            logger.inform("Perfoming dimensionality reduction.");
+            debug.inform("Performing dimensionality reduction.");
+            logger.inform("Performing dimensionality reduction.");
         } else if(!this->mEncoding.empty()) {
             debug.inform("Performing encoding.");
             logger.inform("Performing encoding.");

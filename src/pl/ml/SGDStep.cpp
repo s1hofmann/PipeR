@@ -160,6 +160,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                 for(size_t fold = 0; fold < config->folds(); ++fold) {
                     if(trainingsDescriptorCache[fold].empty() ||
                        trainingsLabelCache[fold].empty()) {
+                        if(debugMode) { debug("Rebuilding training cache."); }
                         cv::Mat tmpDesc;
                         cv::Mat tmpIdx;
                         for(auto idx : indices.first[fold]) {
@@ -171,6 +172,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     }
                     if(testDescriptorCache[fold].empty() ||
                        testLabelCache[fold].empty()) {
+                        if(debugMode) { debug("Rebuilding test cache."); }
                         cv::Mat tmpDesc;
                         cv::Mat tmpIdx;
                         for(auto idx : indices.second[fold]) {
@@ -181,10 +183,12 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         tmpIdx.convertTo(testLabelCache[fold], CV_64F);
                     }
 
+                    if(debugMode) { debug("Setting up SVM."); }
                     cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
                                                                                             trainingsDescriptorCache[fold],
                                                                                             lambda);
 
+                    if(debugMode) { debug("Setting parameters."); }
                     // Bias learning rate and multiplier
                     solver->setBiasLearningRate(lr);
                     solver->setBiasMultiplier(mul);
@@ -192,6 +196,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     cv::Mat1d weights = calculateWeights(trainingsLabelCache[fold]);
                     solver->setWeights(weights);
 
+                    if(debugMode) { debug("Training..."); }
                     solver->train();
                 }
             }
