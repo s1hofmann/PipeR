@@ -217,6 +217,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
                     predictions.setTo(negativeLabel, predictions < 0);
                     predictions.setTo(positiveLabel, predictions >= 0);
+                    predictions = predictions.t();
 
                     double f = Metrics::f1(predictions, testLabelCache[fold]);
                     if(debugMode) { debug("F1 score:", f); }
