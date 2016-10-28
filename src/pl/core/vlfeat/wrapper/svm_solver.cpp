@@ -139,17 +139,18 @@ cv::Mat1d VlFeatWrapper::SVMSolver::predict(cv::Mat1d features) const
     double bias = getBias();
     cv::Mat1d biasMat = cv::Mat1d(1, features.rows);
     biasMat.setTo(bias);
+    cv::Mat tmpFeatures;
     if(features.type() != model.type()) {
-        cv::Mat tmp;
-        features.convertTo(tmp, model.type());
-        cv::Mat1d result = model.dot(tmp)+biasMat;
-
-        return result;
+        features.convertTo(tmpFeatures, model.type());
     } else {
-        cv::Mat1d result = model.dot(features)+biasMat;
-
-        return result;
+        tmpFeatures = features;
     }
+
+    for(int r = 0; r < tmpFeatures.rows; ++r) {
+        biasMat.at<double>(r) += model.dot(tmpFeatures.row(r));
+    }
+
+    return biasMat;
 }
 
 double VlFeatWrapper::SVMSolver::getBias() const
