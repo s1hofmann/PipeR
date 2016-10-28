@@ -314,7 +314,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
     ConsoleLogger debug;
 
     if(mPipelineConfig->rebuildDescriptors()) {
-        for(size_t idx = 0; idx < input.size(); ++idx) {
+        for(size_t idx = 0; idx < input.size() && idx < mPipelineConfig->maxDescriptors(); ++idx) {
             //Load image file
             cv::Mat inputMat = FileUtil::loadImage(input[idx].first);
 
@@ -522,7 +522,8 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
         }
     }
     // Load descriptors with corresponding labels
-    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
+    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
+                                                                                               mPipelineConfig->maxDescriptors());
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
@@ -563,7 +564,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
         }
     }
     if(mDebugMode) {
-        debug.inform("Starting training.", "Data size:", filesWithLabels.size());
+        debug.inform("Data size:", filesWithLabels.size());
     }
 
     cv::Ptr<MLConfig> mlConfig;
@@ -576,13 +577,13 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
     }
 
     if(mlConfig->folds()) {
-        logger.report("Starting crossvalidation.");
-        debug.report("Starting crossvalidation.");
+        logger.inform("Starting crossvalidation.");
+        debug.inform("Starting crossvalidation.");
 
         // Creates randomized indices for n folds of training and test files
         auto crossvalIndices = CrossValidation::createFolds(encodedDescriptorsWithLabels.size(), mlConfig->folds());
-        debug.inform("Crossvalidating...");
-        logger.inform("Crossvalidating...");
+        debug.inform("Built indices, crossvalidating...");
+        logger.inform("Built indices, crossvalidating...");
         if(!mDebugMode) {
             this->mClassification->optimize(crossvalIndices,
                                             encodedDescriptorsWithLabels);

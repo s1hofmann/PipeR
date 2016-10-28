@@ -228,7 +228,7 @@ bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
 
 cv::Mat FileUtil::loadDescriptors(const std::string &descriptorDir,
                                   const std::string &labelFile,
-                                  const int maxDescriptors,
+                                  const unsigned int maxDescriptors,
                                   bool random)
 {
     std::vector<std::pair<std::string, int>> filesWithLabels = getFilesFromLabelFile(labelFile);

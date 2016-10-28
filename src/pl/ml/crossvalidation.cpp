@@ -12,8 +12,8 @@ std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsign
                                                                                                                        const unsigned int folds)
 {
     std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> foldData;
-    foldData.first.reserve(folds);
-    foldData.second.reserve(folds);
+    foldData.first.resize(folds);
+    foldData.second.resize(folds);
     std::vector<unsigned int> indices = Range<unsigned int>::random(0, length);
 
     unsigned int foldSize = length / folds;

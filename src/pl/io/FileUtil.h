@@ -151,7 +151,7 @@ public:
      */
     static cv::Mat loadDescriptors(const std::string &descriptorDir,
                                    const std::string &labelFile,
-                                   const int maxDescriptors,
+                                   const unsigned int maxDescriptors,
                                    bool random = true);
 
     /**

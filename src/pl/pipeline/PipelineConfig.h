@@ -66,9 +66,6 @@ public:
     std::string outputDirectory() const;
     void setOutputDirectory(const std::string &outputDirectory);
 
-    unsigned int maxFiles() const;
-    void setMaxFiles(unsigned int maxFiles);
-
     int randomSeed() const;
     void setRandomSeed(int randomSeed);
 
@@ -127,7 +124,6 @@ private:
      * @brief logFile
      */
     std::string mLogFile;
-
 
     /**
      * @brief mRandomSeed
