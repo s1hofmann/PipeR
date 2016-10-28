@@ -247,6 +247,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     conf[config->identifier()]["mLearningRates"].append(bestLearningRate);
     conf[config->identifier()]["mMultipliers"].clear();
     conf[config->identifier()]["mMultipliers"].append(bestMultiplier);
+    conf[config->identifier()]["mFolds"] = 0;
     config->updateConfigFile(conf);
 
     return cv::Mat();
