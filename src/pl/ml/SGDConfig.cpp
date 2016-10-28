@@ -44,9 +44,10 @@ double SGDConfig::epsilon() const
 }
 
 
-void SGDConfig::setEpsilon(double epsilon)
+bool SGDConfig::setEpsilon(double epsilon)
 {
     mEpsilon = epsilon;
+    return setConfigParameter<double>(varName(mEpsilon), epsilon);
 }
 
 
@@ -80,9 +81,10 @@ vl_size SGDConfig::iterations() const
 }
 
 
-void SGDConfig::setIterations(const vl_size &iterations)
+bool SGDConfig::setIterations(const vl_size &iterations)
 {
     mIterations = iterations;
+    return setConfigParameter<vl_size>(varName(mIterations), iterations);
 }
 
 
@@ -92,9 +94,10 @@ vl_size SGDConfig::maxIterations() const
 }
 
 
-void SGDConfig::setMaxIterations(const vl_size &maxIterations)
+bool SGDConfig::setMaxIterations(const vl_size &maxIterations)
 {
     mMaxIterations = maxIterations;
+    return setConfigParameter<vl_size>(varName(mMaxIterations), maxIterations);
 }
 
 
@@ -104,9 +107,10 @@ std::vector<std::string> SGDConfig::classifierFiles() const
 }
 
 
-void SGDConfig::setClassifierFiles(const std::vector<std::string> &classifierFiles)
+bool SGDConfig::setClassifierFiles(const std::vector<std::string> &classifierFiles)
 {
     mClassifierFiles = classifierFiles;
+    return setConfigParameter<std::string>(varName(mClassifierFiles), classifierFiles);
 }
 
 
@@ -234,9 +238,10 @@ bool SGDConfig::binary() const
     return mBinary;
 }
 
-void SGDConfig::setBinary(bool binary)
+bool SGDConfig::setBinary(bool binary)
 {
     mBinary = binary;
+    return setConfigParameter<bool>(varName(mBinary), binary);
 }
 
 bool SGDConfig::plattScale() const
@@ -244,9 +249,10 @@ bool SGDConfig::plattScale() const
     return mPlattScale;
 }
 
-void SGDConfig::setPlattScale(bool plattScale)
+bool SGDConfig::setPlattScale(bool plattScale)
 {
     mPlattScale = plattScale;
+    return setConfigParameter<bool>(varName(mPlattScale), plattScale);
 }
 
 std::vector<double> SGDConfig::lambdas() const
@@ -254,9 +260,10 @@ std::vector<double> SGDConfig::lambdas() const
     return mLambdas;
 }
 
-void SGDConfig::setLambdas(const std::vector<double> &lambdas)
+bool SGDConfig::setLambdas(const std::vector<double> &lambdas)
 {
     mLambdas = lambdas;
+    return setConfigParameter<double>(varName(mLambdas), lambdas);
 }
 
 std::vector<double> SGDConfig::learningRates() const
@@ -264,9 +271,10 @@ std::vector<double> SGDConfig::learningRates() const
     return mLearningRates;
 }
 
-void SGDConfig::setLearningRates(const std::vector<double> &learningRates)
+bool SGDConfig::setLearningRates(const std::vector<double> &learningRates)
 {
     mLearningRates = learningRates;
+    return setConfigParameter<double>(varName(mLearningRate), learningRates);
 }
 
 std::vector<double> SGDConfig::multipliers() const
@@ -274,9 +282,10 @@ std::vector<double> SGDConfig::multipliers() const
     return mMultipliers;
 }
 
-void SGDConfig::setMultipliers(const std::vector<double> &multipliers)
+bool SGDConfig::setMultipliers(const std::vector<double> &multipliers)
 {
     mMultipliers = multipliers;
+    return setConfigParameter<double>(varName(mMultipliers), multipliers);
 }
 
 

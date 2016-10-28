@@ -36,49 +36,24 @@ public:
      */
     virtual ~SiftExtractorConfig();
 
-    /**
-     * @brief getBestFeatures
-     * @return
-     */
-    int getBestFeatures() const {
-        return mBestFeatures;
-    }
-
-    /**
-     * @brief getOctaves
-     * @return
-     */
-    int getOctaves() const {
-        return mOctaves;
-    }
-
-    /**
-     * @brief getContrastThresh
-     * @return
-     */
-    double getContrastThresh() const {
-        return mContrastThresh;
-    }
-
-    /**
-     * @brief getEdgeThresh
-     * @return
-     */
-    double getEdgeThresh() const {
-        return mEdgeThresh;
-    }
-
-    /**
-     * @brief getSigma
-     * @return
-     */
-    double getSigma() const {
-        return mSigma;
-    }
-
     virtual std::string toString() const;
 
     virtual bool fromJSON(std::string &file);
+
+    int bestFeatures() const;
+    bool setBestFeatures(int bestFeatures);
+
+    int octaves() const;
+    bool setOctaves(int octaves);
+
+    double contrastThresh() const;
+    bool setContrastThresh(double contrastThresh);
+
+    double edgeThresh() const;
+    bool setEdgeThresh(double edgeThresh);
+
+    double sigma() const;
+    bool setSigma(double sigma);
 
 private:
     /**

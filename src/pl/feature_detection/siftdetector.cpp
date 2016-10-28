@@ -27,11 +27,11 @@ std::vector<cv::KeyPoint> SiftDetector::detectImpl(const bool debugMode, const c
         throw FeatureExError(s.str(), currentMethod, currentLine);
     }
 
-    cv::Ptr<cv::xfeatures2d::SiftFeatureDetector> detector = cv::xfeatures2d::SiftFeatureDetector::create(config->getBestFeatures(),
-                                                                                                          config->getOctaves(),
-                                                                                                          config->getContrastThresh(),
-                                                                                                          config->getEdgeThresh(),
-                                                                                                          config->getSigma());
+    cv::Ptr<cv::xfeatures2d::SiftFeatureDetector> detector = cv::xfeatures2d::SiftFeatureDetector::create(config->bestFeatures(),
+                                                                                                          config->octaves(),
+                                                                                                          config->contrastThresh(),
+                                                                                                          config->edgeThresh(),
+                                                                                                          config->sigma());
 
     std::vector<cv::KeyPoint> keypoints;
     detector->detect(input, keypoints);

@@ -20,9 +20,10 @@ int DBScanConfig::minPoints() const
     return mMinPoints;
 }
 
-void DBScanConfig::setMinPoints(int minPoints)
+bool DBScanConfig::setMinPoints(int minPoints)
 {
     mMinPoints = minPoints;
+    return setConfigParameter<int>(varName(mMinPoints), minPoints);
 }
 
 double DBScanConfig::neighborhoodSize() const
@@ -30,9 +31,10 @@ double DBScanConfig::neighborhoodSize() const
     return mNeighborhoodSize;
 }
 
-void DBScanConfig::setNeighborhoodSize(double neighborhoodSize)
+bool DBScanConfig::setNeighborhoodSize(double neighborhoodSize)
 {
     mNeighborhoodSize = neighborhoodSize;
+    return setConfigParameter<double>(varName(mNeighborhoodSize), neighborhoodSize);
 }
 
 std::string DBScanConfig::toString() const

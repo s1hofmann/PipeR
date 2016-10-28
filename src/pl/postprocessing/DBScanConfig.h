@@ -14,10 +14,10 @@ public:
     virtual ~DBScanConfig();
 
     int minPoints() const;
-    void setMinPoints(int minPoints);
+    bool setMinPoints(int minPoints);
 
     double neighborhoodSize() const;
-    void setNeighborhoodSize(double neighborhoodSize);
+    bool setNeighborhoodSize(double neighborhoodSize);
 
     virtual std::string toString() const override;
     virtual bool fromJSON(std::string &file) override;

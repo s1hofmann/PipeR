@@ -21,29 +21,25 @@ public:
 
     virtual ~VladConfig();
 
-    std::vector<normStrategy> getNormStrategies() const;
-
-    std::string getPath() const;
-
-    int getClusters() const;
-
-    int getIterations() const;
-
-    int getVocabCount() const;
-
-    std::vector<std::string> getVocabs() const;
-
-    double getEpsilon() const;
-
     virtual std::string toString() const;
 
     // ConfigContainer interface
     virtual bool fromJSON(std::string &file);
 
-    int getPyramidLevels() const;
-
-    void setPyramidLevels(int pyramidLevels);
-
+    bool setPyramidLevels(int pyramidLevels);
+    int pyramidLevels() const;
+    bool setEpsilon(double epsilon);
+    double epsilon() const;
+    bool setIterations(int iterations);
+    int iterations() const;
+    bool setClusters(int clusters);
+    int clusters() const;
+    bool setPath(const std::string &path);
+    std::string path() const;
+    bool setVocabs(const std::vector<std::string> &vocabs);
+    std::vector<std::string> vocabs() const;
+    bool setNormStrategies(const std::vector<normStrategy> &normStrategies);
+    std::vector<normStrategy> normStrategies() const;
 private:
     std::vector<normStrategy> mNormStrategies;
     std::vector<std::string> mVocabs;

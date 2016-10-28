@@ -240,15 +240,9 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     debug("Best learning rate:", bestLearningRate);
     debug("Best multiplier:", bestMultiplier);
 
-    Json::Value conf = config->getConfigFile();
-    conf[config->identifier()]["mLambdas"].clear();
-    conf[config->identifier()]["mLambdas"].append(bestLambda);
-    conf[config->identifier()]["mLearningRates"].clear();
-    conf[config->identifier()]["mLearningRates"].append(bestLearningRate);
-    conf[config->identifier()]["mMultipliers"].clear();
-    conf[config->identifier()]["mMultipliers"].append(bestMultiplier);
-    conf[config->identifier()]["mFolds"] = 0;
-    config->updateConfigFile(conf);
+    config->setLambdas(std::vector<double>({bestLambda}));
+    config->setLearningRates(std::vector<double>({bestLearningRate}));
+    config->setMultipliers(std::vector<double>({bestMultiplier}));
 
     return cv::Mat();
 }

@@ -26,16 +26,16 @@ public:
     virtual ~SGDConfig();
 
     std::vector<double> lambdas() const;
-    void setLambdas(const std::vector<double> &lambdas);
+    bool setLambdas(const std::vector<double> &lambdas);
 
     std::vector<double> learningRates() const;
-    void setLearningRates(const std::vector<double> &learningRates);
+    bool setLearningRates(const std::vector<double> &learningRates);
 
     std::vector<double> multipliers() const;
-    void setMultipliers(const std::vector<double> &multipliers);
+    bool setMultipliers(const std::vector<double> &multipliers);
 
     double epsilon() const;
-    void setEpsilon(double epsilon);
+    bool setEpsilon(double epsilon);
 
     cv::Mat1d model() const;
     void setModel(const cv::Mat1d &model);
@@ -44,13 +44,13 @@ public:
     void setBias(double bias);
 
     vl_size iterations() const;
-    void setIterations(const vl_size &iterations);
+    bool setIterations(const vl_size &iterations);
 
     vl_size maxIterations() const;
-    void setMaxIterations(const vl_size &maxIterations);
+    bool setMaxIterations(const vl_size &maxIterations);
 
     std::vector<std::string> classifierFiles() const;
-    void setClassifierFiles(const std::vector<std::string> &classifierFile);
+    bool setClassifierFiles(const std::vector<std::string> &classifierFile);
 
     // ConfigContainer interface
     virtual std::string toString() const;
@@ -58,10 +58,10 @@ public:
     virtual bool fromJSON(std::string &file);
 
     bool binary() const;
-    void setBinary(bool binary);
+    bool setBinary(bool binary);
 
     bool plattScale() const;
-    void setPlattScale(bool plattScale);
+    bool setPlattScale(bool plattScale);
 
 private:
     std::vector<double> mLambdas;

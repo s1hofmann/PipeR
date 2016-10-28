@@ -20,30 +20,6 @@ PCAConfig::PCAConfig(const std::string &identifier,
 }
 
 
-int PCAConfig::getComponents() const
-{
-    return this->mComponents;
-}
-
-
-double PCAConfig::getEpsilon() const
-{
-    return this->mEpsilon;
-}
-
-
-bool PCAConfig::getWhitening() const
-{
-    return this->mWhitening;
-}
-
-
-std::string PCAConfig::getPath() const
-{
-    return this->mPath;
-}
-
-
 std::string PCAConfig::toString() const
 {
     std::stringstream configString;
@@ -72,6 +48,50 @@ bool PCAConfig::fromJSON(std::string &file)
 
         return true;
     }
+}
+
+int PCAConfig::components() const
+{
+    return mComponents;
+}
+
+bool PCAConfig::setComponents(int components)
+{
+    mComponents = components;
+    return setConfigParameter<int>(varName(mComponents), components);
+}
+
+double PCAConfig::epsilon() const
+{
+    return mEpsilon;
+}
+
+bool PCAConfig::setEpsilon(double epsilon)
+{
+    mEpsilon = epsilon;
+    return setConfigParameter<double>(varName(mEpsilon), epsilon);
+}
+
+bool PCAConfig::whitening() const
+{
+    return mWhitening;
+}
+
+bool PCAConfig::setWhitening(bool whitening)
+{
+    mWhitening = whitening;
+    return setConfigParameter<bool>(varName(mWhitening), whitening);
+}
+
+std::string PCAConfig::path() const
+{
+    return mPath;
+}
+
+bool PCAConfig::setPath(const std::string &path)
+{
+    mPath = path;
+    return setConfigParameter<std::string>(varName(mPath), path);
 }
 
 

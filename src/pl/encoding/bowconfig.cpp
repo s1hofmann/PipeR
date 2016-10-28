@@ -27,33 +27,6 @@ BOWConfig::~BOWConfig()
 
 }
 
-
-int BOWConfig::getClusters() const
-{
-    return this->mClusters;
-}
-
-
-int BOWConfig::getIterations() const
-{
-    return this->mIterations;
-}
-
-int BOWConfig::getVocabCount() const
-{
-    return this->mVocabs.size();
-}
-
-std::vector<std::string> BOWConfig::getVocabs() const
-{
-    return this->mVocabs;
-}
-
-double BOWConfig::getEpsilon() const
-{
-    return this->mEpsilon;
-}
-
 std::string BOWConfig::toString() const
 {
     std::stringstream configString;
@@ -99,14 +72,70 @@ bool BOWConfig::fromJSON(std::string &file)
     }
 }
 
-int BOWConfig::getPyramidLevels() const
+std::vector<std::string> BOWConfig::vocabs() const
+{
+    return mVocabs;
+}
+
+bool BOWConfig::setVocabs(const std::vector<std::string> &vocabs)
+{
+    mVocabs = vocabs;
+    return setConfigParameter<std::string>(varName(mVocabs), vocabs);
+}
+
+std::string BOWConfig::path() const
+{
+    return mPath;
+}
+
+bool BOWConfig::setPath(const std::string &path)
+{
+    mPath = path;
+    return setConfigParameter<std::string>(varName(mPath), path);
+}
+
+int BOWConfig::clusters() const
+{
+    return mClusters;
+}
+
+bool BOWConfig::setClusters(int clusters)
+{
+    mClusters = clusters;
+    return setConfigParameter<int>(varName(mClusters), clusters);
+}
+
+int BOWConfig::iterations() const
+{
+    return mIterations;
+}
+
+bool BOWConfig::setIterations(int iterations)
+{
+    mIterations = iterations;
+    return setConfigParameter<int>(varName(mIterations), iterations);
+}
+
+double BOWConfig::epsilon() const
+{
+    return mEpsilon;
+}
+
+bool BOWConfig::setEpsilon(double epsilon)
+{
+    mEpsilon = epsilon;
+    return setConfigParameter<double>(varName(mEpsilon), epsilon);
+}
+
+int BOWConfig::pyramidLevels() const
 {
     return mPyramidLevels;
 }
 
-void BOWConfig::setPyramidLevels(int pyramidLevels)
+bool BOWConfig::setPyramidLevels(int pyramidLevels)
 {
     mPyramidLevels = pyramidLevels;
+    return setConfigParameter<int>(varName(mPyramidLevels), pyramidLevels);
 }
 
 

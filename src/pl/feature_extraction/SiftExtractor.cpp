@@ -42,11 +42,11 @@ cv::Mat SiftExtractor::computeImpl(const bool debugMode, const cv::Mat &input, s
         workingCopy = input;
     }
 
-    cv::Ptr<cv::xfeatures2d::SIFT> extractor = cv::xfeatures2d::SIFT::create(config->getBestFeatures(),
-                                                                             config->getOctaves(),
-                                                                             config->getContrastThresh(),
-                                                                             config->getEdgeThresh(),
-                                                                             config->getSigma());
+    cv::Ptr<cv::xfeatures2d::SIFT> extractor = cv::xfeatures2d::SIFT::create(config->bestFeatures(),
+                                                                             config->octaves(),
+                                                                             config->contrastThresh(),
+                                                                             config->edgeThresh(),
+                                                                             config->sigma());
 
     if(!keypoints.empty()) {
         cv::Mat result;

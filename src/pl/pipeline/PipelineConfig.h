@@ -27,10 +27,10 @@ public:
     virtual ~PipelineConfig();
 
     std::string descriptorDir() const;
-    void setDescriptorDir(const std::string &descriptorDir);
+    bool setDescriptorDir(const std::string &descriptorDir);
 
     std::string descriptorLabelFile() const;
-    void setDescriptorLabelFile(const std::string &descriptorLabelFile);
+    bool setDescriptorLabelFile(const std::string &descriptorLabelFile);
 
     // ConfigContainer interface
     virtual std::string toString() const;
@@ -38,36 +38,36 @@ public:
     virtual bool fromJSON(std::string &file);
 
     unsigned int maxDescriptors() const;
-    void setMaxDescriptors(unsigned int value);
+    bool setMaxDescriptors(unsigned int value);
 
     bool rebuildPca() const;
-    void setRebuildPca(bool rebuildPca);
+    bool setRebuildPca(bool rebuildPca);
 
     bool rebuildClusters() const;
-    void setRebuildClusters(bool rebuildClusters);
+    bool setRebuildClusters(bool rebuildClusters);
 
     bool rebuildDescriptors() const;
-    void setRebuildDescriptors(bool rebuildDescriptors);
+    bool setRebuildDescriptors(bool rebuildDescriptors);
 
     PipeLineMode pipelineMode() const;
     void setPipelineMode(const PipeLineMode &pipelineMode);
     void setPipelineMode(const std::string &pipelineMode);
 
     bool debugMode() const;
-    void setDebugMode(bool debugMode);
+    bool setDebugMode(bool debugMode);
 
     PipeLineMode str2mode(const std::string &modeString) const;
 
     std::string mode2string(const PipeLineMode &mode) const;
 
     std::string logFile() const;
-    void setLogFile(const std::string &value);
+    bool setLogFile(const std::string &value);
 
     std::string outputDirectory() const;
-    void setOutputDirectory(const std::string &outputDirectory);
+    bool setOutputDirectory(const std::string &outputDirectory);
 
     int randomSeed() const;
-    void setRandomSeed(int randomSeed);
+    bool setRandomSeed(int randomSeed);
 
 private:
     /**

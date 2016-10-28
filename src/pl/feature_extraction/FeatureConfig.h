@@ -24,7 +24,7 @@ public:
     virtual ~FeatureConfig();
 
     virtual bool augment() const;
-    virtual void setAugment(bool augment);
+    virtual bool setAugment(bool augment);
 
     // ConfigContainer interface
     std::string toString() const;

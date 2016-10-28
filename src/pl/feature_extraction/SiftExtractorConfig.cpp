@@ -37,11 +37,11 @@ std::string SiftExtractorConfig::toString() const
 {
     std::stringstream configString;
 
-    configString << "Best features: " << getBestFeatures() << std::endl
-                 << "Octaves: " << getOctaves() << std::endl
-                 << "Contrast threshold: " << getContrastThresh() << std::endl
-                 << "Edge threshold: " << getEdgeThresh() << std::endl
-                 << "Sigma: " << getSigma() << std::endl
+    configString << "Best features: " << bestFeatures() << std::endl
+                 << "Octaves: " << octaves() << std::endl
+                 << "Contrast threshold: " << contrastThresh() << std::endl
+                 << "Edge threshold: " << edgeThresh() << std::endl
+                 << "Sigma: " << sigma() << std::endl
                  << "Augment: ";
     if(mAugment == true) {
         configString << "true" << std::endl;
@@ -70,6 +70,61 @@ bool SiftExtractorConfig::fromJSON(std::string &file)
 
         return true;
     }
+}
+
+int SiftExtractorConfig::bestFeatures() const
+{
+    return mBestFeatures;
+}
+
+bool SiftExtractorConfig::setBestFeatures(int bestFeatures)
+{
+    mBestFeatures = bestFeatures;
+    return setConfigParameter<int>(varName(mBestFeatures), bestFeatures);
+}
+
+int SiftExtractorConfig::octaves() const
+{
+    return mOctaves;
+}
+
+bool SiftExtractorConfig::setOctaves(int octaves)
+{
+    mOctaves = octaves;
+    return setConfigParameter<int>(varName(mOctaves), octaves);
+}
+
+double SiftExtractorConfig::contrastThresh() const
+{
+    return mContrastThresh;
+}
+
+bool SiftExtractorConfig::setContrastThresh(double contrastThresh)
+{
+    mContrastThresh = contrastThresh;
+    return setConfigParameter<double>(varName(mContrastThresh), contrastThresh);
+}
+
+double SiftExtractorConfig::edgeThresh() const
+{
+    return mEdgeThresh;
+}
+
+bool SiftExtractorConfig::setEdgeThresh(double edgeThresh)
+{
+    mEdgeThresh = edgeThresh;
+    return setConfigParameter<double>(varName(mEdgeThresh), edgeThresh);
+}
+
+double SiftExtractorConfig::sigma() const
+{
+    return mSigma;
+}
+
+bool SiftExtractorConfig::setSigma(double sigma)
+{
+    mSigma = sigma;
+    return setConfigParameter<double>(varName(mSigma), sigma);
 }
 
 

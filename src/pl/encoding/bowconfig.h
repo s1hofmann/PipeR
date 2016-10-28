@@ -21,26 +21,28 @@ public:
 
     virtual ~BOWConfig();
 
-    std::string getPath() const;
-
-    int getClusters() const;
-
-    int getIterations() const;
-
-    int getVocabCount() const;
-
-    std::vector<std::string> getVocabs() const;
-
-    double getEpsilon() const;
-
     virtual std::string toString() const;
 
     // ConfigContainer interface
     virtual bool fromJSON(std::string &file);
 
-    int getPyramidLevels() const;
+    std::vector<std::string> vocabs() const;
+    bool setVocabs(const std::vector<std::string> &vocabs);
 
-    void setPyramidLevels(int pyramidLevels);
+    std::string path() const;
+    bool setPath(const std::string &path);
+
+    int clusters() const;
+    bool setClusters(int clusters);
+
+    int iterations() const;
+    bool setIterations(int iterations);
+
+    double epsilon() const;
+    bool setEpsilon(double epsilon);
+
+    int pyramidLevels() const;
+    bool setPyramidLevels(int pyramidLevels);
 
 private:
     std::vector<std::string> mVocabs;

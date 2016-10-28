@@ -33,9 +33,10 @@ std::string PipelineConfig::descriptorDir() const
 }
 
 
-void PipelineConfig::setDescriptorDir(const std::string &descriptorDir)
+bool PipelineConfig::setDescriptorDir(const std::string &descriptorDir)
 {
     mDescriptorDir = descriptorDir;
+    return setConfigParameter<std::string>(varName(mDescriptorDir), descriptorDir);
 }
 
 
@@ -45,9 +46,10 @@ std::string PipelineConfig::descriptorLabelFile() const
 }
 
 
-void PipelineConfig::setDescriptorLabelFile(const std::string &descriptorLabelFile)
+bool PipelineConfig::setDescriptorLabelFile(const std::string &descriptorLabelFile)
 {
     mDescriptorLabelFile = descriptorLabelFile;
+    return setConfigParameter<std::string>(varName(mDescriptorLabelFile), descriptorLabelFile);
 }
 
 bool PipelineConfig::fromJSON(std::string &file)
@@ -66,8 +68,6 @@ bool PipelineConfig::fromJSON(std::string &file)
         mRebuildClusters = params.get(varName(mRebuildClusters), true).asBool();
         mRebuildPca = params.get(varName(mRebuildPca), true).asBool();
         mRebuildDescriptors = params.get(varName(mRebuildDescriptors), true).asBool();
-        std::string modeString = params.get(varName(mPipelineMode), "MODE_TRAIN").asString();
-        mPipelineMode = str2mode(modeString);
         mDebugMode = params.get(varName(mDebugMode), false).asBool();
         mLogFile = params.get(varName(mLogFile), "./pipeline.log").asString();
         mRandomSeed = params.get(varName(mRandomSeed), 42).asInt();
@@ -81,9 +81,10 @@ unsigned int PipelineConfig::maxDescriptors() const
     return mMaxDescriptors;
 }
 
-void PipelineConfig::setMaxDescriptors(unsigned int value)
+bool PipelineConfig::setMaxDescriptors(unsigned int value)
 {
     mMaxDescriptors = value;
+    return setConfigParameter<unsigned int>(varName(mMaxDescriptors), value);
 }
 
 bool PipelineConfig::rebuildPca() const
@@ -91,9 +92,10 @@ bool PipelineConfig::rebuildPca() const
     return mRebuildPca;
 }
 
-void PipelineConfig::setRebuildPca(bool rebuildPca)
+bool PipelineConfig::setRebuildPca(bool rebuildPca)
 {
     mRebuildPca = rebuildPca;
+    return setConfigParameter<bool>(varName(mRebuildPca), rebuildPca);
 }
 
 bool PipelineConfig::rebuildClusters() const
@@ -101,9 +103,10 @@ bool PipelineConfig::rebuildClusters() const
     return mRebuildClusters;
 }
 
-void PipelineConfig::setRebuildClusters(bool rebuildClusters)
+bool PipelineConfig::setRebuildClusters(bool rebuildClusters)
 {
     mRebuildClusters = rebuildClusters;
+    return setConfigParameter<bool>(varName(mRebuildClusters), rebuildClusters);
 }
 
 bool PipelineConfig::rebuildDescriptors() const
@@ -111,24 +114,10 @@ bool PipelineConfig::rebuildDescriptors() const
     return mRebuildDescriptors;
 }
 
-void PipelineConfig::setRebuildDescriptors(bool rebuildDescriptors)
+bool PipelineConfig::setRebuildDescriptors(bool rebuildDescriptors)
 {
     mRebuildDescriptors = rebuildDescriptors;
-}
-
-PipeLineMode PipelineConfig::pipelineMode() const
-{
-    return mPipelineMode;
-}
-
-void PipelineConfig::setPipelineMode(const PipeLineMode &pipelineMode)
-{
-    mPipelineMode = pipelineMode;
-}
-
-void PipelineConfig::setPipelineMode(const std::string &pipelineMode)
-{
-    mPipelineMode = str2mode(pipelineMode);
+    return setConfigParameter<bool>(varName(mRebuildDescriptors), rebuildDescriptors);
 }
 
 bool PipelineConfig::debugMode() const
@@ -136,34 +125,10 @@ bool PipelineConfig::debugMode() const
     return mDebugMode;
 }
 
-void PipelineConfig::setDebugMode(bool debugMode)
+bool PipelineConfig::setDebugMode(bool debugMode)
 {
     mDebugMode = debugMode;
-}
-
-PipeLineMode PipelineConfig::str2mode(const std::string &modeString) const
-{
-    if(modeString.compare("MODE_TRAIN") == 0 || modeString.compare("train") == 0) {
-        return PipeLineMode::MODE_TRAIN;
-    } else if(modeString.compare("MODE_RUN") == 0 || modeString.compare("run") == 0) {
-        return PipeLineMode::MODE_RUN;
-    } else if(modeString.compare("MODE_OPTIMIZE") == 0 || modeString.compare("optimize") == 0) {
-        return PipeLineMode::MODE_OPTIMIZE;
-    }
-    return PipeLineMode::MODE_TRAIN;
-}
-
-std::string PipelineConfig::mode2string(const PipeLineMode &mode) const
-{
-    if(mode == PipeLineMode::MODE_TRAIN) {
-        return "MODE_TRAIN";
-    } else if(mode == PipeLineMode::MODE_RUN) {
-        return "MODE_RUN";
-    } else if(mode == PipeLineMode::MODE_OPTIMIZE) {
-        return "MODE_OPTIMIZE";
-    }
-
-    return std::string();
+    return setConfigParameter<bool>(varName(mDebugMode), debugMode);
 }
 
 std::string PipelineConfig::toString() const
@@ -194,9 +159,10 @@ std::string PipelineConfig::logFile() const
     return mLogFile;
 }
 
-void PipelineConfig::setLogFile(const std::string &value)
+bool PipelineConfig::setLogFile(const std::string &value)
 {
     mLogFile = value;
+    return setConfigParameter<std::string>(varName(mLogFile), value);
 }
 
 std::string PipelineConfig::outputDirectory() const
@@ -204,9 +170,10 @@ std::string PipelineConfig::outputDirectory() const
     return mOutputDir;
 }
 
-void PipelineConfig::setOutputDirectory(const std::string &outputDirectory)
+bool PipelineConfig::setOutputDirectory(const std::string &outputDirectory)
 {
     mOutputDir = outputDirectory;
+    return setConfigParameter<std::string>(varName(mOutputDir), outputDirectory);
 }
 
 int PipelineConfig::randomSeed() const
@@ -214,9 +181,10 @@ int PipelineConfig::randomSeed() const
     return mRandomSeed;
 }
 
-void PipelineConfig::setRandomSeed(int randomSeed)
+bool PipelineConfig::setRandomSeed(int randomSeed)
 {
     mRandomSeed = randomSeed;
+    return setConfigParameter<int>(varName(mRandomSeed), randomSeed);
 }
 
 

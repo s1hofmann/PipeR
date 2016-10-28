@@ -13,7 +13,8 @@ SiftDetectorConfig::SiftDetectorConfig(const std::string &identifier,
                                        int nOctaveLayers,
                                        double contrastThreshold,
                                        double edgeThreshold,
-                                       double sigma)
+                                       double sigma,
+                                       bool augment)
     :
         ConfigContainer(identifier,
                         "Parameter description",
@@ -37,11 +38,11 @@ std::string SiftDetectorConfig::toString() const
 {
     std::stringstream configString;
 
-    configString << "Best features: " << getBestFeatures() << std::endl
-                 << "Octaves: " << getOctaves() << std::endl
-                 << "Contrast threshold: " << getContrastThresh() << std::endl
-                 << "Edge threshold: " << getEdgeThresh() << std::endl
-                 << "Sigma: " << getSigma() << std::endl;
+    configString << "Best features: " << bestFeatures() << std::endl
+                 << "Octaves: " << octaves() << std::endl
+                 << "Contrast threshold: " << contrastThresh() << std::endl
+                 << "Edge threshold: " << edgeThresh() << std::endl
+                 << "Sigma: " << sigma() << std::endl;
 
     return configString.str();
 }
@@ -63,6 +64,61 @@ bool SiftDetectorConfig::fromJSON(std::string &file)
 
         return true;
     }
+}
+
+int SiftDetectorConfig::bestFeatures() const
+{
+    return mBestFeatures;
+}
+
+bool SiftDetectorConfig::setBestFeatures(int bestFeatures)
+{
+    mBestFeatures = bestFeatures;
+    return setConfigParameter<int>(varName(mBestFeatures), bestFeatures);
+}
+
+int SiftDetectorConfig::octaves() const
+{
+    return mOctaves;
+}
+
+bool SiftDetectorConfig::setOctaves(int octaves)
+{
+    mOctaves = octaves;
+    return setConfigParameter<int>(varName(mOctaves), octaves);
+}
+
+double SiftDetectorConfig::contrastThresh() const
+{
+    return mContrastThresh;
+}
+
+bool SiftDetectorConfig::setContrastThresh(double contrastThresh)
+{
+    mContrastThresh = contrastThresh;
+    return setConfigParameter<double>(varName(mContrastThresh), contrastThresh);
+}
+
+double SiftDetectorConfig::edgeThresh() const
+{
+    return mEdgeThresh;
+}
+
+bool SiftDetectorConfig::setEdgeThresh(double edgeThresh)
+{
+    mEdgeThresh = edgeThresh;
+    return setConfigParameter<double>(varName(mEdgeThresh), edgeThresh);
+}
+
+double SiftDetectorConfig::sigma() const
+{
+    return mSigma;
+}
+
+bool SiftDetectorConfig::setSigma(double sigma)
+{
+    mSigma = sigma;
+    return setConfigParameter<double>(varName(mSigma), sigma);
 }
 
 

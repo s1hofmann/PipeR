@@ -59,9 +59,10 @@ bool FeatureConfig::augment() const
     return mAugment;
 }
 
-void FeatureConfig::setAugment(bool augment)
+bool FeatureConfig::setAugment(bool augment)
 {
     mAugment = augment;
+    return setConfigParameter<bool>(varName(mAugment), augment);
 }
 
 

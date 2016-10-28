@@ -28,38 +28,83 @@ VladConfig::~VladConfig()
 
 }
 
-
-std::vector<normStrategy> VladConfig::getNormStrategies() const
+std::vector<normStrategy> VladConfig::normStrategies() const
 {
-    return this->mNormStrategies;
+    return mNormStrategies;
 }
 
-
-int VladConfig::getClusters() const
+bool VladConfig::setNormStrategies(const std::vector<normStrategy> &normStrategies)
 {
-    return this->mClusters;
+    mNormStrategies = normStrategies;
+    return setConfigParameter<normStrategy>(varName(mNormStrategies), normStrategies);
 }
 
-
-int VladConfig::getIterations() const
+std::vector<std::string> VladConfig::vocabs() const
 {
-    return this->mIterations;
+    return mVocabs;
 }
 
-int VladConfig::getVocabCount() const
+bool VladConfig::setVocabs(const std::vector<std::string> &vocabs)
 {
-    return this->mVocabs.size();
+    mVocabs = vocabs;
+    return setConfigParameter<std::string>(varName(mVocabs), vocabs);
 }
 
-std::vector<std::string> VladConfig::getVocabs() const
+std::string VladConfig::path() const
 {
-    return this->mVocabs;
+    return mPath;
 }
 
-double VladConfig::getEpsilon() const
+bool VladConfig::setPath(const std::string &path)
 {
-    return this->mEpsilon;
+    mPath = path;
+    return setConfigParameter<std::string>(varName(mPath), path);
 }
+
+int VladConfig::clusters() const
+{
+    return mClusters;
+}
+
+bool VladConfig::setClusters(int clusters)
+{
+    mClusters = clusters;
+    return setConfigParameter<int>(varName(mClusters), clusters);
+}
+
+int VladConfig::iterations() const
+{
+    return mIterations;
+}
+
+bool VladConfig::setIterations(int iterations)
+{
+    mIterations = iterations;
+    return setConfigParameter<int>(varName(mIterations), iterations);
+}
+
+double VladConfig::epsilon() const
+{
+    return mEpsilon;
+}
+
+bool VladConfig::setEpsilon(double epsilon)
+{
+    mEpsilon = epsilon;
+    return setConfigParameter<double>(varName(mEpsilon), epsilon);
+}
+
+int VladConfig::pyramidLevels() const
+{
+    return mPyramidLevels;
+}
+
+bool VladConfig::setPyramidLevels(int pyramidLevels)
+{
+    mPyramidLevels = pyramidLevels;
+    return setConfigParameter<int>(varName(mPyramidLevels), pyramidLevels);
+}
+
 
 std::string VladConfig::toString() const
 {
@@ -151,16 +196,6 @@ bool VladConfig::fromJSON(std::string &file)
 
         return true;
     }
-}
-
-int VladConfig::getPyramidLevels() const
-{
-    return mPyramidLevels;
-}
-
-void VladConfig::setPyramidLevels(int pyramidLevels)
-{
-    mPyramidLevels = pyramidLevels;
 }
 
 

@@ -27,7 +27,7 @@ cv::Mat PCAStep::runImpl(const bool debugMode, const cv::Mat &input, const cv::M
         throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
     }
 
-    std::string path = config->getPath();
+    std::string path = config->path();
 
     RPCA rpca(path);
 
@@ -53,13 +53,13 @@ cv::Mat PCAStep::trainImpl(const bool debugMode, const cv::Mat &input, const cv:
         throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
     }
 
-    int components = std::min(config->getComponents(), input.cols);
+    int components = std::min(config->components(), input.cols);
     if(components <= 0) {
         components = input.cols;
     }
-    double epsilon = config->getEpsilon();
-    bool whitening = config->getWhitening();
-    std::string path = config->getPath();
+    double epsilon = config->epsilon();
+    bool whitening = config->whitening();
+    std::string path = config->path();
 
     RPCA rpca(components,
               whitening,

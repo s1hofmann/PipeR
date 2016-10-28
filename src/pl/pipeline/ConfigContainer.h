@@ -56,8 +56,29 @@ public:
     std::string jsonFile() const;
     void setJsonFile(const std::string &jsonFile);
 
-    Json::Value getConfigFile();
-    bool updateConfigFile(const Json::Value &newConfig) const;
+    template<typename T>
+    bool setConfigParameter(const std::string &id, const std::vector<T> value) {
+        Json::Value conf = getConfigFile();
+        if(!conf.empty()) {
+            conf[identifier()][id].clear();
+            for(T v : value) {
+                conf[identifier()][id].append(v);
+            }
+            return updateConfigFile(conf);
+        }
+        return false;
+    }
+
+    template<typename T>
+    bool setConfigParameter(const std::string &id, const T value) {
+        Json::Value conf = getConfigFile();
+        if(!conf.empty()) {
+            conf[identifier()][id].clear();
+            conf[identifier()][id] = value;
+            return updateConfigFile(conf);
+        }
+        return false;
+    }
 
 protected:
     /**
@@ -72,6 +93,9 @@ protected:
     Json::Value readJSON(const std::string &file);
 
     bool writeJSON(const Json::Value &json) const;
+
+    Json::Value getConfigFile();
+    bool updateConfigFile(const Json::Value &newConfig) const;
 
     /**
      * @brief ~ConfigContainer

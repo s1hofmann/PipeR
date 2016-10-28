@@ -17,25 +17,26 @@ public:
               const bool whiten = true,
               const std::string &path = ".");
 
-    int getComponents() const;
-
-    double getEpsilon() const;
-
-    bool getWhitening() const;
-
-    std::string getPath() const;
-
     virtual std::string toString() const;
 
     virtual bool fromJSON(std::string &file);
 
+    int components() const;
+    bool setComponents(int components);
+
+    double epsilon() const;
+    bool setEpsilon(double epsilon);
+
+    bool whitening() const;
+    bool setWhitening(bool whitening);
+
+    std::string path() const;
+    bool setPath(const std::string &path);
+
 private:
     int mComponents;
-
     double mEpsilon;
-
     bool mWhitening;
-
     std::string mPath;
 };
 

@@ -32,8 +32,8 @@ cv::Mat VladEncodingStep::runImpl(const bool debugMode, const cv::Mat &input, co
     }
 
     cv::Mat encoded;
-    std::vector<std::string> vocabs = config->getVocabs();
-    int levels = config->getPyramidLevels();
+    std::vector<std::string> vocabs = config->vocabs();
+    int levels = config->pyramidLevels();
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         std::string inputFile = vocabs[runs];
 
@@ -68,10 +68,10 @@ cv::Mat VladEncodingStep::trainImpl(const bool debugMode, const cv::Mat &input, 
         throw EncodingError(s.str(), currentMethod, currentLine);
     }
 
-    int clusters = config->getClusters();
-    int maxIterations = config->getIterations();
-    std::vector<std::string> vocabs = config->getVocabs();
-    double epsilon = config->getEpsilon();
+    int clusters = config->clusters();
+    int maxIterations = config->iterations();
+    std::vector<std::string> vocabs = config->vocabs();
+    double epsilon = config->epsilon();
 
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         KMeansCluster kmeans;
@@ -98,7 +98,7 @@ cv::Mat VladEncodingStep::encode(const std::string &encoder, const cv::Mat &data
         throw EncodingError(s.str(), currentMethod, currentLine);
     }
 
-    std::vector<normStrategy> normalization = config->getNormStrategies();
+    std::vector<normStrategy> normalization = config->normStrategies();
 
     VladEncoder vlad;
     vlad.setNormStrategy(normalization);
@@ -122,7 +122,7 @@ cv::Mat VladEncodingStep::encodePyramid(const std::string &encoder, const cv::Ma
         throw EncodingError(s.str(), currentMethod, currentLine);
     }
 
-    std::vector<normStrategy> normalization = config->getNormStrategies();
+    std::vector<normStrategy> normalization = config->normStrategies();
 
     VladEncoder vlad;
     vlad.setNormStrategy(normalization);
@@ -132,7 +132,7 @@ cv::Mat VladEncodingStep::encodePyramid(const std::string &encoder, const cv::Ma
         throw EncodingError(e.what(), currentMethod, currentLine);
     }
 
-    DescriptorPyramid dp(config->getPyramidLevels());
+    DescriptorPyramid dp(config->pyramidLevels());
     std::vector<cv::Mat> pyramid = dp.build(data);
     cv::Mat ret;
 
