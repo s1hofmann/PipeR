@@ -3,6 +3,7 @@ add_library(ml MLStep
                MLConfig
                SGDConfig
                crossvalidation
+               platt
                metrics)
 
 target_link_libraries(ml exception
