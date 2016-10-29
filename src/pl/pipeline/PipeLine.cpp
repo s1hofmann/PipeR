@@ -556,7 +556,11 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
     cv::Mat1i trainingLabels;
 
     // Concatenate descriptors as input to the SVM
+#ifdef USE_TBB
+    tbb::parallel_for(size_t(0), filesWithLabels.size(), size_t(1), [&](size_t idx) {
+#else
     for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
+#endif
         cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
         int label = filesWithLabels[idx].second;
 
@@ -583,6 +587,9 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
             trainingData.push_back(desc);
         }
     }
+#ifdef USE_TBB
+    );
+#endif
 
     logger.report("Starting training.");
     debug.report("Starting training.");
@@ -642,30 +649,38 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) c
     }
 
     std::vector<std::pair<cv::Mat, int>> encodedDescriptorsWithLabels;
-    for(auto pair : filesWithLabels) {
-        cv::Mat desc = FileUtil::loadBinary(pair.first);
+#ifdef USE_TBB
+    tbb::parallel_for(size_t(0), filesWithLabels.size(), size_t(1), [&](size_t idx) {
+#else
+    for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
+#endif
+        cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
+        int label = filesWithLabels[idx].second;
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
             if(!mDebugMode) {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(this->mDimensionalityReduction->run(desc)), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(this->mDimensionalityReduction->run(desc)), label));
             } else {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)), label));
             }
         } else if(!this->mDimensionalityReduction.empty()) {
             if(!mDebugMode) {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->run(desc), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->run(desc), label));
             } else {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->debugRun(desc), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mDimensionalityReduction->debugRun(desc), label));
             }
         } else if(!this->mEncoding.empty()) {
             if(!mDebugMode) {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(desc), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(desc), label));
             } else {
-                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(desc), pair.second));
+                encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->debugRun(desc), label));
             }
         } else {
-            encodedDescriptorsWithLabels.push_back(std::make_pair(desc, pair.second));
+            encodedDescriptorsWithLabels.push_back(std::make_pair(desc, label));
         }
     }
+#ifdef USE_TBB
+    );
+#endif
     if(mDebugMode) {
         debug.inform("Data size:", filesWithLabels.size());
     }

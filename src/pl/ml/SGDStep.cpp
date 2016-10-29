@@ -159,10 +159,17 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         if(debugMode) { debug("Rebuilding training cache."); }
                         cv::Mat tmpDesc;
                         cv::Mat tmpIdx;
-                        for(auto idx : indices.first[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
+#ifdef USE_TBB
+                        tbb::parallel_for(size_t(0), indices.first[fold].size(), size_t(1), [&](size_t idx) {
+#else
+                        for(size_t idx = 0; idx < indices.first[fold].size(); ++idx) {
+#endif
+                            tmpDesc.push_back(data[indices.first[fold][idx]].first);
+                            tmpIdx.push_back(data[indices.first[fold][idx]].second);
                         }
+#ifdef USE_TBB
+                        );
+#endif
                         if(tmpDesc.type() != CV_64F) {
                             tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
                         } else {
@@ -179,10 +186,17 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         if(debugMode) { debug("Rebuilding test cache."); }
                         cv::Mat tmpDesc;
                         cv::Mat tmpIdx;
-                        for(auto idx : indices.second[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
+#ifdef USE_TBB
+                        tbb::parallel_for(size_t(0), indices.second[fold].size(), size_t(1), [&](size_t idx) {
+#else
+                        for(size_t idx = 0; idx < indices.second[fold].size(); ++idx) {
+#endif
+                            tmpDesc.push_back(data[indices.second[fold][idx]].first);
+                            tmpIdx.push_back(data[indices.second[fold][idx]].second);
                         }
+#ifdef USE_TBB
+                        );
+#endif
                         if(tmpDesc.type() != CV_64F) {
                             tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
                         } else {
