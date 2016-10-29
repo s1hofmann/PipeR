@@ -141,6 +141,46 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<cv::Mat1d> testDescriptorCache(config->folds());
     std::vector<cv::Mat1d> testLabelCache(config->folds());
 
+    if(debugMode) { debug("Rebuilding training cache."); }
+    for(size_t fold = 0; fold < config->folds(); ++fold) {
+        cv::Mat tmpDesc;
+        cv::Mat tmpIdx;
+        for(auto idx : indices.first[fold]) {
+            tmpDesc.push_back(data[idx].first);
+            tmpIdx.push_back(data[idx].second);
+        }
+        if(tmpDesc.type() != CV_64F) {
+            tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
+        } else {
+            trainingsDescriptorCache[fold] = tmpDesc;
+        }
+        if(tmpIdx.type() != CV_64F) {
+            tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
+        } else {
+            trainingsLabelCache[fold] = tmpIdx;
+        }
+    }
+
+    if(debugMode) { debug("Rebuilding test cache."); }
+    for(size_t fold = 0; fold < config->folds(); ++fold) {
+        cv::Mat tmpDesc;
+        cv::Mat tmpIdx;
+        for(auto idx : indices.second[fold]) {
+            tmpDesc.push_back(data[idx].first);
+            tmpIdx.push_back(data[idx].second);
+        }
+        if(tmpDesc.type() != CV_64F) {
+            tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
+        } else {
+            testDescriptorCache[fold] = tmpDesc;
+        }
+        if(tmpIdx.type() != CV_64F) {
+            tmpIdx.convertTo(testLabelCache[fold], CV_64F);
+        } else {
+            testLabelCache[fold] = tmpIdx;
+        }
+    }
+
     for(double lambda : lambdas) {
         for(double lr : learningRates) {
             for(double mul : multipliers) {
@@ -153,54 +193,24 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                 double avgF = 0;
 
                 // Iterate over folds
+#ifdef USE_TBB
+                tbb::queuing_mutex m;
+                tbb::parallel_for(int(0), config->folds(), int(1), [&](int fold) {
+#else
                 for(size_t fold = 0; fold < config->folds(); ++fold) {
-                    if(trainingsDescriptorCache[fold].empty() ||
-                       trainingsLabelCache[fold].empty()) {
-                        if(debugMode) { debug("Rebuilding training cache."); }
-                        cv::Mat tmpDesc;
-                        cv::Mat tmpIdx;
-                        for(auto idx : indices.first[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
-                        }
-                        if(tmpDesc.type() != CV_64F) {
-                            tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
-                        } else {
-                            trainingsDescriptorCache[fold] = tmpDesc;
-                        }
-                        if(tmpIdx.type() != CV_64F) {
-                            tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
-                        } else {
-                            trainingsLabelCache[fold] = tmpIdx;
-                        }
+#endif
+                    if(debugMode) {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        debug("Setting up SVM", fold, ".");
                     }
-                    if(testDescriptorCache[fold].empty() ||
-                       testLabelCache[fold].empty()) {
-                        if(debugMode) { debug("Rebuilding test cache."); }
-                        cv::Mat tmpDesc;
-                        cv::Mat tmpIdx;
-                        for(auto idx : indices.second[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
-                        }
-                        if(tmpDesc.type() != CV_64F) {
-                            tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
-                        } else {
-                            testDescriptorCache[fold] = tmpDesc;
-                        }
-                        if(tmpIdx.type() != CV_64F) {
-                            tmpIdx.convertTo(testLabelCache[fold], CV_64F);
-                        } else {
-                            testLabelCache[fold] = tmpIdx;
-                        }
-                    }
-
-                    if(debugMode) { debug("Setting up SVM."); }
                     cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
                                                                                             trainingsDescriptorCache[fold],
                                                                                             lambda);
 
-                    if(debugMode) { debug("Setting parameters."); }
+                    if(debugMode) {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        debug("Setting parameters", fold, ".");
+                    }
                     // Bias learning rate and multiplier
                     solver->setBiasLearningRate(lr);
                     solver->setBiasMultiplier(mul);
@@ -208,9 +218,16 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     cv::Mat1d weights = calculateWeights(trainingsLabelCache[fold]);
                     solver->setWeights(weights);
 
-                    if(debugMode) { debug("Training..."); }
+                    if(debugMode) {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        debug("Training SVM", fold, "...");
+                    }
                     solver->train();
 
+                    if(debugMode) {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        debug("Testing SVM", fold, "...");
+                    }
                     cv::Mat1d predictions = solver->predict(testDescriptorCache[fold]);
                     double negativeLabel, positiveLabel;
                     cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
@@ -219,9 +236,18 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                     predictions = predictions.t();
 
                     double f = Metrics::f1(predictions, testLabelCache[fold]);
-                    if(debugMode) { debug("F1 score:", f); }
-                    avgF += f;
+                    if(debugMode) {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        debug("F1 score of SVM", fold, ":", f);
+                    }
+                    {
+                        tbb::queuing_mutex::scoped_lock lock(m);
+                        avgF += f;
+                    }
                 }
+#ifdef USE_TBB
+                );
+#endif
                 avgF /= config->folds();
 
                 if(avgF > bestF) {
