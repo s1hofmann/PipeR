@@ -35,7 +35,6 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
         throw MLError("Missing parameters, labels empty.", currentMethod, currentLine);
     }
 
-
     cv::Mat1d dInput;
     cv::Mat1d dParam;
     if(!(input.type() == CV_64FC1)) {
