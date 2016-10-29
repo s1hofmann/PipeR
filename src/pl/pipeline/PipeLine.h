@@ -256,6 +256,8 @@ public:
     cv::Mat currentInput() const;
     void setCurrentInput(const cv::Mat &currentInput);
 
+    void optimize(const std::vector<std::pair<std::string, int> > &input) const;
+
 private:
     /**
      * @brief mCurrentInput
@@ -333,6 +335,12 @@ private:
      * @return
      */
     bool isValidConfigName(const std::string &name) const;
+
+    /**
+     * @brief generateDescriptors
+     * @param input
+     */
+    void generateDescriptors(const std::vector<std::pair<std::string, int> > &input) const;
 };
 
 

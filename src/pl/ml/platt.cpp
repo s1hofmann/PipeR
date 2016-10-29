@@ -1,39 +1,53 @@
 #include "platt.h"
 #include <iostream>
 
-namespace puhma {
+namespace pl {
 
-// ---- Estimating probabilities from the svm output ---- //
-void platt_calibrate(const cv::Mat1d & decision,
-                     const cv::Mat1i & labels,
-                     double A,
-                     double B)
+
+Platt::Platt()
 {
-    //Outputs:
-    //double A, B = parameters of sigmoid
-    CV_Assert(decision.rows == labels.rows 
-			&& decision.cols == 1 
-			&& labels.cols == 1);
-    CV_Assert(decision.type() == CV_64FC1 
-			&& labels.type() == CV_32SC1);
 
-    int prior1 = 0; int prior0 = 0; // calculate priors
-    for( int i = 0; i < labels.rows; i++ ) {
-        if( labels(i, 0) > 0 )
-            prior1++;
-        else
-            prior0++;
+}
+
+Platt::~Platt()
+{
+
+}
+
+std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
+                                                 const cv::Mat1i labels)
+{
+    CV_Assert(decision.type() == CV_64FC1 &&
+              labels.type() == CV_32SC1);
+
+    if(decision.rows != labels.rows || decision.cols > 1 || labels.cols > 1) {
+        error("Data missmatch, aborting.");
+        return std::make_pair(0.0,0.0);
+    }
+
+    int negativeLabel, positiveLabel;
+    cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
+
+    int posPrior = 0;
+    int negPrior = 0; // calculate priors
+
+    for(int i = 0; i < labels.rows; ++i) {
+        if(labels.at<int>(i, 0) == positiveLabel) {
+            ++posPrior;
+        } else {
+            ++negPrior;
+        }
     }
 
     // Construct initial values: target support in array t,
     // initial function value in fval
-    double hiTarget=(prior1+1.0)/(prior1+2.0);
-    double loTarget=1/(prior0+2.0);
-    int len = prior1 + prior0; // Total number of data
+    double hiTarget=(posPrior+1.0)/(posPrior+2.0);
+    double loTarget=1/(negPrior+2.0);
+    long len = posPrior + negPrior; // Total number of data
 
     std::vector<double> t;
-    A = 0.0;
-    B = log( (prior0+1.0 ) / (prior1+1.0) );
+    double A = 0.0;
+    double B = log( (negPrior+1.0 ) / (posPrior+1.0) );
     double fval=0.0;
     for ( int i = 0; i < len; i++ ) {
         if (labels(i,0) > 0)
@@ -47,7 +61,6 @@ void platt_calibrate(const cv::Mat1d & decision,
         else
             fval += (t[i]-1)*fApB + log1p(exp(fApB));
     }
-
 
     //Parameter setting
     int maxiter = 100; //Maximum number of iterations
@@ -121,30 +134,18 @@ void platt_calibrate(const cv::Mat1d & decision,
         }
         if ( it == maxiter )
             std::cerr << "Platt: Reaching maximum iterations" << std::endl;
-    } // end for
-} // end platt_calibrate
-
-std::vector<double> platt_calibrate_vec(const cv::Mat1d & decision,
-                                        const cv::Mat1i & labels)
-{
-    double A, B;
-    platt_calibrate(decision, labels, A, B);
-
-    std::vector<double> ret;
-    ret.push_back(A);
-    ret.push_back(B);
-
-    return ret;
+    }
 }
 
-double sigmoid_predict(double decision_value, double A, double B)
+double Platt::sigmoid_predict(double decision_value, double A, double B)
 {
     double fApB = decision_value*A+B;
     // 1-p used later; avoid catastrophic cancellation
-    if (fApB >= 0)
+    if(fApB >= 0) {
         return exp(-fApB)/(1.0+exp(-fApB));
-    else
+    } else {
         return 1.0/(1+exp(fApB)) ;
+    }
 }
 
 } // end namespace puhma

@@ -8,12 +8,6 @@
 
 namespace pl {
 
-enum PipeLineMode {
-    MODE_TRAIN,
-    MODE_RUN,
-    MODE_OPTIMIZE
-};
-
 
 class PipelineConfig : public ConfigContainer
 {
@@ -49,16 +43,8 @@ public:
     bool rebuildDescriptors() const;
     bool setRebuildDescriptors(bool rebuildDescriptors);
 
-    PipeLineMode pipelineMode() const;
-    void setPipelineMode(const PipeLineMode &pipelineMode);
-    void setPipelineMode(const std::string &pipelineMode);
-
     bool debugMode() const;
     bool setDebugMode(bool debugMode);
-
-    PipeLineMode str2mode(const std::string &modeString) const;
-
-    std::string mode2string(const PipeLineMode &mode) const;
 
     std::string logFile() const;
     bool setLogFile(const std::string &value);
@@ -109,11 +95,6 @@ private:
      * @brief mRebuildPca
      */
     bool mRebuildPca;
-
-    /**
-     * @brief mPipelineMode
-     */
-    PipeLineMode mPipelineMode;
 
     /**
      * @brief mDebugMode

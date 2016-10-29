@@ -309,7 +309,7 @@ bool PipeLine::removeClassificationStep() {
 }
 
 
-void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) const {
+void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>> &input) const {
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
@@ -521,6 +521,106 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
             this->mEncoding->debugTrain(reduced);
         }
     }
+}
+
+
+void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) const {
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
+    ConsoleLogger debug;
+
+    generateDescriptors(input);
+
+    // Load descriptors with corresponding labels
+    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
+                                                                                               mPipelineConfig->maxDescriptors());
+
+    if(mDebugMode) {
+        debug.inform("Data size:", filesWithLabels.size());
+    }
+
+    if(mDebugMode) {
+        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+            debug.inform("Performing dimensionality reduction and encoding.");
+            logger.inform("Performing dimensionality reduction and encoding.");
+        } else if(!this->mDimensionalityReduction.empty()) {
+            debug.inform("Performing dimensionality reduction.");
+            logger.inform("Performing dimensionality reduction.");
+        } else if(!this->mEncoding.empty()) {
+            debug.inform("Performing encoding.");
+            logger.inform("Performing encoding.");
+        }
+    }
+
+    cv::Mat1d trainingData;
+    cv::Mat1i trainingLabels;
+
+    // Concatenate descriptors as input to the SVM
+    for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
+        cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
+        int label = filesWithLabels[idx].second;
+
+        trainingLabels.push_back(label);
+        if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
+            if(!mDebugMode) {
+                trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
+            } else {
+                trainingData.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
+            }
+        } else if(!this->mDimensionalityReduction.empty()) {
+            if(!mDebugMode) {
+                trainingData.push_back(this->mDimensionalityReduction->run(desc));
+            } else {
+                trainingData.push_back(this->mDimensionalityReduction->debugRun(desc));
+            }
+        } else if(!this->mEncoding.empty()) {
+            if(!mDebugMode) {
+                trainingData.push_back(this->mEncoding->run(desc));
+            } else {
+                trainingData.push_back(this->mEncoding->debugRun(desc));
+            }
+        } else {
+            trainingData.push_back(desc);
+        }
+    }
+
+    logger.report("Starting training.");
+    debug.report("Starting training.");
+
+    // Permute data
+    cv::Mat permutedData;
+    cv::Mat permutedLabels;
+    Shuffler::shuffle(trainingData,
+                      trainingLabels,
+                      permutedData,
+                      permutedLabels);
+
+    debug.inform("Training...");
+    logger.inform("Training...");
+    try {
+        if(mDebugMode) {
+            this->mClassification->debugTrain(permutedData,
+                                              permutedLabels);
+        } else {
+            this->mClassification->train(permutedData,
+                                         permutedLabels);
+        }
+    } catch(MLError &e) {
+        logger.report(e.what());
+        debug.report(e.what());
+        throw;
+    }
+
+    debug.inform("Training done!");
+    logger.inform("Training done!");
+}
+
+
+void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) const {
+    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
+    ConsoleLogger debug;
+
+    generateDescriptors(input);
+
     // Load descriptors with corresponding labels
     std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
                                                                                                mPipelineConfig->maxDescriptors());
@@ -584,74 +684,27 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
         auto crossvalIndices = CrossValidation::createFolds(encodedDescriptorsWithLabels.size(), mlConfig->folds());
         debug.inform("Built indices, crossvalidating...");
         logger.inform("Built indices, crossvalidating...");
-        if(!mDebugMode) {
-            this->mClassification->optimize(crossvalIndices,
-                                            encodedDescriptorsWithLabels);
-        } else {
-            this->mClassification->debugOptimize(crossvalIndices,
-                                                 encodedDescriptorsWithLabels);
-        }
-    } else {
-        logger.report("Starting training.");
-        debug.report("Starting training.");
-        cv::Mat1d trainingData;
-        cv::Mat1i trainingLabels;
-
-        // Concatenate descriptors as input to the SVM
-        for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
-            cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
-            int label = filesWithLabels[idx].second;
-
-            trainingLabels.push_back(label);
-            if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
-                if(!mDebugMode) {
-                    trainingData.push_back(this->mEncoding->run(this->mDimensionalityReduction->run(desc)));
-                } else {
-                    trainingData.push_back(this->mEncoding->debugRun(this->mDimensionalityReduction->debugRun(desc)));
-                }
-            } else if(!this->mDimensionalityReduction.empty()) {
-                if(!mDebugMode) {
-                    trainingData.push_back(this->mDimensionalityReduction->run(desc));
-                } else {
-                    trainingData.push_back(this->mDimensionalityReduction->debugRun(desc));
-                }
-            } else if(!this->mEncoding.empty()) {
-                if(!mDebugMode) {
-                    trainingData.push_back(this->mEncoding->run(desc));
-                } else {
-                    trainingData.push_back(this->mEncoding->debugRun(desc));
-                }
-            } else {
-                trainingData.push_back(desc);
-            }
-        }
-
-        // Permute data
-        cv::Mat permutedData;
-        cv::Mat permutedLabels;
-        Shuffler::shuffle(trainingData,
-                          trainingLabels,
-                          permutedData,
-                          permutedLabels);
-
-        debug.inform("Training...");
-        logger.inform("Training...");
         try {
-            if(mDebugMode) {
-                this->mClassification->debugTrain(permutedData,
-                                                  permutedLabels);
+            if(!mDebugMode) {
+                this->mClassification->optimize(crossvalIndices,
+                                                encodedDescriptorsWithLabels);
             } else {
-                this->mClassification->train(permutedData,
-                                             permutedLabels);
+                this->mClassification->debugOptimize(crossvalIndices,
+                                                     encodedDescriptorsWithLabels);
             }
         } catch(MLError &e) {
             logger.report(e.what());
+            debug.report(e.what());
+            throw;
         }
-
-        debug.inform("Training done!");
-        logger.inform("Training done!");
+    } else {
+        throw MLError("Missing fold info. Aborting crossvalidation.");
     }
+
+    debug.inform("Crossvalidation done!");
+    logger.inform("Crossvalidation done!");
 }
+
 
 cv::Mat PipeLine::run(const std::string &input)
 {
