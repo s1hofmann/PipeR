@@ -340,7 +340,9 @@ private:
      * @brief generateDescriptors
      * @param input
      */
-    void generateDescriptors(const std::vector<std::pair<std::string, int> > &input) const;
+    void generateDescriptors(const std::vector<std::pair<std::string, int>> &input,
+                             FileLogger &fileLog,
+                             ConsoleLogger &consoleLog) const;
 };
 
 

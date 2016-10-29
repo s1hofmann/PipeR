@@ -309,10 +309,9 @@ bool PipeLine::removeClassificationStep() {
 }
 
 
-void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>> &input) const {
-    FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
-    ConsoleLogger debug;
-
+void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>> &input,
+                                   FileLogger &fileLog,
+                                   ConsoleLogger &consoleLog) const {
     if(mPipelineConfig->rebuildDescriptors()) {
         for(size_t idx = 0; idx < input.size() && idx < mPipelineConfig->maxDescriptors(); ++idx) {
             //Load image file
@@ -323,7 +322,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
                 continue;
             }
 
-            logger.inform("Processing file:", input[idx].first);
+            fileLog.inform("Processing file:", input[idx].first);
 
             cv::Mat prep;
             cv::Mat prepMask;
@@ -331,7 +330,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
             // Apply possible preprocessing steps
             if(!this->mPreprocessing.empty()) {
                 if(mDebugMode) {
-                    debug.inform("Starting preprocessing...");
+                    consoleLog.inform("Starting preprocessing...");
                 }
                 // First preprocessing step
                 // Generate mask
@@ -370,7 +369,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
 
             if(!this->mFeatureDetection.first.empty() && !this->mFeatureExtraction.first.empty()) {
                 if(mDebugMode) {
-                    debug.inform("Starting feature extraction from keypoints...");
+                    consoleLog.inform("Starting feature extraction from keypoints...");
                 }
                 if(!this->mFeatureDetectMask.empty()) {
                     featureMask = this->mFeatureDetectMask.clone();
@@ -392,7 +391,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
                 }
             } else if(!this->mFeatureExtraction.first.empty()) {
                 if(mDebugMode) {
-                    debug.inform("Starting global feature extraction...");
+                    consoleLog.inform("Starting global feature extraction...");
                 }
                 if(!this->mFeatureExtractMask.empty()) {
                     featureMask = this->mFeatureExtractMask.clone();
@@ -446,8 +445,8 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
                     throw FeatureExError(s.str(), currentMethod, currentLine);
                 }
                 if(config->augment() && !postProcessed.empty()) {
-                    logger.debug("Truncating augmentation data.");
-                    debug.debug("Truncating augmentation data.");
+                    fileLog.debug("Truncating augmentation data.");
+                    consoleLog.debug("Truncating augmentation data.");
                     postProcessed = postProcessed.colRange(0, postProcessed.cols - 2);
                 } else {
                     continue;
@@ -460,20 +459,20 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
                                                       mPipelineConfig->descriptorDir(),
                                                       descriptorFile,
                                                       mPipelineConfig->descriptorLabelFile())) {
-                    logger.report("Unable to save descriptor", descriptorFile, ". Skipping!");
+                    fileLog.report("Unable to save descriptor", descriptorFile, ". Skipping!");
                     continue;
                 } else {
                     continue;
                 }
             } else {
-                logger.report("No features in file", input[idx].first, ". Skipping!");
+                fileLog.report("No features in file", input[idx].first, ". Skipping!");
             }
         }
     }
 
     // Load all generated descriptors
     if(mDebugMode) {
-        debug.inform("Loading generated descriptors...");
+        consoleLog.inform("Loading generated descriptors...");
     }
     cv::Mat allFeatures = FileUtil::loadDescriptors(mPipelineConfig->descriptorDir(),
                                                     mPipelineConfig->descriptorLabelFile(),
@@ -489,8 +488,8 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
         throw FeatureExError(s.str(), currentMethod, currentLine);
     }
     if(config->augment()) {
-        logger.debug("Truncating augmentation data.");
-        debug.debug("Truncating augmentation data.");
+        fileLog.debug("Truncating augmentation data.");
+        consoleLog.debug("Truncating augmentation data.");
         allFeatures = allFeatures.colRange(0, allFeatures.cols - 2);
     }
 
@@ -498,7 +497,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
     // Apply dimensionality reduction
     if(!this->mDimensionalityReduction.empty() && mPipelineConfig->rebuildPca()) {
         if(mDebugMode) {
-            debug.inform("Perfom dimensionality reduction...");
+            consoleLog.inform("Perfom dimensionality reduction...");
         }
         if(!this->mDebugMode) {
             reduced = this->mDimensionalityReduction->train(allFeatures);
@@ -513,7 +512,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
     // Should be an empty Mat anyways since cluster means are written to disk
     if(!this->mEncoding.empty() && mPipelineConfig->rebuildClusters()) {
         if(mDebugMode) {
-            debug.inform("Encoding...");
+            consoleLog.inform("Encoding...");
         }
         if(!this->mDebugMode) {
             this->mEncoding->train(reduced);
@@ -528,7 +527,9 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
-    generateDescriptors(input);
+    generateDescriptors(input,
+                        logger,
+                        debug);
 
     // Load descriptors with corresponding labels
     std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
@@ -619,7 +620,9 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) c
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
-    generateDescriptors(input);
+    generateDescriptors(input,
+                        logger,
+                        debug);
 
     // Load descriptors with corresponding labels
     std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
