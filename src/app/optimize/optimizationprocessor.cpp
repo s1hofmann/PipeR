@@ -2,7 +2,7 @@
 
 OptimizationProcessor::OptimizationProcessor(int argc, char *argv[])
 {
-    pl::ArgumentProcessor ap("train");
+    pl::ArgumentProcessor ap("optimize");
     ap.addArgument("conf", "Pipeline config.", false);
     ap.addArgument("labels", "Label file.", false);
     ap.addArgument("enc", "Encoding", true, {"vlad"});
