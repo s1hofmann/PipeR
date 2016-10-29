@@ -4,11 +4,12 @@
 
 #include "app/mom/momprocessor.h"
 #include "app/train/trainingprocessor.h"
+#include "app/optimize/optimizationprocessor.h"
 
 int main(int argc, char *argv[]) {
     std::string app;
     // TODO: Let cmake take care of this list of enabled apps
-    std::vector<std::string> apps = {"mom", "train"};
+    std::vector<std::string> apps = {"mom", "train", "optimize"};
 
     if(argc < 2) {
         std::cerr << "No application specified. Aborting." << std::endl;
@@ -38,6 +39,16 @@ int main(int argc, char *argv[]) {
             return tp.run();
         } catch(pl::CommandLineError) {
             return TrainingProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
+        }
+    }
+#endif
+#ifdef APP_OPT
+    if(!app.compare("optimize") || !app.compare("OPTIMIZE")) {
+        try {
+            OptimizationProcessor op(argc, argv);
+            return op.run();
+        } catch(pl::CommandLineError) {
+            return OptimizationProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
         }
     }
 #endif
