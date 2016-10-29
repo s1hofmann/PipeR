@@ -6,11 +6,6 @@
 #include "../core/vlfeat/wrapper/sgdsolver.h"
 #include "SGDConfig.h"
 
-#ifdef USE_TBB
-#include <tbb/parallel_for.h>
-#include <tbb/queuing_mutex.h>
-#endif
-
 #include <iostream>
 #include <utility>
 
