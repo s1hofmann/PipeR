@@ -281,8 +281,14 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
     for(size_t idx = 0; idx < classifiers.size(); ++idx) {
         std::string classifierFile = classifiers[idx];
         if(debugMode) { debug("Loading classifier", classifierFile); }
+        std::tuple<cv::Mat1d, double, vl_size> classifierData;
+        std::tuple<cv::Mat1d, double, vl_size, double, double> plattClassifierData;
         try {
-            std::tuple<cv::Mat1d, double, vl_size> classifierData = this->load(classifierFile);
+            if(config->plattScale()) {
+                plattClassifierData = this->loadWithPlatt(classifierFile);
+            } else {
+                classifierData = this->load(classifierFile);
+            }
             if(input.cols != std::get<0>(classifierData).cols) {
                 std::stringstream s;
                 s << "Data doesn't fit trained model." << std::endl;
@@ -291,11 +297,25 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
                 if(input.type() != CV_64F) {
                     cv::Mat tmp;
                     input.convertTo(tmp, CV_64F);
-                    double score = tmp.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
-                    results.at<double>(idx) = score;
+                    if(config->plattScale()) {
+                        double score = tmp.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
+                        results.at<double>(idx) = Platt::sigmoid_predict(score,
+                                                                         std::get<3>(plattClassifierData),
+                                                                         std::get<4>(plattClassifierData));
+                    } else {
+                        double score = tmp.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
+                        results.at<double>(idx) = score;
+                    }
                 } else {
-                    double score = input.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
-                    results.at<double>(idx) = score;
+                    if(config->plattScale()) {
+                        double score = input.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
+                        results.at<double>(idx) = Platt::sigmoid_predict(score,
+                                                                         std::get<3>(plattClassifierData),
+                                                                         std::get<4>(plattClassifierData));
+                    } else {
+                        double score = input.dot(std::get<0>(classifierData)) + std::get<1>(classifierData);
+                        results.at<double>(idx) = score;
+                    }
                 }
             }
         } catch(MLError) {
