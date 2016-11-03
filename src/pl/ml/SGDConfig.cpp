@@ -274,7 +274,7 @@ std::vector<double> SGDConfig::learningRates() const
 bool SGDConfig::setLearningRates(const std::vector<double> &learningRates)
 {
     mLearningRates = learningRates;
-    return setConfigParameter<double>(varName(mLearningRate), learningRates);
+    return setConfigParameter<double>(varName(mLearningRates), learningRates);
 }
 
 std::vector<double> SGDConfig::multipliers() const
