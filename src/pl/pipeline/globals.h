@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 
 /**
   *
@@ -74,4 +75,9 @@ void error(T... args) {
     write(args...);
 }
 
+
+template <typename T>
+bool checkRangeProperties(const std::vector<T> &params) {
+    return ((params.size() == 3) && (params[2] > 1e-8) && (params[0] < params[1]));
+}
 

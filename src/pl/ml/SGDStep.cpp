@@ -146,6 +146,25 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<double> learningRates = config->learningRates();
     std::vector<double> multipliers = config->multipliers();
 
+    if(!checkRangeProperties<double>(lambdas) || !checkRangeProperties<double>(learningRates) || !checkRangeProperties<double>(multipliers)) {
+        throw MLError("Config parameters do not span a valid range.", currentMethod, currentLine);
+    }
+
+    double lambdaStart, lambdaEnd, lambdaInc;
+    lambdaStart = lambdas[0];
+    lambdaEnd = lambdas[1];
+    lambdaInc = lambdas[2];
+
+    double lrStart, lrEnd, lrInc;
+    lrStart = learningRates[0];
+    lrEnd = learningRates[1];
+    lrInc = learningRates[2];
+
+    double mulStart, mulEnd, mulInc;
+    mulStart = multipliers[0];
+    mulEnd = multipliers[1];
+    mulInc = multipliers[2];
+
     double bestLambda = 0;
     double bestLearningRate = 0;
     double bestMultiplier = 0;
@@ -156,9 +175,9 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<cv::Mat1d> testDescriptorCache(config->folds());
     std::vector<cv::Mat1d> testLabelCache(config->folds());
 
-    for(double lambda : lambdas) {
-        for(double lr : learningRates) {
-            for(double mul : multipliers) {
+    for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
+        for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
+            for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
                 if(debugMode) {
                     debug("Lambda:", lambda);
                     debug("Learning rate:", lr);
