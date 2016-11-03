@@ -4,6 +4,7 @@
 
 #include <opencv2/core/core.hpp>
 #include "../core/vlfeat/wrapper/sgdsolver.h"
+#include "platt.h"
 #include "SGDConfig.h"
 
 #ifdef USE_TBB
@@ -47,6 +48,19 @@ private:
      * @return
      */
     std::tuple<cv::Mat1d, double, vl_size> load() const;
+
+    /**
+     * @brief loadWithPlatt
+     * @param fileName
+     * @return
+     */
+    std::tuple<cv::Mat1d, double, vl_size, double, double> loadWithPlatt(const std::string &fileName) const;
+
+    /**
+     * @brief loadWithPlatt
+     * @return
+     */
+    std::tuple<cv::Mat1d, double, vl_size, double, double> loadWithPlatt() const;
 
     template<typename T>
     T load(const std::string &fileName, const std::string &identifier) {
@@ -99,6 +113,12 @@ private:
               const double bias,
               const double iterations) const;
 
+    void save(const cv::Mat1d &model,
+              const double bias,
+              const double iterations,
+              const double plattA,
+              const double plattB) const;
+
     template<typename T>
     void save(const std::string &fileName, const std::string &identifier, const T &value) {
         cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
@@ -121,9 +141,6 @@ private:
 
         this->save<T>(config->classifierFiles()[0], identifier, value);
     }
-
-    // MLStep interface
-public:
 };
 
 

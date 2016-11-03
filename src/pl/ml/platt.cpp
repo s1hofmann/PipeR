@@ -1,6 +1,8 @@
 #include "platt.h"
 #include <iostream>
 
+#include "../exception/error.h"
+
 namespace pl {
 
 
@@ -17,22 +19,18 @@ Platt::~Platt()
 std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
                                                  const cv::Mat1i labels)
 {
-    CV_Assert(decision.type() == CV_64FC1 &&
-              labels.type() == CV_32SC1);
-
     if(decision.rows != labels.rows || decision.cols > 1 || labels.cols > 1) {
-        error("Data missmatch, aborting.");
-        return std::make_pair(0.0,0.0);
+        throw MLError("Data missmatch, aborting.");
     }
 
-    int negativeLabel, positiveLabel;
+    double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
 
-    int posPrior = 0;
-    int negPrior = 0; // calculate priors
+    unsigned int posPrior = 0;
+    unsigned int negPrior = 0; // calculate priors
 
     for(int i = 0; i < labels.rows; ++i) {
-        if(labels.at<int>(i, 0) == positiveLabel) {
+        if(labels.at<int>(i, 0) == static_cast<int>(positiveLabel)) {
             ++posPrior;
         } else {
             ++negPrior;
@@ -67,7 +65,7 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
     double minstep = 1e-10; //Minimum step taken in line search
     double sigma = 1e-12; //Set to any value > 0
 
-    for( int it = 0; it < maxiter; it++ ) {
+    for(size_t it = 0; it < maxiter; ++it) {
         //Update Gradient and Hessian (use H' = H + sigma I)
         double h11, h22, h21, g1, g2;
         h11 = h22 = sigma;
@@ -96,8 +94,6 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
         if ( std::abs(g1) < 1e-5 && std::abs(g2) < 1e-5 ) {
             break;
         }
-
-//        std::cerr << "initialize modified newton directions\n";
 
         //Compute modified Newton directions
         double det = h11*h22 - h21*h21;
@@ -135,6 +131,8 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
         if ( it == maxiter )
             std::cerr << "Platt: Reaching maximum iterations" << std::endl;
     }
+
+    return std::make_pair(A, B);
 }
 
 double Platt::sigmoid_predict(double decision_value, double A, double B)
@@ -148,4 +146,5 @@ double Platt::sigmoid_predict(double decision_value, double A, double B)
     }
 }
 
-} // end namespace puhma
+
+}

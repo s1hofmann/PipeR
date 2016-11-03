@@ -87,11 +87,6 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
         if(debugMode) { debug("Starting training."); }
     }
 
-    // If user defined values for iterations, stopping epsilon and max iterations are present, override settings
-    if(iterations > 0) { solver->setStartIterationCount(iterations); }
-    if(epsilon > 0) { solver->setEpsilon(epsilon); }
-    if(maxIterations > 0) { solver->setMaxIterations(maxIterations); }
-
     solver->train();
 
     cv::Mat1d model;
@@ -104,6 +99,26 @@ cv::Mat SGDStep::trainImpl(const bool debugMode,
     if(debugMode) { debug("Bias:", bias); }
     iterations = solver->getIterationCount();
     if(debugMode) { debug("Iterations:", iterations); }
+
+    cv::Mat1d predictions = solver->predict(dInput);
+    double negativeLabel, positiveLabel;
+    cv::minMaxIdx(dParam, &negativeLabel, &positiveLabel, NULL, NULL);
+    predictions.setTo(negativeLabel, predictions < 0);
+    predictions.setTo(positiveLabel, predictions >= 0);
+    predictions = predictions.t();
+
+    if(config->plattScale()) {
+        std::pair<double, double> plattParams = Platt::platt_calibrate(predictions, dParam);
+        if(debugMode) { debug("Platt parameter A:", plattParams.first); }
+        if(debugMode) { debug("Platt parameter B:", plattParams.second); }
+        if(!model.empty()) {
+            this->save(model,
+                       bias,
+                       iterations,
+                       plattParams.first,
+                       plattParams.second);
+        }
+    }
 
     if(!model.empty()) {
         this->save(model,
@@ -297,6 +312,21 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
 }
 
 
+void SGDStep::save(const std::string &fileName,
+                   const cv::Mat1d &model,
+                   const double bias,
+                   const double iterations) const
+{
+    cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
+
+    fs << "model" << model;
+    fs << "bias" << bias;
+    fs << "iterations" << iterations;
+
+    fs.release();
+}
+
+
 std::tuple<cv::Mat1d, double, vl_size> SGDStep::load(const std::string &fileName) const
 {
     cv::FileStorage fs(fileName, cv::FileStorage::READ);
@@ -327,18 +357,39 @@ std::tuple<cv::Mat1d, double, vl_size> SGDStep::load(const std::string &fileName
 }
 
 
-void SGDStep::save(const std::string &fileName,
-                   const cv::Mat1d &model,
-                   const double bias,
-                   const double iterations) const
+std::tuple<cv::Mat1d, double, vl_size, double, double> SGDStep::loadWithPlatt(const std::string &fileName) const
 {
-    cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
+    cv::FileStorage fs(fileName, cv::FileStorage::READ);
 
-    fs << "model" << model;
-    fs << "bias" << bias;
-    fs << "iterations" << iterations;
+    if ((fs["model"].isNone() || fs["model"].empty()) ||
+        (fs["bias"].isNone() || fs["bias"].empty()) ||
+        (fs["plattA"].isNone() || fs["plattA"].empty()) ||
+        (fs["plattB"].isNone() || fs["plattB"].empty())) {
+        std::stringstream s;
+        s << "Error. Unable to load classifier data from file: " << fileName << ". Aborting." << std::endl;
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+    cv::Mat1d model;
+    double bias;
+    double iterations;
+    double plattA;
+    double plattB;
+
+    fs["model"] >> model;
+    fs["bias"] >> bias;
+    fs["plattA"] >> plattA;
+    fs["plattB"] >> plattB;
+
+    if(fs["iterations"].isNone() || fs["iterations"].empty()) {
+        inform("No iteration info found, skipping. Maybe an old classifier format?");
+        iterations = 0;
+    } else {
+        fs["iterations"] >> iterations;
+    }
 
     fs.release();
+
+    return std::make_tuple(model, bias, static_cast<vl_size>(iterations), plattA, plattB);
 }
 
 
@@ -354,6 +405,21 @@ std::tuple<cv::Mat1d, double, vl_size> SGDStep::load() const
     }
 
     return this->load(config->classifierFiles()[0]);
+}
+
+
+std::tuple<cv::Mat1d, double, vl_size, double, double> SGDStep::loadWithPlatt() const
+{
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    return this->loadWithPlatt(config->classifierFiles()[0]);
 }
 
 
@@ -373,7 +439,33 @@ void SGDStep::save(const cv::Mat1d &model,
     this->save(config->classifierFiles()[0],
                model,
                bias,
-               iterations);
+            iterations);
+}
+
+void SGDStep::save(const cv::Mat1d &model,
+                   const double bias,
+                   const double iterations,
+                   const double plattA,
+                   const double plattB) const
+{
+    cv::Ptr<SGDConfig> config;
+    try {
+        config = config_cast<SGDConfig>(this->mConfig);
+    } catch(std::bad_cast) {
+        std::stringstream s;
+        s << "Wrong config type: " << this->mConfig->identifier();
+        throw MLError(s.str(), currentMethod, currentLine);
+    }
+
+    cv::FileStorage fs(config->classifierFiles()[0], cv::FileStorage::WRITE);
+
+    fs << "model" << model;
+    fs << "bias" << bias;
+    fs << "iterations" << iterations;
+    fs << "plattA" << plattA;
+    fs << "plattB" << plattB;
+
+    fs.release();
 }
 
 
