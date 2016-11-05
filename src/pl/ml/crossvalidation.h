@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "../core/utils/Range.h"
+#include "../pipeline/globals.h"
 
 namespace pl{
 
