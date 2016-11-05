@@ -10,14 +10,14 @@ class Metrics
 public:
     Metrics();
 
-    static unsigned int truePositives(const cv::Mat1d predictions,
+    static uint32_t truePositives(const cv::Mat1d predictions,
                                       const cv::Mat1d labels);
-    static unsigned int falsePositives(const cv::Mat1d predictions,
+    static uint32_t falsePositives(const cv::Mat1d predictions,
                                        const cv::Mat1d labels);
 
-    static unsigned int trueNegatives(const cv::Mat1d predictions,
+    static uint32_t trueNegatives(const cv::Mat1d predictions,
                                       const cv::Mat1d labels);
-    static unsigned int falseNegatives(const cv::Mat1d predictions,
+    static uint32_t falseNegatives(const cv::Mat1d predictions,
                                        const cv::Mat1d labels);
 
     static double precision(const cv::Mat1d predictions,

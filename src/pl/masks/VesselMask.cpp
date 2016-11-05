@@ -8,8 +8,8 @@ namespace pl {
 
 
 VesselMask::VesselMask(const std::string &identifier,
-                       const int octaves,
-                       const int stages,
+                       const int32_t octaves,
+                       const int32_t stages,
                        const double sigma,
                        const double beta,
                        const double c, const double threshold)

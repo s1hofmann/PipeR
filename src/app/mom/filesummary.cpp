@@ -2,7 +2,7 @@
 
 namespace pl {
 
-FileSummary::FileSummary(const std::string &fileName, const int width, const int height, const decorationNiveau niv)
+FileSummary::FileSummary(const std::string &fileName, const int32_t width, const int32_t height, const decorationNiveau niv)
     :
       fileName(fileName),
       imageWidth(width),

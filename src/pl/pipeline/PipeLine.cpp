@@ -309,7 +309,7 @@ bool PipeLine::removeClassificationStep() {
 }
 
 
-void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>> &input,
+void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int32_t>> &input,
                                    FileLogger &fileLog,
                                    ConsoleLogger &consoleLog) const {
     if(mPipelineConfig->rebuildDescriptors()) {
@@ -523,7 +523,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int>
 }
 
 
-void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) const {
+void PipeLine::train(const std::vector<std::pair<std::string, int32_t>> &input) const {
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
@@ -532,7 +532,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
                         debug);
 
     // Load descriptors with corresponding labels
-    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
+    std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
                                                                                                mPipelineConfig->maxDescriptors());
 
     if(mDebugMode) {
@@ -558,7 +558,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
     // Concatenate descriptors as input to the SVM
     for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
         cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
-        int label = filesWithLabels[idx].second;
+        int32_t label = filesWithLabels[idx].second;
 
         trainingLabels.push_back(label);
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
@@ -616,7 +616,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int>> &input) cons
 }
 
 
-void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) const {
+void PipeLine::optimize(const std::vector<std::pair<std::string, int32_t>> &input) const {
     FileLogger logger(mPipelineConfig.dynamicCast<PipelineConfig>()->logFile());
     ConsoleLogger debug;
 
@@ -625,7 +625,7 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) c
                         debug);
 
     // Load descriptors with corresponding labels
-    std::vector<std::pair<std::string, int>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
+    std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
                                                                                                mPipelineConfig->maxDescriptors());
 
     if(mDebugMode) {
@@ -641,10 +641,10 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int>> &input) c
         }
     }
 
-    std::vector<std::pair<cv::Mat, int>> encodedDescriptorsWithLabels;
+    std::vector<std::pair<cv::Mat, int32_t>> encodedDescriptorsWithLabels;
     for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
         cv::Mat desc = FileUtil::loadBinary(filesWithLabels[idx].first);
-        int label = filesWithLabels[idx].second;
+        int32_t label = filesWithLabels[idx].second;
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
             if(!mDebugMode) {
                 encodedDescriptorsWithLabels.push_back(std::make_pair(this->mEncoding->run(this->mDimensionalityReduction->run(desc)), label));

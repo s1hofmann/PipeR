@@ -19,7 +19,7 @@ public:
               vl_size maxIterations = 10000,
               vl_size iterations = 0,
               const double bias = 0,
-              const int folds = 5,
+              const int32_t folds = 5,
               const bool platt = false,
               const bool binary = false);
 

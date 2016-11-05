@@ -41,9 +41,9 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
     cv::Mat vladEncoded(assignments.rows, data.cols, CV_32F);
 
 #ifdef USE_TBB
-    tbb::parallel_for(int(0), assignments.rows, int(1), [&](int cluster) {
+    tbb::parallel_for(int32_t(0), assignments.rows, int32_t(1), [&](int32_t cluster) {
 #else
-    for(int cluster = 0; cluster < assignments.rows; ++cluster) {
+    for(int32_t cluster = 0; cluster < assignments.rows; ++cluster) {
 #endif
         //Storage for every thread
         cv::Mat1f pAccumulator = cv::Mat1f::zeros(1, data.cols);
@@ -51,11 +51,11 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
         cv::Mat indices;
         cv::findNonZero(assignments.row(cluster), indices);
 
-        int entries = indices.rows;
+        int32_t entries = indices.rows;
 
-        for(int dataPoints = 0; dataPoints < entries; ++dataPoints) {
+        for(int32_t dataPoints = 0; dataPoints < entries; ++dataPoints) {
             cv::Mat1f pTmp;
-            cv::subtract(data.row(indices.at<int>(dataPoints, 0)), mMeans.row(cluster), pTmp);
+            cv::subtract(data.row(indices.at<int32_t>(dataPoints, 0)), mMeans.row(cluster), pTmp);
             cv::add(pAccumulator, pTmp, pAccumulator);
         }
 

@@ -22,7 +22,7 @@ cv::Mat BOWEncoder::encode(const cv::Mat &data)
     for(size_t y = 0; y < assignments.rows; ++y) {
         cv::Scalar sum = cv::sum(assignments.row(y));
 
-        bowEncoded.at<float>(y) = sum[0];
+        bowEncoded.at<float_t>(y) = sum[0];
     }
 
     return bowEncoded;

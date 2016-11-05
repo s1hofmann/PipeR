@@ -68,9 +68,9 @@ unsigned long BIN::write(const cv::Mat &output,
         throw IOError(s.str(), currentMethod, currentLine);
     }
 
-    int chans = output.channels();
+    int32_t chans = output.channels();
 
-    int dataSize;
+    int32_t dataSize;
 
     switch(output.depth()) {
     case CV_8U:
@@ -91,11 +91,11 @@ unsigned long BIN::write(const cv::Mat &output,
         break;
     case CV_32S:
         file.putChar('i');
-        dataSize = sizeof(int);
+        dataSize = sizeof(int32_t);
         break;
     case CV_32F:
         file.putChar('f');
-        dataSize = sizeof(float);
+        dataSize = sizeof(float_t);
         break;
     case CV_64F:
         file.putChar('d');
@@ -103,9 +103,9 @@ unsigned long BIN::write(const cv::Mat &output,
         break;
     }
 
-    file.write((char *)&output.rows, sizeof(int));
-    file.write((char *)&output.cols, sizeof(int));
-    file.write((char *)&chans, sizeof(int));
+    file.write((char *)&output.rows, sizeof(int32_t));
+    file.write((char *)&output.cols, sizeof(int32_t));
+    file.write((char *)&chans, sizeof(int32_t));
     file.write((char*)output.data,
                dataSize*output.rows*output.cols);
     file.close();
@@ -135,17 +135,17 @@ cv::Mat BIN::read(const std::string &input, const std::string &prefix) const
 
     char dtype;
     file.getChar(&dtype);
-    int rows, cols, chans;
-    file.read((char *)&rows, sizeof(int));
-    file.read((char *)&cols, sizeof(int));
-    file.read((char *)&chans, sizeof(int));
+    int32_t rows, cols, chans;
+    file.read((char *)&rows, sizeof(int32_t));
+    file.read((char *)&cols, sizeof(int32_t));
+    file.read((char *)&chans, sizeof(int32_t));
     if(chans != 1) {
         std::stringstream s;
         s << "Wrong channel size." << std::endl;
         throw IOError(s.str(), currentMethod, currentLine);
     }
 
-    int dataSize;
+    int32_t dataSize;
 
     cv::Mat descr;
 
@@ -168,11 +168,11 @@ cv::Mat BIN::read(const std::string &input, const std::string &prefix) const
         break;
     case 'i':
         descr.create(rows, cols, CV_32SC1);
-        dataSize = sizeof(int);
+        dataSize = sizeof(int32_t);
         break;
     case 'f':
         descr.create(rows, cols, CV_32FC1);
-        dataSize = sizeof(float);
+        dataSize = sizeof(float_t);
         break;
     case 'd':
         descr.create(rows, cols, CV_64FC1);

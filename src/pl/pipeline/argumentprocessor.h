@@ -27,7 +27,7 @@ public:
     void addSwitch(const std::string &arg,
                    const std::string &desc = std::string());
 
-    std::unordered_map<std::string, std::string> parse(int argc, char *argv[]);
+    std::unordered_map<std::string, std::string> parse(int32_t argc, char *argv[]);
 
     std::string help();
 
@@ -45,7 +45,7 @@ private:
     std::string createFlag(const std::string &arg, const bool optional) const;
     std::string parseFlag(const std::string &arg) const;
 
-    std::vector<std::string> toStringVector(int argc, char *argv[]) const;
+    std::vector<std::string> toStringVector(int32_t argc, char *argv[]) const;
 
     std::string argumentString(std::vector<std::string> &args,
                                std::vector<std::string> &desc,

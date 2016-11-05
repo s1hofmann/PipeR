@@ -65,13 +65,13 @@ public:
 
         this->mProgressBarBuffer << "[";
 
-        float percent = this->mCurrentElement/(float)this->mTotalElements;
+        float_t percent = this->mCurrentElement/(float_t)this->mTotalElements;
         this->mCurrentProgressPercent = std::ceil(100*percent);
         this->mCurrentProgress = percent * this->mProgressBarWidth;
-        for(int i = 0; i < this->mCurrentProgress; ++i) {
+        for(int32_t i = 0; i < this->mCurrentProgress; ++i) {
             this->mProgressBarBuffer << "#";
         }
-        for(int i = mCurrentProgress; i < this->mProgressBarWidth; ++i) {
+        for(int32_t i = mCurrentProgress; i < this->mProgressBarWidth; ++i) {
             this->mProgressBarBuffer << " ";
         }
         this->mProgressBarBuffer << "]";
@@ -95,9 +95,9 @@ public:
     }
 
     void update() {
-        float percent = this->mCurrentElement/(float)this->mTotalElements;
+        float_t percent = this->mCurrentElement/(float_t)this->mTotalElements;
         this->mCurrentProgressPercent = 100*percent;
-        int progress = percent * this->mProgressBarWidth;
+        int32_t progress = percent * this->mProgressBarWidth;
         if(progress > this->mCurrentProgress) {
             ++this->mCurrentProgress;
             if(progress < this->mProgressBarWidth) {
@@ -126,7 +126,7 @@ private:
         this->mProgressBarBuffer.clear();
 
         this->mProgressBarBuffer << "[";
-        for(int i = 0; i < this->mProgressBarWidth; ++i) {
+        for(int32_t i = 0; i < this->mProgressBarWidth; ++i) {
             this->mProgressBarBuffer << " ";
         }
         this->mProgressBarBuffer << "]";
@@ -142,7 +142,7 @@ private:
     void drawLabel() {
         if(!this->mLabel.empty()) {
             std::cout << this->mLabel << std::endl;
-            for(int i = 0; i < this->mLabel.size(); ++i) {
+            for(int32_t i = 0; i < this->mLabel.size(); ++i) {
                 std::cout << "=";
             }
             std::cout << std::endl;
@@ -154,11 +154,11 @@ private:
         this->mProgressBarWidth = this->mTotalWidth - 7;
     }
 
-    int getProgressBarWidth() {
+    int32_t getProgressBarWidth() {
         return this->mProgressBarWidth;
     }
 
-    int getTerminalWidth() {
+    int32_t getTerminalWidth() {
         return this->mTotalWidth;
     }
 
@@ -176,9 +176,9 @@ private:
     std::string mProgressBarPercent;
     std::stringstream mProgressBarBuffer;
 
-    int mProgressBarWidth;
-    int mTotalWidth;
+    int32_t mProgressBarWidth;
+    int32_t mTotalWidth;
 
-    int mCurrentProgressPercent;
-    int mCurrentProgress;
+    int32_t mCurrentProgressPercent;
+    int32_t mCurrentProgress;
 };

@@ -33,8 +33,8 @@ public:
                               const cv::Mat &labels) const;
 
     virtual cv::Mat optimizeImpl(const bool debugMode,
-                                 const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
-                                 const std::vector<std::pair<cv::Mat, int>> &data) const;
+                                 const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                                 const std::vector<std::pair<cv::Mat, int32_t>> &data) const;
 private:
     /**
      * @brief load Loads classifier data from a given file

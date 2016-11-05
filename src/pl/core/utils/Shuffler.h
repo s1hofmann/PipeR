@@ -20,9 +20,9 @@ public:
                         cv::Mat &shuffledLabels);
 
     static void shuffle(const std::vector<std::string> &files,
-                        const std::vector<int> &labels,
+                        const std::vector<int32_t> &labels,
                         std::vector<std::string> &shuffledFiles,
-                        std::vector<int> &shuffledLabels);
+                        std::vector<int32_t> &shuffledLabels);
 };
 
 

@@ -15,15 +15,15 @@ DBScanConfig::~DBScanConfig()
 
 }
 
-int DBScanConfig::minPoints() const
+int32_t DBScanConfig::minPoints() const
 {
     return mMinPoints;
 }
 
-bool DBScanConfig::setMinPoints(int minPoints)
+bool DBScanConfig::setMinPoints(int32_t minPoints)
 {
     mMinPoints = minPoints;
-    return setConfigParameter<int>(varName(mMinPoints), minPoints);
+    return setConfigParameter<int32_t>(varName(mMinPoints), minPoints);
 }
 
 double DBScanConfig::neighborhoodSize() const

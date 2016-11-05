@@ -44,7 +44,7 @@ void ArgumentProcessor::addSwitch(const std::string &arg,
     mSwitchDesc.push_back(desc);
 }
 
-std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int argc, char *argv[])
+std::unordered_map<std::string, std::string> ArgumentProcessor::parse(int32_t argc, char *argv[])
 {
     std::vector<std::string> args = toStringVector(argc, argv);
 
@@ -146,7 +146,7 @@ std::string ArgumentProcessor::parseFlag(const std::string &arg) const
     return arg.substr(idx);
 }
 
-std::vector<std::string> ArgumentProcessor::toStringVector(int argc, char *argv[]) const
+std::vector<std::string> ArgumentProcessor::toStringVector(int32_t argc, char *argv[]) const
 {
     std::vector<std::string> elements(argc);
     for(size_t idx = 0; idx < argc; ++idx) {
@@ -214,7 +214,7 @@ bool ArgumentProcessor::notIn(const std::string &what,
 bool ArgumentProcessor::notIn(const std::string &what,
                               const std::vector<std::vector<std::string> > &where) const
 {
-    int sum = 0;
+    int32_t sum = 0;
     for(auto elem : where) {
         if(notIn(what, elem)) {
             ++sum;

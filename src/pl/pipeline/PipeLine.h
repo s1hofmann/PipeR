@@ -60,7 +60,7 @@ public:
      * @brief train
      * @param mask
      */
-    void train(const std::vector<std::pair<std::string, int>> &input) const;
+    void train(const std::vector<std::pair<std::string, int32_t>> &input) const;
 
     /**
      * @brief run
@@ -256,7 +256,7 @@ public:
     cv::Mat currentInput() const;
     void setCurrentInput(const cv::Mat &currentInput);
 
-    void optimize(const std::vector<std::pair<std::string, int> > &input) const;
+    void optimize(const std::vector<std::pair<std::string, int32_t> > &input) const;
 
 private:
     /**
@@ -340,7 +340,7 @@ private:
      * @brief generateDescriptors
      * @param input
      */
-    void generateDescriptors(const std::vector<std::pair<std::string, int>> &input,
+    void generateDescriptors(const std::vector<std::pair<std::string, int32_t>> &input,
                              FileLogger &fileLog,
                              ConsoleLogger &consoleLog) const;
 };

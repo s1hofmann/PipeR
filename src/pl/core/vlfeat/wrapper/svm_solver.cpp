@@ -52,7 +52,7 @@ void VlFeatWrapper::SVMSolver::setBiasMultiplier(double bias)
     vl_svm_set_bias_multiplier(this->svm, bias);
 }
 
-void VlFeatWrapper::SVMSolver::setMaxIterations(int max)
+void VlFeatWrapper::SVMSolver::setMaxIterations(int32_t max)
 {
     vl_svm_set_max_num_iterations(this->svm, max);
 }
@@ -146,7 +146,7 @@ cv::Mat1d VlFeatWrapper::SVMSolver::predict(cv::Mat1d features) const
         tmpFeatures = features;
     }
 
-    for(int r = 0; r < tmpFeatures.rows; ++r) {
+    for(int32_t r = 0; r < tmpFeatures.rows; ++r) {
         double result = model.dot(tmpFeatures.row(r));
         biasMat.at<double>(r) += result;
     }

@@ -71,7 +71,7 @@ public:
      * @brief setMaxIterations: Sets new value for max. iterations
      * @param max: New value
      */
-    void setMaxIterations(int max);
+    void setMaxIterations(int32_t max);
 
     /**
      * @brief getMaxIterations: Get max iterations count.

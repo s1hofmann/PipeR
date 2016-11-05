@@ -45,12 +45,12 @@ std::vector<std::string> FileUtil::getFiles(const std::string &path,
 }
 
 
-std::vector<std::pair<std::string, int>> FileUtil::getFilesFromLabelFile(const std::string &labelFile,
-                                                                         const unsigned int maxFiles)
+std::vector<std::pair<std::string, int32_t>> FileUtil::getFilesFromLabelFile(const std::string &labelFile,
+                                                                         const uint32_t maxFiles)
 {
     QFile f(QString::fromStdString(labelFile));
 
-    std::vector<std::pair<std::string, int>> files;
+    std::vector<std::pair<std::string, int32_t>> files;
 
     if(f.exists()) {
         if (f.open(QIODevice::ReadOnly)) {
@@ -167,7 +167,7 @@ bool FileUtil::saveYML(const cv::Mat &data,
 
 
 bool FileUtil::saveDescriptorWithLabel(const cv::Mat &descriptor,
-                                       const int label,
+                                       const int32_t label,
                                        const std::string &outputPath,
                                        const std::string &descriptorFileName,
                                        const std::string &labelFileName, const std::string &prefix)
@@ -228,32 +228,32 @@ bool FileUtil::saveDescriptor(const cv::Mat &descriptor,
 
 cv::Mat FileUtil::loadDescriptors(const std::string &descriptorDir,
                                   const std::string &labelFile,
-                                  const unsigned int maxDescriptors,
+                                  const uint32_t maxDescriptors,
                                   bool random)
 {
-    std::vector<std::pair<std::string, int>> filesWithLabels = getFilesFromLabelFile(labelFile);
+    std::vector<std::pair<std::string, int32_t>> filesWithLabels = getFilesFromLabelFile(labelFile);
 
-    int maxDescriptorsPerFile = maxDescriptors / filesWithLabels.size();
+    int32_t maxDescriptorsPerFile = maxDescriptors / filesWithLabels.size();
 
     cv::Mat allDescriptors;
-    int idx = 0;
+    int32_t idx = 0;
 
     while((allDescriptors.rows < maxDescriptors || maxDescriptors <= 0) && idx < filesWithLabels.size()) {
         cv::Mat desc = loadBinary(filesWithLabels[idx].first);
 
-        int rows;
+        int32_t rows;
         if(maxDescriptors <= 0) {
             rows = desc.rows;
         } else {
             rows = std::min(desc.rows, maxDescriptorsPerFile);
         }
 
-        std::vector<int> indices;
+        std::vector<int32_t> indices;
         allDescriptors.reserve(rows);
         if(random) {
-            indices = Range<int>::random(0, rows);
+            indices = Range<int32_t>::random(0, rows);
         } else {
-            indices = Range<int>::unique(0, rows);
+            indices = Range<int32_t>::unique(0, rows);
         }
 
         for(size_t i = 0; i < indices.size(); ++i) {
@@ -316,13 +316,13 @@ std::string FileUtil::buildPath(const std::string &path,
     return info.absoluteFilePath().toStdString();
 }
 
-std::vector<std::pair<cv::Mat, int>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
+std::vector<std::pair<cv::Mat, int32_t>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     FileReader<IMG> reader;
-    std::vector<std::pair<std::string, int>> filesWithLabels = getFilesFromLabelFile(labelFile);
+    std::vector<std::pair<std::string, int32_t>> filesWithLabels = getFilesFromLabelFile(labelFile);
 
     try {
-        std::vector<std::pair<cv::Mat, int>> loadedFiles;
+        std::vector<std::pair<cv::Mat, int32_t>> loadedFiles;
 
         for(size_t idx = 0; idx < filesWithLabels.size(); ++idx) {
             QFileInfo qf(QString::fromStdString(labelFile));
@@ -381,7 +381,7 @@ std::vector<std::string> FileUtil::examineDirectory(const std::string &pathName,
 bool FileUtil::appendDescriptor(const std::string &labelFileName,
                                 const std::string &outputPath,
                                 const std::string &fileName,
-                                const int label,
+                                const int32_t label,
                                 const std::string &prefix)
 {
     QDir d(QString::fromStdString(outputPath));

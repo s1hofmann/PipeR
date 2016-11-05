@@ -45,7 +45,7 @@ protected:
      * @param n Degree of faculty
      * @return Faculty of n
      */
-    unsigned long long fak(unsigned int n) const {
+    unsigned long long fak(uint32_t n) const {
         if(n < 17) {
             return mFakLookUp[n];
         }
@@ -64,7 +64,7 @@ private:
      * @param rho
      * @return
      */
-    virtual double poly(int m, int n, double rho) const = 0;
+    virtual double poly(int32_t m, int32_t n, double rho) const = 0;
 
     /**
       * Small faculty lookup table
@@ -93,9 +93,9 @@ public:
 
 private:
     // ZernikePolyImpl interface
-    virtual double poly(int m, int n, double rho) const override {
+    virtual double poly(int32_t m, int32_t n, double rho) const override {
         double r = 0.0;
-        for(int s = 0; s <= static_cast<int>((n - m) / 2); ++s) {
+        for(int32_t s = 0; s <= static_cast<int32_t>((n - m) / 2); ++s) {
             r += (std::pow(-1.0,static_cast<double>(s)) * fak(n-s) * std::pow(static_cast<double>(rho), static_cast<double>(n-2*s)))
                     / (fak(s) * fak((n+m)/2-s) * fak((n-m)/2-s));
         }
@@ -118,7 +118,7 @@ public:
 
 private:
     // ZernikePolyImpl interface
-    virtual double poly(int m, int n, double rho) const override {
+    virtual double poly(int32_t m, int32_t n, double rho) const override {
 
     }
 };

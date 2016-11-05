@@ -62,16 +62,16 @@ unsigned long CSV::write(const cv::Mat &output,
 
     unsigned long count = 0;
 
-    for(int y = 0; y < output.rows; y++ ) {
-        for(int x = 0; x < output.cols; x++ ) {
+    for(int32_t y = 0; y < output.rows; y++ ) {
+        for(int32_t x = 0; x < output.cols; x++ ) {
             if(output.type() == CV_32FC1) {
-                file_stream << (float)output.at<float>(y,x);
+                file_stream << (float_t)output.at<float_t>(y,x);
                 ++count;
             } else if(output.type() == CV_64FC1 ) {
                 file_stream << (double)output.at<double>(y,x);
                 ++count;
             } else if(output.type() == CV_32SC1 ) {
-                file_stream << (int)output.at<int>(y,x);
+                file_stream << (int32_t)output.at<int32_t>(y,x);
                 ++count;
             } else if(output.type() == CV_8UC1 ) {
                 file_stream << (uchar)output.at<uchar>(y,x);
@@ -115,14 +115,14 @@ cv::Mat CSV::read(const std::string &input, const std::string &prefix) const
 
     QTextStream file_stream(&file);
 
-    int rows = 0;
-    int cols = 0;
-    std::vector<float> vals;
+    int32_t rows = 0;
+    int32_t cols = 0;
+    std::vector<float_t> vals;
     QString line;
     while((line = file_stream.readLine()) != QString::null) {
        QStringList val_str = line.split(',', QString::SkipEmptyParts);
 
-       int col = 0;
+       int32_t col = 0;
        foreach(QString v, val_str){
            bool ok;
            vals.push_back(v.toFloat(&ok));

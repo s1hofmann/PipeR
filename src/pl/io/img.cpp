@@ -51,7 +51,7 @@ unsigned long IMG::write(const cv::Mat &output,
     s << fileName;
     QString absFile = d.absoluteFilePath(QString::fromStdString(s.str()));
 
-    std::vector<int> parameters;
+    std::vector<int32_t> parameters;
 
     if(cv::imwrite(absFile.toStdString(), output)) {
         return output.rows * output.cols * output.channels();

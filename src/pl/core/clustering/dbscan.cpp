@@ -8,17 +8,17 @@ DbScan::DbScan()
 }
 
 
-std::set<int> DbScan::queryNeighborhood(int centerIdx)
+std::set<int32_t> DbScan::queryNeighborhood(int32_t centerIdx)
 {
     return this->distanceMatrix[centerIdx];
 }
 
 
-void DbScan::expandCluster(int currentIdx,
-                           std::set<int> &neighboringPoints,
+void DbScan::expandCluster(int32_t currentIdx,
+                           std::set<int32_t> &neighboringPoints,
                            double neighborhoodSize,
-                           int clusterIdx,
-                           int minPoints)
+                           int32_t clusterIdx,
+                           int32_t minPoints)
 {
     this->clusters[clusterIdx].insert(currentIdx);
 
@@ -27,7 +27,7 @@ void DbScan::expandCluster(int currentIdx,
         if(!isVisited(*row)) {
             //Mark as visited
             setVisited(*row);
-            std::set<int> newNeighbors = queryNeighborhood(*row);
+            std::set<int32_t> newNeighbors = queryNeighborhood(*row);
             if(newNeighbors.size() >= minPoints) {
                 for(auto n = newNeighbors.begin(); n != newNeighbors.end(); ++n) {
                     neighboringPoints.insert(*n);
@@ -42,7 +42,7 @@ void DbScan::expandCluster(int currentIdx,
 }
 
 
-bool DbScan::isAssigned(const int idx)
+bool DbScan::isAssigned(const int32_t idx)
 {
     if(this->alreadyAssigned[idx] == 0) {
         return false;
@@ -52,13 +52,13 @@ bool DbScan::isAssigned(const int idx)
 }
 
 
-void DbScan::assign(const int idx)
+void DbScan::assign(const int32_t idx)
 {
     this->alreadyAssigned[idx] = 1;
 }
 
 
-bool DbScan::isNoise(const int idx)
+bool DbScan::isNoise(const int32_t idx)
 {
     if(this->noise[idx] == 0) {
         return false;
@@ -68,13 +68,13 @@ bool DbScan::isNoise(const int idx)
 }
 
 
-void DbScan::setNoise(const int idx)
+void DbScan::setNoise(const int32_t idx)
 {
     this->noise[idx] = 1;
 }
 
 
-bool DbScan::isVisited(const int idx)
+bool DbScan::isVisited(const int32_t idx)
 {
     if(this->visited[idx] == 0) {
         return false;
@@ -84,7 +84,7 @@ bool DbScan::isVisited(const int idx)
 }
 
 
-void DbScan::setVisited(const int idx)
+void DbScan::setVisited(const int32_t idx)
 {
     this->visited[idx] = 1;
 }
@@ -92,15 +92,15 @@ void DbScan::setVisited(const int idx)
 
 void DbScan::init(const double neighborhoodSize)
 {
-    for(int row = 0; row < this->mData.rows; ++row) {
-        int rX = this->mData.at<float>(row, this->mData.cols - 2);
-        int rY = this->mData.at<float>(row, this->mData.cols - 1);
-        for(int col = row; col < this->mData.rows; ++col) {
-            int cX = this->mData.at<float>(col, this->mData.cols - 2);
-            int cY = this->mData.at<float>(col, this->mData.cols - 1);
+    for(int32_t row = 0; row < this->mData.rows; ++row) {
+        int32_t rX = this->mData.at<float_t>(row, this->mData.cols - 2);
+        int32_t rY = this->mData.at<float_t>(row, this->mData.cols - 1);
+        for(int32_t col = row; col < this->mData.rows; ++col) {
+            int32_t cX = this->mData.at<float_t>(col, this->mData.cols - 2);
+            int32_t cY = this->mData.at<float_t>(col, this->mData.cols - 1);
 
-            int dX = cX - rX;
-            int dY = cY - rY;
+            int32_t dX = cX - rX;
+            int32_t dY = cY - rY;
 
             double distance = sqrt(dX*dX + dY*dY);
 
@@ -115,9 +115,9 @@ void DbScan::init(const double neighborhoodSize)
 
 double DbScan::estimate(const cv::Mat &input)
 {
-    int clusters = 128;
+    int32_t clusters = 128;
 
-    int maxIterations = 300;
+    int32_t maxIterations = 300;
     double epsilon = 0.001;
 
     cv::Mat labels;
@@ -135,13 +135,13 @@ double DbScan::estimate(const cv::Mat &input)
 
     std::vector<double> meanDist;
     meanDist.resize(clusters);
-    std::vector<int> meanPoints;
+    std::vector<int32_t> meanPoints;
     meanPoints.resize(clusters);
 
     for(size_t p = 0; p < input.rows; ++p) {
-        double dist = cv::norm(input.row(p), means.row(labels.at<int>(p)), cv::NORM_L2);
-        meanDist[labels.at<int>(p)] += dist;
-        ++meanPoints[labels.at<int>(p)];
+        double dist = cv::norm(input.row(p), means.row(labels.at<int32_t>(p)), cv::NORM_L2);
+        meanDist[labels.at<int32_t>(p)] += dist;
+        ++meanPoints[labels.at<int32_t>(p)];
     }
 
     for(size_t p = 0; p < meanDist.size(); ++p) {
@@ -156,12 +156,12 @@ double DbScan::estimate(const cv::Mat &input)
 }
 
 
-std::vector<std::set<int>> DbScan::cluster(const cv::Mat1f &data,
-                                           const int minPoints,
-                                           const int neighborhoodSize)
+std::vector<std::set<int32_t>> DbScan::cluster(const cv::Mat1f &data,
+                                           const int32_t minPoints,
+                                           const int32_t neighborhoodSize)
 {
     this->mData = data;
-    int cluster = -1;
+    int32_t cluster = -1;
 
     double nSize;
 
@@ -182,7 +182,7 @@ std::vector<std::set<int>> DbScan::cluster(const cv::Mat1f &data,
 
         setVisited(row);
 
-        std::set<int> neighborhood = queryNeighborhood(row);
+        std::set<int32_t> neighborhood = queryNeighborhood(row);
 
         if(neighborhood.size() < minPoints) {
             for(auto idx = neighborhood.begin(); idx != neighborhood.end(); ++idx) {
@@ -190,7 +190,7 @@ std::vector<std::set<int>> DbScan::cluster(const cv::Mat1f &data,
             }
         } else {
             //Create new cluster
-            this->clusters.push_back(std::set<int>());
+            this->clusters.push_back(std::set<int32_t>());
             cluster = this->clusters.size() - 1;
             expandCluster(row, neighborhood, nSize, cluster, minPoints);
         }

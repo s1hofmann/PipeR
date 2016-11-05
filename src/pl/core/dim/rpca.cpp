@@ -1,9 +1,9 @@
 #include "rpca.h"
 
 
-RPCA::RPCA(int _components,
+RPCA::RPCA(int32_t _components,
            bool _whiten,
-           float _reg)
+           float_t _reg)
     : n_components(_components),
       whiten(_whiten),
       reg(_reg)
@@ -22,12 +22,12 @@ void RPCA::fit(const cv::Mat1f & descr)
     cv::Mat1f X(descr.rows, descr.cols);
 
 #ifdef USE_TBB
-    tbb::parallel_for(int(0), X.rows, [&](int y) {
+    tbb::parallel_for(int32_t(0), X.rows, [&](int32_t y) {
         X.row(y) = descr.row(y) - mean;
     }
     );
 #else
-    for( int y = 0; y < X.rows; y++){
+    for( int32_t y = 0; y < X.rows; y++){
         X.row(y) = descr.row(y) - mean;
     }
 #endif
@@ -67,12 +67,12 @@ void RPCA::transform(const cv::Mat1f & descr,
     // make data zero-mean
     cv::Mat1f X(descr.rows,descr.cols);
 #ifdef USE_TBB
-        tbb::parallel_for(int(0), X.rows, [&](int i) {
+        tbb::parallel_for(int32_t(0), X.rows, [&](int32_t i) {
             X.row(i) = descr.row(i) - mean;
         }
         );
 #else
-    for( int y = 0; y < X.rows; y++){
+    for( int32_t y = 0; y < X.rows; y++){
         X.row(y) = descr.row(y) - mean;
     }
 #endif
@@ -87,13 +87,13 @@ void RPCA::transform(const cv::Mat1f & descr,
             var_reg += reg;
         cv::sqrt(var_reg, var_reg);
 #ifdef USE_TBB
-        tbb::parallel_for(int(0), X.rows, [&](int i) {
+        tbb::parallel_for(int32_t(0), X.rows, [&](int32_t i) {
             cv::Mat1f row = X.row(i);
             row /= var_reg;
         }
         );
 #else
-        for( int i = 0; i < X.rows; i++ ) {
+        for( int32_t i = 0; i < X.rows; i++ ) {
             cv::Mat1f row = X.row(i);
             row /= var_reg;
         }

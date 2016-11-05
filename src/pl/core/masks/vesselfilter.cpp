@@ -4,9 +4,9 @@
 namespace pl {
 
 
-VesselFilter::VesselFilter(const double sigma,
-                           const int octaves,
-                           const int stages) {
+VesselFilter::VesselFilter(const double_t sigma,
+                           const int32_t octaves,
+                           const int32_t stages) {
     this->mSigma = sigma;
     this->mOctaves = octaves;
     this->mStages = stages;
@@ -18,8 +18,8 @@ VesselFilter::VesselFilter(const double sigma,
 
 
 cv::Mat VesselFilter::compute(const cv::Mat &input,
-                              const double beta,
-                              const double c,
+                              const double_t beta,
+                              const double_t c,
                               const cv::Mat &mask) const {
     cv::Mat workingCopy;
     if(input.channels() > 1) {
@@ -35,8 +35,8 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
     std::vector<cv::Mat1f> filtered;
     filtered.resize(scales.size());
 
-    int oct = 0;
-    int st = 0;
+    int32_t oct = 0;
+    int32_t st = 0;
 
     cv::Mat combined;
 
@@ -49,7 +49,7 @@ cv::Mat VesselFilter::compute(const cv::Mat &input,
         cv::phase(eigenVectorX, eigenVectorY, angles);
 
         //Upscaling factor
-        double scale = sp.getScaleFactor(oct, st);
+        double_t scale = sp.getScaleFactor(oct, st);
 
         cv::resize(filtered[i], filtered[i], workingCopy.size(), scale, scale, cv::INTER_NEAREST);
 
@@ -145,8 +145,8 @@ void VesselFilter::computeEigen(const cv::Mat &input,
 
 cv::Mat1f VesselFilter::computeVesselness(cv::Mat1f &lambda1,
                                           const cv::Mat1f &lambda2,
-                                          const float c,
-                                          const float beta) const {
+                                          const float_t c,
+                                          const float_t beta) const {
                                                               //Avoid division by 0
                                                               lambda1.setTo(std::nextafter(0.0, 1.0), lambda1 == 0);
 
@@ -169,8 +169,8 @@ cv::Mat1f VesselFilter::computeVesselness(cv::Mat1f &lambda1,
 
 cv::Mat1f Frangi::computeVesselness(cv::Mat1f &lambda1,
                                     const cv::Mat1f &lambda2,
-                                    const float p1,
-                                    const float p2) {
+                                    const float_t p1,
+                                    const float_t p2) {
                                                 //Avoid division by 0
                                                 lambda1.setTo(std::nextafter(0.0, 1.0), lambda1 == 0);
 
@@ -189,13 +189,6 @@ cv::Mat1f Frangi::computeVesselness(cv::Mat1f &lambda1,
 
                                                 return result;
                                                 }
-
-cv::Mat1f Sato::computeVesselness(cv::Mat1f &lambda1,
-                                  const cv::Mat1f &lambda2,
-                                  const float p1,
-                                  const float p2) {
-
-}
 
 
 }

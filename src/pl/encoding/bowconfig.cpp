@@ -6,10 +6,10 @@ namespace pl {
 BOWConfig::BOWConfig(const std::string &identifier,
                        const std::vector<normStrategy> &normalization,
                        const std::vector<std::string> &vocabs,
-                       const int clusters,
-                       const int iterations,
+                       const int32_t clusters,
+                       const int32_t iterations,
                        const double epsilon,
-                       const int pyramidLevels)
+                       const int32_t pyramidLevels)
     :
         ConfigContainer(identifier),
         mClusters(clusters),
@@ -63,7 +63,7 @@ bool BOWConfig::fromJSON(std::string &file)
             mVocabs.push_back("./cluster_0.yml");
         } else {
             mVocabs.clear();
-            for(int idx = 0; idx < vocabs.size(); ++idx) {
+            for(int32_t idx = 0; idx < vocabs.size(); ++idx) {
                 mVocabs.push_back(vocabs[idx].asString());
             }
         }
@@ -94,26 +94,26 @@ bool BOWConfig::setPath(const std::string &path)
     return setConfigParameter<std::string>(varName(mPath), path);
 }
 
-int BOWConfig::clusters() const
+int32_t BOWConfig::clusters() const
 {
     return mClusters;
 }
 
-bool BOWConfig::setClusters(int clusters)
+bool BOWConfig::setClusters(int32_t clusters)
 {
     mClusters = clusters;
-    return setConfigParameter<int>(varName(mClusters), clusters);
+    return setConfigParameter<int32_t>(varName(mClusters), clusters);
 }
 
-int BOWConfig::iterations() const
+int32_t BOWConfig::iterations() const
 {
     return mIterations;
 }
 
-bool BOWConfig::setIterations(int iterations)
+bool BOWConfig::setIterations(int32_t iterations)
 {
     mIterations = iterations;
-    return setConfigParameter<int>(varName(mIterations), iterations);
+    return setConfigParameter<int32_t>(varName(mIterations), iterations);
 }
 
 double BOWConfig::epsilon() const
@@ -127,15 +127,15 @@ bool BOWConfig::setEpsilon(double epsilon)
     return setConfigParameter<double>(varName(mEpsilon), epsilon);
 }
 
-int BOWConfig::pyramidLevels() const
+int32_t BOWConfig::pyramidLevels() const
 {
     return mPyramidLevels;
 }
 
-bool BOWConfig::setPyramidLevels(int pyramidLevels)
+bool BOWConfig::setPyramidLevels(int32_t pyramidLevels)
 {
     mPyramidLevels = pyramidLevels;
-    return setConfigParameter<int>(varName(mPyramidLevels), pyramidLevels);
+    return setConfigParameter<int32_t>(varName(mPyramidLevels), pyramidLevels);
 }
 
 

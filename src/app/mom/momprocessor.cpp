@@ -1,6 +1,6 @@
 #include "momprocessor.h"
 
-MomProcessor::MomProcessor(int argc, char *argv[])
+MomProcessor::MomProcessor(int32_t argc, char *argv[])
 {
     pl::ArgumentProcessor ap("mom");
     ap.addArgument("c", "Pipeline config.", false);
@@ -46,7 +46,7 @@ MomProcessor::MomProcessor(int argc, char *argv[])
     }
 }
 
-int MomProcessor::run()
+int32_t MomProcessor::run()
 {
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
@@ -152,7 +152,7 @@ int MomProcessor::run()
                 double min, max;
                 cv::Point minIdx, maxIdx;
                 cv::minMaxLoc(niveauResults, &min, &max, &minIdx, &maxIdx);
-                int best = maxIdx.x + 1;
+                int32_t best = maxIdx.x + 1;
                 if(debugMode) {
                     console.debug("Estimated niveau:", best);
                 }
@@ -192,10 +192,10 @@ int MomProcessor::run()
                 // Structuring element to dilate masks
                 cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
 
-                for(int idx = scales.size() - 1; idx > -1; --idx) {
-                    int windowSize = mWindowSize;
-                    int width = scales[idx].cols;
-                    int height = scales[idx].rows;
+                for(int32_t idx = scales.size() - 1; idx > -1; --idx) {
+                    int32_t windowSize = mWindowSize;
+                    int32_t width = scales[idx].cols;
+                    int32_t height = scales[idx].rows;
 
                     if(windowSize > width || windowSize > height) {
                         windowSize = std::min(width, height);
@@ -212,7 +212,7 @@ int MomProcessor::run()
                             cv::Range cols(c, c + windowSize);
                             cv::Mat part = scales[idx](rows, cols);
                             cv::Mat s = textPipe.run(part);
-                            if(!s.empty() && s.at<float>(0) > 0) {
+                            if(!s.empty() && s.at<float_t>(0) > 0) {
                                 score(rows, cols).setTo(255);
                             }
                         }

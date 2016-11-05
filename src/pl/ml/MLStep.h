@@ -25,8 +25,8 @@ public:
                               const cv::Mat &labels) const = 0;
 
     virtual cv::Mat optimizeImpl(const bool debugMode,
-                                 const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
-                                 const std::vector<std::pair<cv::Mat, int>> &data) const = 0;
+                                 const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                                 const std::vector<std::pair<cv::Mat, int32_t>> &data) const = 0;
 
     virtual cv::Mat predict(const cv::Mat &input) const {
         return this->predictImpl(false, input);
@@ -44,12 +44,12 @@ public:
         return this->trainImpl(true, input, param);
     }
 
-    virtual cv::Mat optimize(const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
-                             const std::vector<std::pair<cv::Mat, int>> &data) const {
+    virtual cv::Mat optimize(const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                             const std::vector<std::pair<cv::Mat, int32_t>> &data) const {
         return this->optimizeImpl(false, indices, data);
     }
-    virtual cv::Mat debugOptimize(const std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> &indices,
-                                  const std::vector<std::pair<cv::Mat, int>> &data) const {
+    virtual cv::Mat debugOptimize(const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                                  const std::vector<std::pair<cv::Mat, int32_t>> &data) const {
         return this->optimizeImpl(true, indices, data);
     }
 

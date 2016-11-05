@@ -42,11 +42,11 @@ public:
     static std::vector<cv::Mat> loadImages(const std::string &path);
 
     /**
-     * @brief loadImagesFromLabelFile Returns a std::pair of std::vector<cv::Mat> and std::vector<int> read from a labelfile
+     * @brief loadImagesFromLabelFile Returns a std::pair of std::vector<cv::Mat> and std::vector<int32_t> read from a labelfile
      * @param labelFile Labelfile to read data from
-     * @return std::pair<std::vector<cv::Mat>, std::vector<int>>
+     * @return std::pair<std::vector<cv::Mat>, std::vector<int32_t>>
      */
-    static std::vector<std::pair<cv::Mat, int>> loadImagesFromLabelFile(const std::string &labelFile);
+    static std::vector<std::pair<cv::Mat, int32_t>> loadImagesFromLabelFile(const std::string &labelFile);
 
     /**
      * @brief getFiles Returns an std::vector of std::string objects containing all files in a given folder.
@@ -57,12 +57,12 @@ public:
                                              const std::vector<std::string> &filters = std::vector<std::string>());
 
     /**
-     * @brief getFilesFromLabelFile Returns a std::pair of std::vector<std::string> and std::vector<int>, holding filenames and corresponding labels read from a given labelfile
+     * @brief getFilesFromLabelFile Returns a std::pair of std::vector<std::string> and std::vector<int32_t>, holding filenames and corresponding labels read from a given labelfile
      * @param labelFile File to read data from
-     * @return std::pair<std::vector<std::string>, std::vector<int>>
+     * @return std::pair<std::vector<std::string>, std::vector<int32_t>>
      */
-    static std::vector<std::pair<std::string, int> > getFilesFromLabelFile(const std::string &labelFile,
-                                                                                       const unsigned int maxFiles = 0);
+    static std::vector<std::pair<std::string, int32_t> > getFilesFromLabelFile(const std::string &labelFile,
+                                                                                       const uint32_t maxFiles = 0);
 
     /**
      * @brief saveImage Utility function to save a cv::Mat as image
@@ -123,7 +123,7 @@ public:
      * @return boolean value if descriptor was written or not
      */
     static bool saveDescriptorWithLabel(const cv::Mat &descriptor,
-                                        const int label,
+                                        const int32_t label,
                                         const std::string &outputPath,
                                         const std::string &descriptorFileName,
                                         const std::string &labelFileName,
@@ -151,7 +151,7 @@ public:
      */
     static cv::Mat loadDescriptors(const std::string &descriptorDir,
                                    const std::string &labelFile,
-                                   const unsigned int maxDescriptors,
+                                   const uint32_t maxDescriptors,
                                    bool random = true);
 
     /**
@@ -208,7 +208,7 @@ private:
     static bool appendDescriptor(const std::string &labelFileName,
                                  const std::string &outputPath,
                                  const std::string &fileName,
-                                 const int label, const std::string &prefix);
+                                 const int32_t label, const std::string &prefix);
 };
 
 

@@ -17,9 +17,9 @@
 class RPCA
 {
 public:
-    RPCA(int n_components=0,
+    RPCA(int32_t n_components=0,
          bool whiten=true,
-         float reg=0.001);
+         float_t reg=0.001);
     /// construct from saved RPCA
     explicit RPCA(const std::string & path);
     ~RPCA(){}
@@ -42,9 +42,9 @@ private:
     /// --> bring covariance matrix to unit
     bool whiten;
     /// number of components
-    int n_components;
+    int32_t n_components;
     /// regularizer on the eigenvalues
-    float reg;
+    float_t reg;
 
     /// mean of the data
     cv::Mat1f mean;

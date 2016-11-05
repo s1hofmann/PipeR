@@ -2,7 +2,7 @@
 
 namespace pl {
 
-ClusterError::ClusterError(const std::string &msg, const std::string &where, const int line)
+ClusterError::ClusterError(const std::string &msg, const std::string &where, const int32_t line)
     :
         BaseError(msg, where, line)
 {

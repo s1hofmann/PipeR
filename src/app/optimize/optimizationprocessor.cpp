@@ -1,6 +1,6 @@
 #include "optimizationprocessor.h"
 
-OptimizationProcessor::OptimizationProcessor(int argc, char *argv[])
+OptimizationProcessor::OptimizationProcessor(int32_t argc, char *argv[])
 {
     pl::ArgumentProcessor ap("optimize");
     ap.addArgument("conf", "Pipeline config.", false);
@@ -22,7 +22,7 @@ OptimizationProcessor::OptimizationProcessor(int argc, char *argv[])
     }
 }
 
-int OptimizationProcessor::run()
+int32_t OptimizationProcessor::run()
 {
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
@@ -101,7 +101,7 @@ int OptimizationProcessor::run()
         optPipe.showPipeline();
         pl::FileUtil fu;
 
-        std::vector<std::pair<std::string, int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
+        std::vector<std::pair<std::string, int32_t>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
         optPipe.optimize(filesWithLabels);
     } catch(const pl::ClusterError &e) {
         console.report(e.what());

@@ -10,18 +10,18 @@ namespace pl {
 class DescriptorPyramid
 {
 public:
-    explicit DescriptorPyramid(int levels = 1) {
+    explicit DescriptorPyramid(int32_t levels = 1) {
         this->levels = levels;
     }
 
     std::vector<cv::Mat> build(const cv::Mat1f &descriptor);
 
 private:
-    int totalElements(int level);
+    int32_t totalElements(int32_t level);
     std::vector<cv::Mat> split(const cv::Mat &input);
 
 private:
-    int levels = 1;
+    int32_t levels = 1;
 };
 
 

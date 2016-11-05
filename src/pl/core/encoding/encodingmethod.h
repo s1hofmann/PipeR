@@ -42,7 +42,7 @@ public:
     void setNormStrategy(std::vector<normStrategy> &normTypes) {
         mNormType = 0;
         for(auto norm : normTypes) {
-            mNormType += static_cast<int>(pow(2.0, static_cast<double>(norm)));
+            mNormType += static_cast<int32_t>(pow(2.0, static_cast<double>(norm)));
         }
     }
 
@@ -64,5 +64,5 @@ public:
 
 protected:
     EncodingMethod();
-    int mNormType;
+    int32_t mNormType;
 };

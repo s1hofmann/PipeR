@@ -26,11 +26,11 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
     double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
 
-    unsigned int posPrior = 0;
-    unsigned int negPrior = 0; // calculate priors
+    uint32_t posPrior = 0;
+    uint32_t negPrior = 0; // calculate priors
 
-    for(int i = 0; i < labels.rows; ++i) {
-        if(labels.at<int>(i, 0) == static_cast<int>(positiveLabel)) {
+    for(int32_t i = 0; i < labels.rows; ++i) {
+        if(labels.at<int32_t>(i, 0) == static_cast<int32_t>(positiveLabel)) {
             ++posPrior;
         } else {
             ++negPrior;
@@ -47,7 +47,7 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
     double A = 0.0;
     double B = log( (negPrior+1.0 ) / (posPrior+1.0) );
     double fval=0.0;
-    for ( int i = 0; i < len; i++ ) {
+    for ( int32_t i = 0; i < len; i++ ) {
         if (labels(i,0) > 0)
             t.push_back(hiTarget);
         else
@@ -61,7 +61,7 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
     }
 
     //Parameter setting
-    int maxiter = 100; //Maximum number of iterations
+    int32_t maxiter = 100; //Maximum number of iterations
     double minstep = 1e-10; //Minimum step taken in line search
     double sigma = 1e-12; //Set to any value > 0
 
@@ -70,7 +70,7 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
         double h11, h22, h21, g1, g2;
         h11 = h22 = sigma;
         h21 = g1 = g2 = 0.0;
-        for ( int i = 0; i < len; i++ ) {
+        for ( int32_t i = 0; i < len; i++ ) {
             double fApB = decision(i,0)*A+B;
             double p;
             double q;
@@ -106,7 +106,7 @@ std::pair<double, double> Platt::platt_calibrate(const cv::Mat1d decision,
             double newB = B + stepsize*dB;
             double newf = 0.0;
 
-            for ( int i = 0; i < len; i++ ) {
+            for ( int32_t i = 0; i < len; i++ ) {
                 double fApB = decision(i,0)*newA + newB;
                 if (fApB >= 0)
                     newf += t[i]*fApB + log1p(exp(-fApB));

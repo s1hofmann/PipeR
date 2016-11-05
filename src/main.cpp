@@ -6,7 +6,7 @@
 #include "app/train/trainingprocessor.h"
 #include "app/optimize/optimizationprocessor.h"
 
-int main(int argc, char *argv[]) {
+int32_t main(int32_t argc, char *argv[]) {
     std::string app;
     // TODO: Let cmake take care of this list of enabled apps
     std::vector<std::string> apps = {"mom", "train", "optimize"};

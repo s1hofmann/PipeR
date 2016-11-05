@@ -8,7 +8,7 @@ MLConfig::~MLConfig()
 }
 
 MLConfig::MLConfig(const std::string &identifier,
-                   const int folds)
+                   const int32_t folds)
     :
         ConfigContainer(identifier),
         mFolds(folds)
@@ -16,12 +16,12 @@ MLConfig::MLConfig(const std::string &identifier,
 
 }
 
-int MLConfig::folds() const
+int32_t MLConfig::folds() const
 {
     return mFolds;
 }
 
-void MLConfig::setFolds(int folds)
+void MLConfig::setFolds(int32_t folds)
 {
     mFolds = folds;
 }

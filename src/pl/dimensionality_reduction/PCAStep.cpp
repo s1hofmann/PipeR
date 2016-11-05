@@ -53,7 +53,7 @@ cv::Mat PCAStep::trainImpl(const bool debugMode, const cv::Mat &input, const cv:
         throw DimensionalityReductionError(s.str(), currentMethod, currentLine);
     }
 
-    int components = std::min(config->components(), input.cols);
+    int32_t components = std::min(config->components(), input.cols);
     if(components <= 0) {
         components = input.cols;
     }

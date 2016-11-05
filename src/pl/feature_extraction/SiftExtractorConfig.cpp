@@ -9,8 +9,8 @@ namespace pl {
 
 
 SiftExtractorConfig::SiftExtractorConfig(const std::string &identifier,
-                                         int nBestFeatures,
-                                         int nOctaveLayers,
+                                         int32_t nBestFeatures,
+                                         int32_t nOctaveLayers,
                                          double contrastThreshold,
                                          double edgeThreshold,
                                          double sigma,
@@ -72,26 +72,26 @@ bool SiftExtractorConfig::fromJSON(std::string &file)
     }
 }
 
-int SiftExtractorConfig::bestFeatures() const
+int32_t SiftExtractorConfig::bestFeatures() const
 {
     return mBestFeatures;
 }
 
-bool SiftExtractorConfig::setBestFeatures(int bestFeatures)
+bool SiftExtractorConfig::setBestFeatures(int32_t bestFeatures)
 {
     mBestFeatures = bestFeatures;
-    return setConfigParameter<int>(varName(mBestFeatures), bestFeatures);
+    return setConfigParameter<int32_t>(varName(mBestFeatures), bestFeatures);
 }
 
-int SiftExtractorConfig::octaves() const
+int32_t SiftExtractorConfig::octaves() const
 {
     return mOctaves;
 }
 
-bool SiftExtractorConfig::setOctaves(int octaves)
+bool SiftExtractorConfig::setOctaves(int32_t octaves)
 {
     mOctaves = octaves;
-    return setConfigParameter<int>(varName(mOctaves), octaves);
+    return setConfigParameter<int32_t>(varName(mOctaves), octaves);
 }
 
 double SiftExtractorConfig::contrastThresh() const

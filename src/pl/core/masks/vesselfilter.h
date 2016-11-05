@@ -18,8 +18,8 @@ public:
      * @param stages: Amount of substages for scale space
      */
     VesselFilter(const double mSigma = 1,
-                 const int mOctaves = 3,
-                 const int mStages = 3);
+                 const int32_t mOctaves = 3,
+                 const int32_t mStages = 3);
 
     /**
     * @brief compute: Computes a combined probability map for vessels using a Gaussian scale space
@@ -70,16 +70,16 @@ private:
     */
     cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                 const cv::Mat1f &lambda2,
-                                const float c,
-                                const float beta) const;
+                                const float_t c,
+                                const float_t beta) const;
 
 /**
 * DATA
 */
 private:
     double mSigma;
-    int mOctaves;
-    int mStages;
+    int32_t mOctaves;
+    int32_t mStages;
 
     cv::Mat mDxx, mDyy, mDx, mDy;
     cv::Mat mId;
@@ -101,8 +101,8 @@ public:
     */
     static cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                        const cv::Mat1f &lambda2,
-                                       const float p1,
-                                       const float p2);
+                                       const float_t p1,
+                                       const float_t p2);
 };
 
 
@@ -121,8 +121,8 @@ public:
     */
     static cv::Mat1f computeVesselness(cv::Mat1f &lambda1,
                                        const cv::Mat1f &lambda2,
-                                       const float p1,
-                                       const float p2);
+                                       const float_t p1,
+                                       const float_t p2);
 };
 
 

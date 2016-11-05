@@ -24,8 +24,8 @@ public:
      * @param sigma
      */
     SiftDetectorConfig(const std::string &identifier,
-                       int nBestFeatures = 0,
-                       int nOctaveLayers = 3,
+                       int32_t nBestFeatures = 0,
+                       int32_t nOctaveLayers = 3,
                        double contrastThreshold = 0.04,
                        double edgeThreshold = 10,
                        double sigma = 1.6,
@@ -40,11 +40,11 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    int bestFeatures() const;
-    bool setBestFeatures(int bestFeatures);
+    int32_t bestFeatures() const;
+    bool setBestFeatures(int32_t bestFeatures);
 
-    int octaves() const;
-    bool setOctaves(int octaves);
+    int32_t octaves() const;
+    bool setOctaves(int32_t octaves);
 
     double contrastThresh() const;
     bool setContrastThresh(double contrastThresh);
@@ -59,12 +59,12 @@ private:
     /**
      * @brief mBestFeatures
      */
-    int mBestFeatures;
+    int32_t mBestFeatures;
 
     /**
      * @brief mOctaves
      */
-    int mOctaves;
+    int32_t mOctaves;
 
     /**
      * @brief mContrastThresh

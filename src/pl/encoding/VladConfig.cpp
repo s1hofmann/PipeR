@@ -6,10 +6,10 @@ namespace pl {
 VladConfig::VladConfig(const std::string &identifier,
                        const std::vector<normStrategy> &normalization,
                        const std::vector<std::string> &vocabs,
-                       const int clusters,
-                       const int iterations,
+                       const int32_t clusters,
+                       const int32_t iterations,
                        const double epsilon,
-                       const int pyramidLevels)
+                       const int32_t pyramidLevels)
     :
         ConfigContainer(identifier),
         mNormStrategies(normalization),
@@ -61,26 +61,26 @@ bool VladConfig::setPath(const std::string &path)
     return setConfigParameter<std::string>(varName(mPath), path);
 }
 
-int VladConfig::clusters() const
+int32_t VladConfig::clusters() const
 {
     return mClusters;
 }
 
-bool VladConfig::setClusters(int clusters)
+bool VladConfig::setClusters(int32_t clusters)
 {
     mClusters = clusters;
-    return setConfigParameter<int>(varName(mClusters), clusters);
+    return setConfigParameter<int32_t>(varName(mClusters), clusters);
 }
 
-int VladConfig::iterations() const
+int32_t VladConfig::iterations() const
 {
     return mIterations;
 }
 
-bool VladConfig::setIterations(int iterations)
+bool VladConfig::setIterations(int32_t iterations)
 {
     mIterations = iterations;
-    return setConfigParameter<int>(varName(mIterations), iterations);
+    return setConfigParameter<int32_t>(varName(mIterations), iterations);
 }
 
 double VladConfig::epsilon() const
@@ -94,15 +94,15 @@ bool VladConfig::setEpsilon(double epsilon)
     return setConfigParameter<double>(varName(mEpsilon), epsilon);
 }
 
-int VladConfig::pyramidLevels() const
+int32_t VladConfig::pyramidLevels() const
 {
     return mPyramidLevels;
 }
 
-bool VladConfig::setPyramidLevels(int pyramidLevels)
+bool VladConfig::setPyramidLevels(int32_t pyramidLevels)
 {
     mPyramidLevels = pyramidLevels;
-    return setConfigParameter<int>(varName(mPyramidLevels), pyramidLevels);
+    return setConfigParameter<int32_t>(varName(mPyramidLevels), pyramidLevels);
 }
 
 
@@ -168,7 +168,7 @@ bool VladConfig::fromJSON(std::string &file)
             mVocabs.push_back("./cluster_0.yml");
         } else {
             mVocabs.clear();
-            for(int idx = 0; idx < vocabs.size(); ++idx) {
+            for(int32_t idx = 0; idx < vocabs.size(); ++idx) {
                 mVocabs.push_back(vocabs[idx].asString());
             }
         }
@@ -177,7 +177,7 @@ bool VladConfig::fromJSON(std::string &file)
 
         if(!norm.empty()) {
             mNormStrategies.clear();
-            for(int idx = 0; idx < norm.size(); ++idx) {
+            for(int32_t idx = 0; idx < norm.size(); ++idx) {
                 std::string strategy = norm[idx].asString();
 
                 if(!strategy.compare(varName(NORM_COMPONENT_L2))) {

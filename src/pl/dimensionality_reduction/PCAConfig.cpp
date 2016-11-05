@@ -5,7 +5,7 @@ namespace pl {
 
 
 PCAConfig::PCAConfig(const std::string &identifier,
-                     const int components,
+                     const int32_t components,
                      const double epsilon,
                      const bool whiten,
                      const std::string &path)
@@ -50,15 +50,15 @@ bool PCAConfig::fromJSON(std::string &file)
     }
 }
 
-int PCAConfig::components() const
+int32_t PCAConfig::components() const
 {
     return mComponents;
 }
 
-bool PCAConfig::setComponents(int components)
+bool PCAConfig::setComponents(int32_t components)
 {
     mComponents = components;
-    return setConfigParameter<int>(varName(mComponents), components);
+    return setConfigParameter<int32_t>(varName(mComponents), components);
 }
 
 double PCAConfig::epsilon() const

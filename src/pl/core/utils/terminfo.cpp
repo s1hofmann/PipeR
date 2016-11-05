@@ -16,12 +16,12 @@ void TermInfo::update()
     this->cols = this->winSize.ws_col;
 }
 
-int TermInfo::getLines() const
+int32_t TermInfo::getLines() const
 {
     return this->lines;
 }
 
-int TermInfo::getCols() const
+int32_t TermInfo::getCols() const
 {
     return this->cols;
 }

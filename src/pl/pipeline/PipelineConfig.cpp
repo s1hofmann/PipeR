@@ -76,15 +76,15 @@ bool PipelineConfig::fromJSON(std::string &file)
     }
 }
 
-unsigned int PipelineConfig::maxDescriptors() const
+uint32_t PipelineConfig::maxDescriptors() const
 {
     return mMaxDescriptors;
 }
 
-bool PipelineConfig::setMaxDescriptors(unsigned int value)
+bool PipelineConfig::setMaxDescriptors(uint32_t value)
 {
     mMaxDescriptors = value;
-    return setConfigParameter<unsigned int>(varName(mMaxDescriptors), value);
+    return setConfigParameter<uint32_t>(varName(mMaxDescriptors), value);
 }
 
 bool PipelineConfig::rebuildPca() const
@@ -176,15 +176,15 @@ bool PipelineConfig::setOutputDirectory(const std::string &outputDirectory)
     return setConfigParameter<std::string>(varName(mOutputDir), outputDirectory);
 }
 
-int PipelineConfig::randomSeed() const
+int32_t PipelineConfig::randomSeed() const
 {
     return mRandomSeed;
 }
 
-bool PipelineConfig::setRandomSeed(int randomSeed)
+bool PipelineConfig::setRandomSeed(int32_t randomSeed)
 {
     mRandomSeed = randomSeed;
-    return setConfigParameter<int>(varName(mRandomSeed), randomSeed);
+    return setConfigParameter<int32_t>(varName(mRandomSeed), randomSeed);
 }
 
 

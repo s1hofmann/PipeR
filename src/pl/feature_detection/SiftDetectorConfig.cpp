@@ -9,8 +9,8 @@ namespace pl {
 
 
 SiftDetectorConfig::SiftDetectorConfig(const std::string &identifier,
-                                       int nBestFeatures,
-                                       int nOctaveLayers,
+                                       int32_t nBestFeatures,
+                                       int32_t nOctaveLayers,
                                        double contrastThreshold,
                                        double edgeThreshold,
                                        double sigma,
@@ -66,26 +66,26 @@ bool SiftDetectorConfig::fromJSON(std::string &file)
     }
 }
 
-int SiftDetectorConfig::bestFeatures() const
+int32_t SiftDetectorConfig::bestFeatures() const
 {
     return mBestFeatures;
 }
 
-bool SiftDetectorConfig::setBestFeatures(int bestFeatures)
+bool SiftDetectorConfig::setBestFeatures(int32_t bestFeatures)
 {
     mBestFeatures = bestFeatures;
-    return setConfigParameter<int>(varName(mBestFeatures), bestFeatures);
+    return setConfigParameter<int32_t>(varName(mBestFeatures), bestFeatures);
 }
 
-int SiftDetectorConfig::octaves() const
+int32_t SiftDetectorConfig::octaves() const
 {
     return mOctaves;
 }
 
-bool SiftDetectorConfig::setOctaves(int octaves)
+bool SiftDetectorConfig::setOctaves(int32_t octaves)
 {
     mOctaves = octaves;
-    return setConfigParameter<int>(varName(mOctaves), octaves);
+    return setConfigParameter<int32_t>(varName(mOctaves), octaves);
 }
 
 double SiftDetectorConfig::contrastThresh() const

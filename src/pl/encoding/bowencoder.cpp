@@ -23,7 +23,7 @@ cv::Mat BOWEncodeingStep::runImpl(const bool debugMode, const cv::Mat &input, co
 
     cv::Mat encoded;
     std::vector<std::string> vocabs = config->vocabs();
-    int levels = config->pyramidLevels();
+    int32_t levels = config->pyramidLevels();
     for(size_t runs = 0; runs < vocabs.size(); ++runs) {
         std::string inputFile = vocabs[runs];
 
@@ -58,8 +58,8 @@ cv::Mat BOWEncodeingStep::trainImpl(const bool debugMode, const cv::Mat &input, 
         throw EncodingError(s.str(), currentMethod, currentLine);
     }
 
-    int clusters = config->clusters();
-    int maxIterations = config->iterations();
+    int32_t clusters = config->clusters();
+    int32_t maxIterations = config->iterations();
     std::vector<std::string> vocabs = config->vocabs();
     double epsilon = config->epsilon();
 

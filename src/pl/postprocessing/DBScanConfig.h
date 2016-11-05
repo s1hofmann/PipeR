@@ -13,8 +13,8 @@ public:
 
     virtual ~DBScanConfig();
 
-    int minPoints() const;
-    bool setMinPoints(int minPoints);
+    int32_t minPoints() const;
+    bool setMinPoints(int32_t minPoints);
 
     double neighborhoodSize() const;
     bool setNeighborhoodSize(double neighborhoodSize);
@@ -23,7 +23,7 @@ public:
     virtual bool fromJSON(std::string &file) override;
 
 private:
-    int mMinPoints;
+    int32_t mMinPoints;
     double mNeighborhoodSize;
 };
 

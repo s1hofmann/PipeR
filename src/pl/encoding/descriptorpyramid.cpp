@@ -5,11 +5,11 @@ namespace pl {
 
 std::vector<cv::Mat> DescriptorPyramid::build(const cv::Mat1f &descriptor)
 {
-    int maxIndex = totalElements(this->levels);
+    int32_t maxIndex = totalElements(this->levels);
 
     std::vector<cv::Mat> ret = {descriptor};
 
-    for(int i = 0; i < maxIndex; ++i) {
+    for(int32_t i = 0; i < maxIndex; ++i) {
         std::vector<cv::Mat> tmp = split(ret[i]);
         std::copy(tmp.begin(), tmp.end(), std::back_inserter(ret));
     }
@@ -18,12 +18,12 @@ std::vector<cv::Mat> DescriptorPyramid::build(const cv::Mat1f &descriptor)
 }
 
 
-int DescriptorPyramid::totalElements(int level)
+int32_t DescriptorPyramid::totalElements(int32_t level)
 {
-    int total = 0;
+    int32_t total = 0;
 
-    for(int i = 0; i < level; ++i) {
-        total += static_cast<int>(pow(4.0,i));
+    for(int32_t i = 0; i < level; ++i) {
+        total += static_cast<int32_t>(pow(4.0,i));
     }
 
     return total;
@@ -45,16 +45,16 @@ std::vector<cv::Mat> DescriptorPyramid::split(const cv::Mat &input)
     cv::Mat1i xIdx;
     cv::sortIdx(xCoords, xIdx, cv::SORT_ASCENDING + cv::SORT_EVERY_COLUMN);
 
-    int maxIdx = xIdx(xIdx.rows - 1);
-    int minIdx = xIdx(0);
-    float maxCoord = xCoords.at<float>(maxIdx);
-    float minCoord = xCoords.at<float>(minIdx);
+    int32_t maxIdx = xIdx(xIdx.rows - 1);
+    int32_t minIdx = xIdx(0);
+    float_t maxCoord = xCoords.at<float_t>(maxIdx);
+    float_t minCoord = xCoords.at<float_t>(minIdx);
 
-    int threshold = (maxCoord - minCoord)/2;
+    int32_t threshold = (maxCoord - minCoord)/2;
 
     cv::Mat left, right;
-    for(int i = 0; i < input.rows; ++i) {
-        if(xCoords.at<float>(xIdx(i)) < (minCoord + threshold)) {
+    for(int32_t i = 0; i < input.rows; ++i) {
+        if(xCoords.at<float_t>(xIdx(i)) < (minCoord + threshold)) {
             left.push_back(input.row(xIdx(i)));
         } else {
             right.push_back(input.row(xIdx(i)));
@@ -69,14 +69,14 @@ std::vector<cv::Mat> DescriptorPyramid::split(const cv::Mat &input)
 
     maxIdx = yIdx(yIdx.rows - 1);
     minIdx = yIdx(0);
-    maxCoord = yCoords.at<float>(maxIdx);
-    minCoord = yCoords.at<float>(minIdx);
+    maxCoord = yCoords.at<float_t>(maxIdx);
+    minCoord = yCoords.at<float_t>(minIdx);
 
     threshold = (maxCoord - minCoord)/2;
 
     cv::Mat top, bottom;
-    for(int i = 0; i < input.rows; ++i) {
-        if(yCoords.at<float>(yIdx(i)) < (minCoord + threshold)) {
+    for(int32_t i = 0; i < input.rows; ++i) {
+        if(yCoords.at<float_t>(yIdx(i)) < (minCoord + threshold)) {
             top.push_back(input.row(yIdx(i)));
         } else {
             bottom.push_back(input.row(yIdx(i)));

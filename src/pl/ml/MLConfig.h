@@ -10,14 +10,14 @@ class MLConfig : public ConfigContainer
 public:
     virtual ~MLConfig();
 
-    int folds() const;
-    void setFolds(int folds);
+    int32_t folds() const;
+    void setFolds(int32_t folds);
 
 protected:
     MLConfig(const std::string &identifier,
-             const int folds = 5);
+             const int32_t folds = 5);
 
-    int mFolds;
+    int32_t mFolds;
 };
 
 

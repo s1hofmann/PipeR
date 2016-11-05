@@ -16,8 +16,8 @@ public:
     VesselMask();
 
     VesselMask(const std::string &identifier = "vessel",
-               const int octaves = 3,
-               const int stages = 3,
+               const int32_t octaves = 3,
+               const int32_t stages = 3,
                const double sigma = 1,
                const double beta = 0.5,
                const double c = 15,
@@ -34,8 +34,8 @@ public:
     std::string identifier() const;
 
 private:
-    int mOctaves;
-    int mStages;
+    int32_t mOctaves;
+    int32_t mStages;
 
     double mSigma;
     double mBeta;

@@ -36,7 +36,7 @@ cv::Mat DBScanFilter::trainImpl(const bool debugMode, const cv::Mat &input, cons
     }
 
     DbScan cl;
-    std::vector<std::set<int>> clusters;
+    std::vector<std::set<int32_t>> clusters;
     clusters = cl.cluster(input.colRange(input.cols - 2,
                                          input.cols),
                           config->minPoints(),
@@ -51,7 +51,7 @@ cv::Mat DBScanFilter::trainImpl(const bool debugMode, const cv::Mat &input, cons
     //Loop through all clusters, assemble descriptors and classify them
     for(size_t cluster = 0; cluster < clusters.size(); ++cluster) {
         cv::Mat1f clusterDescriptor(clusters[cluster].size(), input.cols);
-        int i = 0;
+        int32_t i = 0;
         for(auto idx = clusters[cluster].begin(); idx != clusters[cluster].end(); ++idx) {
             input.row(*idx).copyTo(clusterDescriptor.row(i));
             ++i;

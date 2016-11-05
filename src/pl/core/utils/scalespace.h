@@ -19,8 +19,8 @@ public:
      * @param _n_ocataves
      * @param _n_sublevels
      */
-    ScaleSpace(int octaves,
-               int sublevels)
+    ScaleSpace(int32_t octaves,
+               int32_t sublevels)
         : mOctaves(octaves),
           mSublevels(sublevels)
     {
@@ -46,20 +46,20 @@ public:
      * @param s
      * @return
      */
-    double getScaleFactor(int o, int s) const {
-        return std::pow(2, o + (float) s / (float) mSublevels );
+    double getScaleFactor(int32_t o, int32_t s) const {
+        return std::pow(2, o + (float_t) s / (float_t) mSublevels );
     }
 
 protected:
     /**
      * @brief mOctaves
      */
-    int mOctaves;
+    int32_t mOctaves;
 
     /**
      * @brief mSublevels
      */
-    int mSublevels;
+    int32_t mSublevels;
 };
 
 /**
@@ -73,8 +73,8 @@ public:
      * @param octaves
      * @param sublevels
      */
-    LinearScaleSpace(int octaves = 2,
-                     int sublevels = 3)
+    LinearScaleSpace(int32_t octaves = 2,
+                     int32_t sublevels = 3)
         : ScaleSpace(octaves, sublevels)
     {
 
@@ -104,8 +104,8 @@ public:
      * @param scaleOctave
      * @param scaleSublevel
      */
-    GaussianScaleSpace(int octaves = 4,
-                       int sublevels = 3,
+    GaussianScaleSpace(int32_t octaves = 4,
+                       int32_t sublevels = 3,
                        double sigmaBase = 1.6,
                        bool scaleOctave = true,
                        bool scaleSublevel = false)

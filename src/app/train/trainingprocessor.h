@@ -11,9 +11,9 @@
 class TrainingProcessor
 {
 public:
-    TrainingProcessor(int argc, char *argv[]);
+    TrainingProcessor(int32_t argc, char *argv[]);
 
-    int run();
+    int32_t run();
 
     enum ReturnValues {
         RETURN_SUCCESS,

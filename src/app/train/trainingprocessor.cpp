@@ -1,6 +1,6 @@
 #include "trainingprocessor.h"
 
-TrainingProcessor::TrainingProcessor(int argc, char *argv[])
+TrainingProcessor::TrainingProcessor(int32_t argc, char *argv[])
 {
     pl::ArgumentProcessor ap("train");
     ap.addArgument("conf", "Pipeline config.", false);
@@ -22,7 +22,7 @@ TrainingProcessor::TrainingProcessor(int argc, char *argv[])
     }
 }
 
-int TrainingProcessor::run()
+int32_t TrainingProcessor::run()
 {
     // Create pipeline config first
     cv::Ptr<pl::PipelineConfig> pipeCfg = new pl::PipelineConfig("global");
@@ -101,7 +101,7 @@ int TrainingProcessor::run()
         trainPipe.showPipeline();
         pl::FileUtil fu;
 
-        std::vector<std::pair<std::string, int>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
+        std::vector<std::pair<std::string, int32_t>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
         trainPipe.train(filesWithLabels);
     } catch(const pl::ClusterError &e) {
         console.report(e.what());

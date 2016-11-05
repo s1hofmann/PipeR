@@ -19,8 +19,8 @@ class FileSummary
 {
 public:
     FileSummary(const std::string &fileName = std::string(),
-                const int width = -1,
-                const int height = -1,
+                const int32_t width = -1,
+                const int32_t height = -1,
                 const decorationNiveau niv = decorationNiveau::NIVEAU_NONE);
 
     ~FileSummary() { }
@@ -28,16 +28,16 @@ public:
     inline std::string getFileName() const { return fileName; }
     inline void setFileName(const std::string &file) { fileName = file; }
 
-    inline int getImageWidth() const { return imageWidth; }
-    inline void setImageWidth(const int width) { imageWidth = width; }
+    inline int32_t getImageWidth() const { return imageWidth; }
+    inline void setImageWidth(const int32_t width) { imageWidth = width; }
 
-    inline int getImageHeight() const { return imageHeight; }
-    inline void setImageHeight(const int height) { imageHeight = height; }
+    inline int32_t getImageHeight() const { return imageHeight; }
+    inline void setImageHeight(const int32_t height) { imageHeight = height; }
 
     inline decorationNiveau getDecorationNiveau() const { return niveau; }
     inline void setDecorationNiveau(const decorationNiveau niv) { niveau = niv; }
 
-    inline int hasTextAreas() const { return textAreas.size(); }
+    inline int32_t hasTextAreas() const { return textAreas.size(); }
     inline std::vector<cv::Rect> getTextAreas() const { return textAreas; }
     inline void addTextArea(const cv::Rect &area) { textAreas.push_back(area); }
 
@@ -56,8 +56,8 @@ private:
 
     std::string fileName;
 
-    int imageWidth;
-    int imageHeight;
+    int32_t imageWidth;
+    int32_t imageHeight;
 };
 
 

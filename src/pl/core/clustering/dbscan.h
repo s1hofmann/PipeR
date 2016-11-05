@@ -11,39 +11,39 @@ class DbScan
 public:
     DbScan();
 
-    std::vector<std::set<int>> cluster(const cv::Mat1f &data,
-                                       const int minPoints,
-                                       const int neighborhoodSize = -1);
+    std::vector<std::set<int32_t>> cluster(const cv::Mat1f &data,
+                                       const int32_t minPoints,
+                                       const int32_t neighborhoodSize = -1);
 
 private:
-    std::set<int> queryNeighborhood(int centerIdx);
+    std::set<int32_t> queryNeighborhood(int32_t centerIdx);
 
-    void expandCluster(int currentIdx,
-                       std::set<int> &neighboringPoints,
+    void expandCluster(int32_t currentIdx,
+                       std::set<int32_t> &neighboringPoints,
                        double neighborhoodSize,
-                       int clusterIdx,
-                       int minPoints);
+                       int32_t clusterIdx,
+                       int32_t minPoints);
 
-    bool isAssigned(const int idx);
-    void assign(const int idx);
+    bool isAssigned(const int32_t idx);
+    void assign(const int32_t idx);
 
-    bool isNoise(const int idx);
-    void setNoise(const int idx);
+    bool isNoise(const int32_t idx);
+    void setNoise(const int32_t idx);
 
-    bool isVisited(const int idx);
-    void setVisited(const int idx);
+    bool isVisited(const int32_t idx);
+    void setVisited(const int32_t idx);
 
     void init(const double neighborhoodSize);
 
     double estimate(const cv::Mat &input);
 
-    std::unordered_map<int, std::set<int>> distanceMatrix;
+    std::unordered_map<int32_t, std::set<int32_t>> distanceMatrix;
 
-    std::vector<std::set<int>> clusters;
+    std::vector<std::set<int32_t>> clusters;
 
     cv::Mat1f mData;
-    std::unordered_map<int, int> visited;
-    std::unordered_map<int, int> noise;
-    std::unordered_map<int, int> alreadyAssigned;
+    std::unordered_map<int32_t, int32_t> visited;
+    std::unordered_map<int32_t, int32_t> noise;
+    std::unordered_map<int32_t, int32_t> alreadyAssigned;
 };
 

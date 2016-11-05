@@ -11,9 +11,9 @@
 class OptimizationProcessor
 {
 public:
-    OptimizationProcessor(int argc, char *argv[]);
+    OptimizationProcessor(int32_t argc, char *argv[]);
 
-    int run();
+    int32_t run();
 
     enum ReturnValues {
         RETURN_SUCCESS,

@@ -31,8 +31,8 @@ public:
 
     virtual bool fromJSON(std::string &file);
 
-    unsigned int maxDescriptors() const;
-    bool setMaxDescriptors(unsigned int value);
+    uint32_t maxDescriptors() const;
+    bool setMaxDescriptors(uint32_t value);
 
     bool rebuildPca() const;
     bool setRebuildPca(bool rebuildPca);
@@ -52,8 +52,8 @@ public:
     std::string outputDirectory() const;
     bool setOutputDirectory(const std::string &outputDirectory);
 
-    int randomSeed() const;
-    bool setRandomSeed(int randomSeed);
+    int32_t randomSeed() const;
+    bool setRandomSeed(int32_t randomSeed);
 
 private:
     /**
@@ -79,7 +79,7 @@ private:
     /**
      * @brief maxDescriptors
      */
-    unsigned int mMaxDescriptors;
+    uint32_t mMaxDescriptors;
 
     /**
      * @brief mRebuildDescriptors
@@ -109,7 +109,7 @@ private:
     /**
      * @brief mRandomSeed
      */
-    int mRandomSeed;
+    int32_t mRandomSeed;
 };
 
 

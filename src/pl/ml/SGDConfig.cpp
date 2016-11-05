@@ -13,7 +13,7 @@ SGDConfig::SGDConfig(const std::string &identifier,
                      vl_size iterations,
                      vl_size maxIterations,
                      const double bias,
-                     const int folds,
+                     const int32_t folds,
                      const bool platt,
                      const bool binary)
     :
@@ -84,7 +84,7 @@ vl_size SGDConfig::iterations() const
 bool SGDConfig::setIterations(const vl_size &iterations)
 {
     mIterations = iterations;
-    return setConfigParameter<int>(varName(mIterations), static_cast<int>(iterations));
+    return setConfigParameter<int32_t>(varName(mIterations), static_cast<int32_t>(iterations));
 }
 
 
@@ -97,7 +97,7 @@ vl_size SGDConfig::maxIterations() const
 bool SGDConfig::setMaxIterations(const vl_size &maxIterations)
 {
     mMaxIterations = maxIterations;
-    return setConfigParameter<int>(varName(mMaxIterations), static_cast<int>(maxIterations));
+    return setConfigParameter<int32_t>(varName(mMaxIterations), static_cast<int32_t>(maxIterations));
 }
 
 
@@ -188,7 +188,7 @@ bool SGDConfig::fromJSON(std::string &file)
 
         if(!classifiers.empty()) {
             mClassifierFiles.clear();
-            for(unsigned int idx = 0; idx < classifiers.size(); ++idx) {
+            for(uint32_t idx = 0; idx < classifiers.size(); ++idx) {
                 mClassifierFiles.push_back(classifiers[idx].asString());
             }
         } else {
@@ -199,7 +199,7 @@ bool SGDConfig::fromJSON(std::string &file)
 
         if(!lambdas.empty()) {
             mLambdas.clear();
-            for(unsigned int idx = 0; idx < lambdas.size(); ++idx) {
+            for(uint32_t idx = 0; idx < lambdas.size(); ++idx) {
                 mLambdas.push_back(lambdas[idx].asDouble());
             }
         } else {
@@ -210,7 +210,7 @@ bool SGDConfig::fromJSON(std::string &file)
 
         if(!learningRates.empty()) {
             mLearningRates.clear();
-            for(unsigned int idx = 0; idx < learningRates.size(); ++idx) {
+            for(uint32_t idx = 0; idx < learningRates.size(); ++idx) {
                 mLearningRates.push_back(learningRates[idx].asDouble());
             }
         } else {
@@ -221,7 +221,7 @@ bool SGDConfig::fromJSON(std::string &file)
 
         if(!multipliers.empty()) {
             mMultipliers.clear();
-            for(unsigned int idx = 0; idx < multipliers.size(); ++idx) {
+            for(uint32_t idx = 0; idx < multipliers.size(); ++idx) {
                 mMultipliers.push_back(multipliers[idx].asDouble());
             }
         } else {

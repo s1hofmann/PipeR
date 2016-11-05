@@ -14,10 +14,10 @@ public:
     VladConfig(const std::string &identifier,
                const std::vector<normStrategy> &normalization = std::vector<normStrategy>(),
                const std::vector<std::string> &vocabs = std::vector<std::string>(),
-               const int clusters = 64,
-               const int iterations = 100,
+               const int32_t clusters = 64,
+               const int32_t iterations = 100,
                const double epsilon = 0.001,
-               const int pyramidLevels = 1);
+               const int32_t pyramidLevels = 1);
 
     virtual ~VladConfig();
 
@@ -26,14 +26,14 @@ public:
     // ConfigContainer interface
     virtual bool fromJSON(std::string &file);
 
-    bool setPyramidLevels(int pyramidLevels);
-    int pyramidLevels() const;
+    bool setPyramidLevels(int32_t pyramidLevels);
+    int32_t pyramidLevels() const;
     bool setEpsilon(double epsilon);
     double epsilon() const;
-    bool setIterations(int iterations);
-    int iterations() const;
-    bool setClusters(int clusters);
-    int clusters() const;
+    bool setIterations(int32_t iterations);
+    int32_t iterations() const;
+    bool setClusters(int32_t clusters);
+    int32_t clusters() const;
     bool setPath(const std::string &path);
     std::string path() const;
     bool setVocabs(const std::vector<std::string> &vocabs);
@@ -44,10 +44,10 @@ private:
     std::vector<normStrategy> mNormStrategies;
     std::vector<std::string> mVocabs;
     std::string mPath;
-    int mClusters;
-    int mIterations;
+    int32_t mClusters;
+    int32_t mIterations;
     double mEpsilon;
-    int mPyramidLevels;
+    int32_t mPyramidLevels;
 };
 
 

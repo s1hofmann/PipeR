@@ -17,16 +17,16 @@ void Shuffler::shuffle(const cv::Mat &descriptors,
     shuffledDescriptors.create(descriptors.size(), CV_64FC1);
     shuffledLabels.create(labels.size(), CV_64FC1);
 
-    std::vector<int> idx = Range<int>::random(0, descriptors.rows);
+    std::vector<int32_t> idx = Range<int32_t>::random(0, descriptors.rows);
 
 #if USE_TBB
-    tbb::parallel_for(int(0), descriptors.rows, [&](int i) {
+    tbb::parallel_for(int32_t(0), descriptors.rows, [&](int32_t i) {
         descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
         labels.row(i).copyTo(shuffledLabels.row(idx[i]));
     }
     );
 #else
-    for(int i = 0; i < descriptors.rows; ++i) {
+    for(int32_t i = 0; i < descriptors.rows; ++i) {
         descriptors.row(i).copyTo(shuffledDescriptors.row(idx[i]));
         labels.row(i).copyTo(shuffledLabels.row(idx[i]));
     }
@@ -34,14 +34,14 @@ void Shuffler::shuffle(const cv::Mat &descriptors,
 }
 
 void Shuffler::shuffle(const std::vector<std::string> &files,
-                       const std::vector<int> &labels,
+                       const std::vector<int32_t> &labels,
                        std::vector<std::string> &shuffledFiles,
-                       std::vector<int> &shuffledLabels)
+                       std::vector<int32_t> &shuffledLabels)
 {
     shuffledFiles.resize(files.size());
     shuffledLabels.resize(labels.size());
 
-    std::vector<int> idx = Range<int>::random(0, files.size());
+    std::vector<int32_t> idx = Range<int32_t>::random(0, files.size());
 #if USE_TBB
         tbb::parallel_for(size_t(0), files.size(), [&](size_t i) {
             shuffledFiles[i] = files[idx[i]];
@@ -49,7 +49,7 @@ void Shuffler::shuffle(const std::vector<std::string> &files,
         }
         );
 #else
-    for(int i = 0; i < files.size(); ++i) {
+    for(int32_t i = 0; i < files.size(); ++i) {
         shuffledFiles[i] = files[idx[i]];
         shuffledLabels[i] = labels[idx[i]];
     }

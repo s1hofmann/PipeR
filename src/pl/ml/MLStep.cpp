@@ -29,9 +29,9 @@ cv::Mat1d MLStep::calculateWeights(const cv::Mat1d &labels) const
     cv::Mat1d weights(labels.size());
 
     for(size_t idx = 0; idx < elems; ++idx) {
-        if(labels.at<int>(idx) == 1) {
+        if(labels.at<int32_t>(idx) == 1) {
             weights.at<double>(idx) = posWeight;
-        } else if(labels.at<int>(idx) == -1) {
+        } else if(labels.at<int32_t>(idx) == -1) {
             weights.at<double>(idx) = negWeight;
         }
     }

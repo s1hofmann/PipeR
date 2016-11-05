@@ -12,9 +12,9 @@
 class MomProcessor
 {
 public:
-    MomProcessor(int argc, char *argv[]);
+    MomProcessor(int32_t argc, char *argv[]);
 
-    int run();
+    int32_t run();
 
     enum ReturnValues {
         RETURN_SUCCESS,
@@ -31,9 +31,9 @@ public:
 
 private:
     std::unordered_map<std::string, std::string> mArguments;
-    int mWindowSize;
-    int mStepSize;
+    int32_t mWindowSize;
+    int32_t mStepSize;
     double mThreshold;
-    int mOctaves;
-    int mStages;
+    int32_t mOctaves;
+    int32_t mStages;
 };

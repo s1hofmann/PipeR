@@ -1,8 +1,8 @@
 #include "kmeanscluster.h"
 
 void KMeansCluster::cluster(cv::Mat data,
-                            int clusters,
-                            int maxIterations,
+                            int32_t clusters,
+                            int32_t maxIterations,
                             double epsilon)
 {
     cv::Mat labels;
@@ -21,7 +21,7 @@ void KMeansCluster::cluster(cv::Mat data,
 }
 
 
-int KMeansCluster::dump(const std::string & file_name)
+int32_t KMeansCluster::dump(const std::string & file_name)
 {
     cv::FileStorage fs(file_name, cv::FileStorage::WRITE);
 
@@ -35,7 +35,7 @@ int KMeansCluster::dump(const std::string & file_name)
     return 0;
 }
 
-int KMeansCluster::load(const std::string & file_name)
+int32_t KMeansCluster::load(const std::string & file_name)
 {
     cv::FileStorage fs(file_name, cv::FileStorage::READ);
 

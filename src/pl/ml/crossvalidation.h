@@ -11,8 +11,8 @@ class CrossValidation
 public:
     CrossValidation();
 
-    static std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>> createFolds(const unsigned long &length,
-                                                                                                                 const unsigned int folds);
+    static std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> createFolds(const unsigned long &length,
+                                                                                                                 const uint32_t folds);
 };
 
 
@@ -21,8 +21,8 @@ class CrossValidationContainer
 public:
     CrossValidationContainer();
 
-    std::vector<std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> trainingData();
-    std::vector<std::pair<std::vector<unsigned int>, std::vector<unsigned int>>> testData();
+    std::vector<std::pair<std::vector<uint32_t>, std::vector<uint32_t>>> trainingData();
+    std::vector<std::pair<std::vector<uint32_t>, std::vector<uint32_t>>> testData();
 };
 
 }

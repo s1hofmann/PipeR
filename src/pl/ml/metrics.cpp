@@ -9,7 +9,7 @@ Metrics::Metrics()
 
 }
 
-unsigned int Metrics::truePositives(const cv::Mat1d predictions, const cv::Mat1d labels)
+uint32_t Metrics::truePositives(const cv::Mat1d predictions, const cv::Mat1d labels)
 {
     double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
@@ -20,7 +20,7 @@ unsigned int Metrics::truePositives(const cv::Mat1d predictions, const cv::Mat1d
     return cv::countNonZero(tp);
 }
 
-unsigned int Metrics::falsePositives(const cv::Mat1d predictions, const cv::Mat1d labels)
+uint32_t Metrics::falsePositives(const cv::Mat1d predictions, const cv::Mat1d labels)
 {
     double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
@@ -32,7 +32,7 @@ unsigned int Metrics::falsePositives(const cv::Mat1d predictions, const cv::Mat1
     return cv::countNonZero(tp);
 }
 
-unsigned int Metrics::trueNegatives(const cv::Mat1d predictions, const cv::Mat1d labels)
+uint32_t Metrics::trueNegatives(const cv::Mat1d predictions, const cv::Mat1d labels)
 {
     double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
@@ -44,7 +44,7 @@ unsigned int Metrics::trueNegatives(const cv::Mat1d predictions, const cv::Mat1d
     return cv::countNonZero(tp);
 }
 
-unsigned int Metrics::falseNegatives(const cv::Mat1d predictions, const cv::Mat1d labels)
+uint32_t Metrics::falseNegatives(const cv::Mat1d predictions, const cv::Mat1d labels)
 {
     double negativeLabel, positiveLabel;
     cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
