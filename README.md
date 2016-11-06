@@ -25,7 +25,7 @@ Since I like to design frameworks, I decided to build a modular framework for pa
   - [x] I/O
   - [x] Commandline Arguments
   - [x] k-fold crossvalidation
-  - [ ] Platt scaling
+  - [x] Platt scaling
 
 - [ ] Core
   - [x] Clustering
@@ -42,11 +42,16 @@ Since I like to design frameworks, I decided to build a modular framework for pa
     - [x] SIFT
     - [ ] Zernike Moments
     - [ ] OTC
-  - [ ] Machine Learning
+  - [x] Machine Learning
     - [x] Linear SVM
   - [ ] Preprocessing
     - [x] Vesselfilter
     - [ ] Binarization
+  - [x] Postprocessing
+    - [x] Density Based Filtering
+
+- [ ] GUI
+    - [ ] User Interface for Pipeline Tools
 
 
 This list is by no means complete and will be extended in the future.
