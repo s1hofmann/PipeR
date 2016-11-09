@@ -5,8 +5,20 @@
 #include "app/mom/momprocessor.h"
 #include "app/train/trainingprocessor.h"
 #include "app/optimize/optimizationprocessor.h"
+#include "app/predict/predictor.h"
+
+#ifdef ENABLE_UI
+#include <QApplication>
+#include "ui/pipelineconfigwindow.h"
+#endif
 
 int32_t main(int32_t argc, char *argv[]) {
+#ifdef ENABLE_UI
+    QApplication appl(argc, argv);
+    PipelineConfigWindow a;
+    a.show();
+    return appl.exec();
+#else
     std::string app;
     // TODO: Let cmake take care of this list of enabled apps
     std::vector<std::string> apps = {"mom", "train", "optimize"};
@@ -52,7 +64,18 @@ int32_t main(int32_t argc, char *argv[]) {
         }
     }
 #endif
+#ifdef APP_PREDICT
+    if(!app.compare("predict") || !app.compare("PREDICT")) {
+        try {
+            Predictor p(argc, argv);
+            return p.run();
+        } catch(pl::CommandLineError) {
+            return OptimizationProcessor::ReturnValues::RETURN_COMMANDLINE_ERROR;
+        }
+    }
+#endif
 
     std::cerr << "Unknow application '" << app << "'. Maybe it's disabled?" << std::endl;
     return -1;
+#endif
 }

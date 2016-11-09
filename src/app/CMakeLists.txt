@@ -5,6 +5,9 @@ option (TRAIN
 option (OPT
         "Enable OPTIMIZE application?" ON)
 
+option (PREDICT
+        "Enable PREDICT application?" ON)
+
 option (MOM
         "Enable MOM application?" ON)
 
@@ -23,6 +26,14 @@ if(OPT)
     set (EXTRA_LIBS ${EXTRA_LIBS} opt)
     set (APPS ${APPS} APP_OPT)
 endif(OPT)
+
+if(PREDICT)
+    add_definitions(-DAPP_PREDICT)
+    include_directories ("./predict")
+    add_subdirectory(./predict)
+    set (EXTRA_LIBS ${EXTRA_LIBS} predict)
+    set (APPS ${APPS} APP_PREDICT)
+endif(PREDICT)
 
 if(MOM)
     add_definitions(-DAPP_MOM)
