@@ -343,8 +343,17 @@ cv::Mat SGDStep::predictImpl(const bool debugMode,
     }
 
     if(config->binary()) {
-        results.setTo(1, results > 0);
-        results.setTo(-1, results < 0);
+        if(config->plattScale()) {
+            double min, max;
+            cv::Point minIdx, maxIdx;
+            cv::minMaxLoc(results, &min, &max, &minIdx, &maxIdx);
+            int32_t best = maxIdx.x;
+            results.setTo(0);
+            results.at<double>(best) = 1;
+        } else {
+            results.setTo(1, results > 0);
+            results.setTo(-1, results < 0);
+        }
     }
 
     return results;
