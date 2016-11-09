@@ -188,6 +188,20 @@ public:
                                  const std::string &extension,
                                  const std::string &suffix = "");
 
+    /**
+     * @brief isFile
+     * @param path
+     * @return
+     */
+    static bool isFile(const std::string &path);
+
+    /**
+     * @brief isDir
+     * @param path
+     * @return
+     */
+    static bool isDir(const std::string &path);
+
 private:
     /**
      * @brief examineDirectory Examines the contents of a directory and returns them as \link{std::vector}<\link{std::string}>

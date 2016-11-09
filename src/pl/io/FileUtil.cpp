@@ -316,6 +316,20 @@ std::string FileUtil::buildPath(const std::string &path,
     return info.absoluteFilePath().toStdString();
 }
 
+bool FileUtil::isFile(const std::string &path)
+{
+    QFileInfo fi(QString::fromStdString(path));
+
+    return fi.isFile();
+}
+
+bool FileUtil::isDir(const std::string &path)
+{
+    QFileInfo fi(QString::fromStdString(path));
+
+    return fi.isDir();
+}
+
 std::vector<std::pair<cv::Mat, int32_t>> FileUtil::loadImagesFromLabelFile(const std::string &labelFile)
 {
     FileReader<IMG> reader;
