@@ -98,7 +98,9 @@ int32_t TrainingProcessor::run()
             trainPipe.addClassificationStep(new pl::SGDStep(sgd));
         }
 
-        trainPipe.showPipeline();
+        if(debugMode) {
+            trainPipe.showPipeline();
+        }
         pl::FileUtil fu;
 
         std::vector<std::pair<std::string, int32_t>> filesWithLabels = fu.getFilesFromLabelFile(mArguments["labels"]);
