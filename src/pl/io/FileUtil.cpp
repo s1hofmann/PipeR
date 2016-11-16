@@ -61,6 +61,11 @@ std::vector<std::pair<std::string, int32_t>> FileUtil::getFilesFromLabelFile(con
               QStringList parts = line.split(" ");
               if(parts.size() == 2) {
                   files.push_back(std::make_pair(parts[0].toStdString(), parts[1].toInt()));
+              } else if(parts.size() > 2) {
+                  int label = parts.back().toInt();
+                  parts.pop_back();
+                  QString filename = parts.join(" ");
+                  files.push_back(std::make_pair(filename.toStdString(), label));
               } else {
                   warning("Incompatible lable format. Skipping.");
                   continue;
