@@ -462,6 +462,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int3
                     fileLog.report("Unable to save descriptor", descriptorFile, ". Skipping!");
                     continue;
                 } else {
+                    fileLog.report("Wrote descriptor", descriptorFile, ".");
                     continue;
                 }
             } else {
