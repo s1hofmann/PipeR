@@ -448,17 +448,16 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int3
                     fileLog.debug("Truncating augmentation data.");
                     consoleLog.debug("Truncating augmentation data.");
                     postProcessed = postProcessed.colRange(0, postProcessed.cols - 2);
-                } else {
-                    continue;
                 }
 
                 QFileInfo info(QString::fromStdString(input[idx].first));
                 std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
-                if(!FileUtil::saveDescriptorWithLabel(postProcessed,
-                                                      input[idx].second,
-                                                      mPipelineConfig->descriptorDir(),
-                                                      descriptorFile,
-                                                      mPipelineConfig->descriptorLabelFile())) {
+                bool saved = FileUtil::saveDescriptorWithLabel(postProcessed,
+                                                               input[idx].second,
+                                                               mPipelineConfig->descriptorDir(),
+                                                               descriptorFile,
+                                                               mPipelineConfig->descriptorLabelFile());
+                if(!saved) {
                     fileLog.report("Unable to save descriptor", descriptorFile, ". Skipping!");
                     continue;
                 } else {
