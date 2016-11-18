@@ -145,6 +145,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<double> lambdas = config->lambdas();
     std::vector<double> learningRates = config->learningRates();
     std::vector<double> multipliers = config->multipliers();
+    std::vector<std::string> losses = config->loss();
 
     if(!checkRangeProperties<double>(lambdas) || !checkRangeProperties<double>(learningRates) || !checkRangeProperties<double>(multipliers)) {
         throw MLError("Config parameters do not span a valid range.", currentMethod, currentLine);
@@ -169,106 +170,113 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     double bestLearningRate = 0;
     double bestMultiplier = 0;
     double bestF = 0;
+    std::string bestLoss;
 
     std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
     std::vector<cv::Mat1d> trainingsLabelCache(config->folds());
     std::vector<cv::Mat1d> testDescriptorCache(config->folds());
     std::vector<cv::Mat1d> testLabelCache(config->folds());
 
-    for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
-        for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
-            for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
-                if(debugMode) {
-                    debug("Lambda:", lambda);
-                    debug("Learning rate:", lr);
-                    debug("Multiplier:", mul);
-                }
-
-                double avgF = 0;
-
-                // Iterate over folds
-                for(size_t fold = 0; fold < config->folds(); ++fold) {
-                    if(trainingsDescriptorCache[fold].empty() ||
-                       trainingsLabelCache[fold].empty()) {
-                        if(debugMode) { debug("Rebuilding training cache."); }
-                        cv::Mat tmpDesc;
-                        cv::Mat tmpIdx;
-                        for(auto idx : indices.first[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
-                        }
-                        if(tmpDesc.type() != CV_64F) {
-                            tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
-                        } else {
-                            trainingsDescriptorCache[fold] = tmpDesc;
-                        }
-                        if(tmpIdx.type() != CV_64F) {
-                            tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
-                        } else {
-                            trainingsLabelCache[fold] = tmpIdx;
-                        }
-                    }
-                    if(testDescriptorCache[fold].empty() ||
-                       testLabelCache[fold].empty()) {
-                        if(debugMode) { debug("Rebuilding test cache."); }
-                        cv::Mat tmpDesc;
-                        cv::Mat tmpIdx;
-                        for(auto idx : indices.second[fold]) {
-                            tmpDesc.push_back(data[idx].first);
-                            tmpIdx.push_back(data[idx].second);
-                        }
-                        if(tmpDesc.type() != CV_64F) {
-                            tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
-                        } else {
-                            testDescriptorCache[fold] = tmpDesc;
-                        }
-                        if(tmpIdx.type() != CV_64F) {
-                            tmpIdx.convertTo(testLabelCache[fold], CV_64F);
-                        } else {
-                            testLabelCache[fold] = tmpIdx;
-                        }
+    for(std::string loss : losses) {
+        for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
+            for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
+                for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
+                    if(debugMode) {
+                        debug("Lambda:", lambda);
+                        debug("Learning rate:", lr);
+                        debug("Multiplier:", mul);
                     }
 
-                    if(debugMode) { debug("Setting up SVM."); }
-                    cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
-                                                                                            trainingsDescriptorCache[fold],
-                                                                                            lambda);
+                    double avgF = 0;
 
-                    if(debugMode) { debug("Setting parameters."); }
-                    // Bias learning rate and multiplier
-                    solver->setBiasLearningRate(lr);
-                    solver->setBiasMultiplier(mul);
-                    // Sample weights
-                    cv::Mat1d weights = calculateWeights(trainingsLabelCache[fold]);
-                    solver->setWeights(weights);
+                    // Iterate over folds
+                    for(size_t fold = 0; fold < config->folds(); ++fold) {
+                        if(trainingsDescriptorCache[fold].empty() ||
+                           trainingsLabelCache[fold].empty()) {
+                            if(debugMode) { debug("Rebuilding training cache."); }
+                            cv::Mat tmpDesc;
+                            cv::Mat tmpIdx;
+                            for(auto idx : indices.first[fold]) {
+                                tmpDesc.push_back(data[idx].first);
+                                tmpIdx.push_back(data[idx].second);
+                            }
+                            if(tmpDesc.type() != CV_64F) {
+                                tmpDesc.convertTo(trainingsDescriptorCache[fold], CV_64F);
+                            } else {
+                                trainingsDescriptorCache[fold] = tmpDesc;
+                            }
+                            if(tmpIdx.type() != CV_64F) {
+                                tmpIdx.convertTo(trainingsLabelCache[fold], CV_64F);
+                            } else {
+                                trainingsLabelCache[fold] = tmpIdx;
+                            }
+                        }
+                        if(testDescriptorCache[fold].empty() ||
+                           testLabelCache[fold].empty()) {
+                            if(debugMode) { debug("Rebuilding test cache."); }
+                            cv::Mat tmpDesc;
+                            cv::Mat tmpIdx;
+                            for(auto idx : indices.second[fold]) {
+                                tmpDesc.push_back(data[idx].first);
+                                tmpIdx.push_back(data[idx].second);
+                            }
+                            if(tmpDesc.type() != CV_64F) {
+                                tmpDesc.convertTo(testDescriptorCache[fold], CV_64F);
+                            } else {
+                                testDescriptorCache[fold] = tmpDesc;
+                            }
+                            if(tmpIdx.type() != CV_64F) {
+                                tmpIdx.convertTo(testLabelCache[fold], CV_64F);
+                            } else {
+                                testLabelCache[fold] = tmpIdx;
+                            }
+                        }
 
-                    if(debugMode) { debug("Training..."); }
-                    solver->train();
+                        if(debugMode) { debug("Setting up SVM."); }
+                        cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
+                                                                                                trainingsDescriptorCache[fold],
+                                                                                                lambda);
 
-                    cv::Mat1d predictions = solver->predict(testDescriptorCache[fold]);
-                    double negativeLabel, positiveLabel;
-                    cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
-                    predictions.setTo(negativeLabel, predictions < 0);
-                    predictions.setTo(positiveLabel, predictions >= 0);
-                    predictions = predictions.t();
+                        if(debugMode) { debug("Setting parameters."); }
+                        // Bias learning rate and multiplier
+                        solver->setBiasLearningRate(lr);
+                        solver->setBiasMultiplier(mul);
+                        // Sample weights
+                        cv::Mat1d weights = calculateWeights(trainingsLabelCache[fold]);
+                        solver->setWeights(weights);
 
-                    double f = Metrics::f1(predictions, testLabelCache[fold]);
-                    if(debugMode) { debug("F1 score:", f); }
-                    avgF += f;
-                }
-                avgF /= config->folds();
+                        solver->setLoss(config->lossStrToType(loss));
 
-                if(avgF > bestF) {
-                    bestLambda = lambda;
-                    bestLearningRate = lr;
-                    bestMultiplier = mul;
-                    bestF = avgF;
+                        if(debugMode) { debug("Training..."); }
+                        solver->train();
+
+                        cv::Mat1d predictions = solver->predict(testDescriptorCache[fold]);
+                        double negativeLabel, positiveLabel;
+                        cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
+                        predictions.setTo(negativeLabel, predictions < 0);
+                        predictions.setTo(positiveLabel, predictions >= 0);
+                        predictions = predictions.t();
+
+                        double f = Metrics::f1(predictions, testLabelCache[fold]);
+                        if(debugMode) { debug("F1 score:", f); }
+                        avgF += f;
+                    }
+                    avgF /= config->folds();
+
+                    if(avgF > bestF) {
+                        bestLoss = loss;
+                        bestLambda = lambda;
+                        bestLearningRate = lr;
+                        bestMultiplier = mul;
+                        bestF = avgF;
+                    }
                 }
             }
         }
     }
 
     debug("Best F1 score:", bestF);
+    debug("Best loss:", bestLoss);
     debug("Best lambda:", bestLambda);
     debug("Best learning rate:", bestLearningRate);
     debug("Best multiplier:", bestMultiplier);
@@ -276,6 +284,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     config->setLambdas(std::vector<double>({bestLambda}));
     config->setLearningRates(std::vector<double>({bestLearningRate}));
     config->setMultipliers(std::vector<double>({bestMultiplier}));
+    config->setLoss(std::vector<std::string>({bestLoss}));
 
     return cv::Mat();
 }

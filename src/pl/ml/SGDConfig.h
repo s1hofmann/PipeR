@@ -21,7 +21,8 @@ public:
               const double bias = 0,
               const int32_t folds = 5,
               const bool platt = false,
-              const bool binary = false);
+              const bool binary = false,
+              const std::string &loss = "hinge");
 
     virtual ~SGDConfig();
 
@@ -63,10 +64,16 @@ public:
     bool plattScale() const;
     bool setPlattScale(bool plattScale);
 
+    std::vector<std::string> loss() const;
+    VlSvmLossType lossStrToType(const std::string &lossString) const;
+    std::string lossTypeToString(const VlSvmLossType lossType) const;
+    bool setLoss(const std::vector<std::string> &loss);
+
 private:
     std::vector<double> mLambdas;
     std::vector<double> mLearningRates;
     std::vector<double> mMultipliers;
+    std::vector<std::string> mLoss;
     double mEpsilon;
     double mBias;
     bool mBinary;

@@ -15,7 +15,8 @@ SGDConfig::SGDConfig(const std::string &identifier,
                      const double bias,
                      const int32_t folds,
                      const bool platt,
-                     const bool binary)
+                     const bool binary,
+                     const std::string &loss)
     :
         MLConfig(identifier, folds),
         mClassifierFiles(outputFiles),
@@ -24,11 +25,12 @@ SGDConfig::SGDConfig(const std::string &identifier,
         mIterations(iterations),
         mBias(bias),
         mPlattScale(platt),
-        mBinary(binary)
+        mBinary(binary),
+        mLambdas({lambda}),
+        mLearningRates({learningRate}),
+        mMultipliers({multiplier}),
+        mLoss({loss})
 {
-    mLambdas.push_back(lambda);
-    mLearningRates.push_back(learningRate);
-    mMultipliers.push_back(multiplier);
 }
 
 
@@ -185,6 +187,7 @@ bool SGDConfig::fromJSON(std::string &file)
         const Json::Value lambdas = params[varName(mLambdas)];
         const Json::Value learningRates = params[varName(mLearningRates)];
         const Json::Value multipliers = params[varName(mMultipliers)];
+        const Json::Value loss = params[varName(mLoss)];
 
         if(!classifiers.empty()) {
             mClassifierFiles.clear();
@@ -229,6 +232,18 @@ bool SGDConfig::fromJSON(std::string &file)
             warning("No biars multiplier parameter specified, using fallback value.");
             mLambdas.push_back(1.0);
         }
+
+        if(!loss.empty()) {
+            mLoss.clear();
+            for(uint32_t idx = 0; idx < loss.size(); ++idx) {
+                mLoss.push_back(loss[idx].asString());
+            }
+        } else {
+            mLoss.clear();
+            warning("No loss function parameter specified, using fallback value.");
+            mLoss.push_back("hinge");
+        }
+
         return true;
     }
 }
@@ -253,6 +268,57 @@ bool SGDConfig::setPlattScale(bool plattScale)
 {
     mPlattScale = plattScale;
     return setConfigParameter<bool>(varName(mPlattScale), plattScale);
+}
+
+VlSvmLossType SGDConfig::lossStrToType(const std::__1::string &lossString) const
+{
+    if(lossString.compare("hinge") == 0) {
+        return VlSvmLossHinge;
+    } else if(lossString.compare("hinge2") == 0) {
+        return VlSvmLossHinge2;
+    } else if(lossString.compare("l2") == 0) {
+        return VlSvmLossL2;
+    } else if(lossString.compare("l1") == 0) {
+        return VlSvmLossL1;
+    } else if(lossString.compare("log") == 0) {
+        return VlSvmLossLogistic;
+    }
+    return VlSvmLossHinge;
+}
+
+std::vector<std::string> SGDConfig::loss() const
+{
+    return mLoss;
+}
+
+std::string SGDConfig::lossTypeToString(const VlSvmLossType lossType) const
+{
+    switch (lossType) {
+    case VlSvmLossHinge:
+        return "hinge";
+        break;
+    case VlSvmLossHinge2:
+        return "hinge2";
+        break;
+    case VlSvmLossL1:
+        return "l1";
+        break;
+    case VlSvmLossL2:
+        return "l2";
+        break;
+    case VlSvmLossLogistic:
+        return "log";
+        break;
+    default:
+        return "hinge";
+        break;
+    }
+}
+
+bool SGDConfig::setLoss(const std::vector<std::string> &loss)
+{
+    mLoss = loss;
+    return setConfigParameter<std::string>(varName(mLoss), loss);
 }
 
 std::vector<double> SGDConfig::lambdas() const
