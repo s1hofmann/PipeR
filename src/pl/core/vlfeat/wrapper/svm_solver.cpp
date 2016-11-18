@@ -42,6 +42,11 @@ void VlFeatWrapper::SVMSolver::setWeights(cv::Mat &weights)
     vl_svm_set_weights(this->svm, reinterpret_cast<double*>(m.data));
 }
 
+void VlFeatWrapper::SVMSolver::setLoss(VlSvmLossType loss)
+{
+    vl_svm_set_loss(this->svm, loss);
+}
+
 double VlFeatWrapper::SVMSolver::getEpsilon() const
 {
     return vl_svm_get_epsilon(this->svm);

@@ -23,7 +23,17 @@ public:
      */
     void setEpsilon(double epsilon);
 
+    /**
+     * @brief setWeights
+     * @param weights
+     */
     void setWeights(cv::Mat &weights);
+
+    /**
+     * @brief setLoss
+     * @param loss
+     */
+    void setLoss(VlSvmLossType loss);
 
     /**
      * @brief getEpsilon: Get the convergence threshold.
