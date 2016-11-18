@@ -270,7 +270,7 @@ bool SGDConfig::setPlattScale(bool plattScale)
     return setConfigParameter<bool>(varName(mPlattScale), plattScale);
 }
 
-VlSvmLossType SGDConfig::lossStrToType(const std::__1::string &lossString) const
+VlSvmLossType SGDConfig::lossStrToType(const std::string &lossString) const
 {
     if(lossString.compare("hinge") == 0) {
         return VlSvmLossHinge;
