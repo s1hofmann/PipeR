@@ -17,8 +17,10 @@ MLStep::MLStep(const cv::Ptr<ConfigContainer> config)
 cv::Mat1d MLStep::calculateWeights(const cv::Mat1d &labels) const
 {
     //Count positive and negative samples
-    double posCnt = std::count(labels.begin(), labels.end(), 1);
-    double negCnt = std::count(labels.begin(), labels.end(), -1);
+    double negativeLabel, positiveLabel;
+    cv::minMaxIdx(labels, &negativeLabel, &positiveLabel, NULL, NULL);
+    double posCnt = std::count(labels.begin(), labels.end(), positiveLabel);
+    double negCnt = std::count(labels.begin(), labels.end(), negativeLabel);
 
     //Compute reciprocal weights
     double posWeight = (posCnt > 0) ? negCnt/posCnt : 1;
@@ -29,9 +31,9 @@ cv::Mat1d MLStep::calculateWeights(const cv::Mat1d &labels) const
     cv::Mat1d weights(labels.size());
 
     for(size_t idx = 0; idx < elems; ++idx) {
-        if(labels.at<int32_t>(idx) == 1) {
+        if(labels.at<int32_t>(idx) == positiveLabel) {
             weights.at<double>(idx) = posWeight;
-        } else if(labels.at<int32_t>(idx) == -1) {
+        } else if(labels.at<int32_t>(idx) == negativeLabel) {
             weights.at<double>(idx) = negWeight;
         }
     }
