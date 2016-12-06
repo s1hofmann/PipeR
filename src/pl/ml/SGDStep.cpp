@@ -147,24 +147,24 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<double> multipliers = config->multipliers();
     std::vector<std::string> losses = config->loss();
 
-    if(!checkRangeProperties<double>(lambdas) || !checkRangeProperties<double>(learningRates) || !checkRangeProperties<double>(multipliers)) {
-        throw MLError("Config parameters do not span a valid range.", currentMethod, currentLine);
-    }
+//    if(!checkRangeProperties<double>(lambdas) || !checkRangeProperties<double>(learningRates) || !checkRangeProperties<double>(multipliers)) {
+//        throw MLError("Config parameters do not span a valid range.", currentMethod, currentLine);
+//    }
 
-    double lambdaStart, lambdaEnd, lambdaInc;
-    lambdaStart = lambdas[0];
-    lambdaEnd = lambdas[1];
-    lambdaInc = lambdas[2];
+//    double lambdaStart, lambdaEnd, lambdaInc;
+//    lambdaStart = lambdas[0];
+//    lambdaEnd = lambdas[1];
+//    lambdaInc = lambdas[2];
 
-    double lrStart, lrEnd, lrInc;
-    lrStart = learningRates[0];
-    lrEnd = learningRates[1];
-    lrInc = learningRates[2];
+//    double lrStart, lrEnd, lrInc;
+//    lrStart = learningRates[0];
+//    lrEnd = learningRates[1];
+//    lrInc = learningRates[2];
 
-    double mulStart, mulEnd, mulInc;
-    mulStart = multipliers[0];
-    mulEnd = multipliers[1];
-    mulInc = multipliers[2];
+//    double mulStart, mulEnd, mulInc;
+//    mulStart = multipliers[0];
+//    mulEnd = multipliers[1];
+//    mulInc = multipliers[2];
 
     double bestLambda = 0;
     double bestLearningRate = 0;
@@ -178,13 +178,17 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<cv::Mat1d> testLabelCache(config->folds());
 
     for(std::string loss : losses) {
-        for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
-            for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
-                for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
+        for(double lambda : lambdas) {
+//        for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
+            for(double lr : learningRates) {
+//            for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
+                for(double mul : multipliers) {
+//                for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
                     if(debugMode) {
                         debug("Lambda:", lambda);
                         debug("Learning rate:", lr);
                         debug("Multiplier:", mul);
+                        debug("Loss function:", loss);
                     }
 
                     double avgF = 0;
