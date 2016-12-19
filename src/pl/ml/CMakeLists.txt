@@ -1,7 +1,9 @@
 add_library(ml MLStep
                SGDStep
+               NCStep
                MLConfig
                SGDConfig
+               NCConfig
                crossvalidation
                platt
                metrics)
