@@ -10,7 +10,7 @@ TrainingProcessor::TrainingProcessor(int32_t argc, char *argv[])
     ap.addArgument("fex", "Feature descriptor.", false, {"sift"});
     ap.addArgument("fmask", "Feature mask.", true, {"vessel"});
     ap.addArgument("red", "Dimensionality reduction.", true, {"pca"});
-    ap.addArgument("learn", "Learning method.", false, {"sgd"});
+    ap.addArgument("learn", "Learning method.", false, {"sgd", "nc"});
     ap.addSwitch("d", "Debug mode");
 
     try {
@@ -96,6 +96,10 @@ int32_t TrainingProcessor::run()
             cv::Ptr<pl::SGDConfig> sgd = new pl::SGDConfig(learningAlgo);
             sgd->fromJSON(file);
             trainPipe.addClassificationStep(new pl::SGDStep(sgd));
+        } else if(!learningAlgo.compare("nc")) {
+            cv::Ptr<pl::NCConfig> nc = new pl::NCConfig(learningAlgo);
+            nc->fromJSON(file);
+            trainPipe.addClassificationStep(new pl::NCStep(nc));
         }
 
         if(debugMode) {
