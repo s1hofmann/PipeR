@@ -14,7 +14,7 @@ cv::Mat1b EncodingMethod::assign(const cv::Mat &data,
 {
     cv::Mat1b assignmentMap = cv::Mat1b::zeros(means.rows, data.rows);
 
-    cv::BFMatcher matcher(cv::NORM_L2);
+    cv::BFMatcher matcher;
     std::vector<cv::DMatch> assignments;
 
     matcher.match(data, means, assignments);
