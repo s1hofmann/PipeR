@@ -34,6 +34,8 @@
 #include "../postprocessing/DBScanConfig.h"
 #include "../ml/SGDConfig.h"
 #include "../ml/SGDStep.h"
+#include "../ml/NCConfig.h"
+#include "../ml/NCStep.h"
 #include "../ml/crossvalidation.h"
 #include "../core/utils/Shuffler.h"
 #include "../exception/error.h"
