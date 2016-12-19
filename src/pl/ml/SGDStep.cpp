@@ -254,15 +254,22 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         if(debugMode) { debug("Training..."); }
                         solver->train();
 
+                        calculateWeights(testLabelCache[fold]);
                         cv::Mat1d predictions = solver->predict(testDescriptorCache[fold]);
                         double negativeLabel, positiveLabel;
                         cv::minMaxIdx(testLabelCache[fold], &negativeLabel, &positiveLabel, NULL, NULL);
                         predictions.setTo(negativeLabel, predictions < 0);
-                        predictions.setTo(positiveLabel, predictions >= 0);
+                        predictions.setTo(positiveLabel, predictions > 0);
                         predictions = predictions.t();
 
+                        double p = Metrics::precision(predictions, testLabelCache[fold]);
+                        double r = Metrics::recall(predictions, testLabelCache[fold]);
                         double f = Metrics::f1(predictions, testLabelCache[fold]);
-                        if(debugMode) { debug("F1 score:", f); }
+                        if(debugMode) {
+                            debug("Precision:", p);
+                            debug("Recall:", r);
+                            debug("F1 score:", f);
+                        }
                         avgF += f;
                     }
                     avgF /= config->folds();

@@ -9,7 +9,7 @@ CrossValidation::CrossValidation()
 }
 
 std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> CrossValidation::createFolds(const unsigned long &length,
-                                                                                                                       const uint32_t folds)
+                                                                                                               const uint32_t folds)
 {
     std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> foldData;
     foldData.first.resize(folds);
