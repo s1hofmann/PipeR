@@ -59,12 +59,11 @@ cv::Mat NCStep::trainImpl(const bool debugMode,
 }
 
 cv::Mat NCStep::optimizeImpl(const bool debugMode,
-                             const cv::Mat &input,
-                             const cv::Mat &labels) const
+                             const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                             const std::vector<std::pair<cv::Mat, int32_t>> &data) const
 {
-    return this->trainImpl(debugMode,
-                           input,
-                           labels);
+    inform("No optimization required / implemented.");
+    return cv::Mat();
 }
 
 

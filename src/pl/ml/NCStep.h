@@ -5,7 +5,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 
-#include "../core/vlfeat/wrapper/sgdsolver.h"
 #include "NCConfig.h"
 
 #ifdef USE_TBB
@@ -33,8 +32,10 @@ public:
                               const cv::Mat &input,
                               const cv::Mat &labels) const;
 
-    virtual cv::Mat optimizeImpl(const bool debugMode,
-                                 const cv::Mat &input, const cv::Mat &labels) const;
+    cv::Mat optimizeImpl(const bool debugMode,
+                         const std::pair<std::vector<std::vector<uint32_t>>, std::vector<std::vector<uint32_t>>> &indices,
+                         const std::vector<std::pair<cv::Mat, int32_t> > &data) const;
+
 private:
     /**
      * @brief load Loads classifier data from a given file
@@ -124,6 +125,9 @@ private:
 
         this->save<T>(config->classifierFiles()[0], identifier, value);
     }
+
+    // MLStep interface
+public:
 };
 
 
