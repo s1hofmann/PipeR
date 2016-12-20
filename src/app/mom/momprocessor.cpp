@@ -114,9 +114,9 @@ int32_t MomProcessor::run()
     cv::Ptr<pl::SGDStep> textClassifier = new pl::SGDStep(textCfg);
     textPipe.addClassificationStep(textClassifier);
 
-    cv::Ptr<pl::SGDConfig> decoCfg = new pl::SGDConfig("deco_classifiers");
+    cv::Ptr<pl::NCConfig> decoCfg = new pl::NCConfig("deco_classifiers");
     decoCfg->fromJSON(file);
-    cv::Ptr<pl::SGDStep> decoClassifier = new pl::SGDStep(decoCfg);
+    cv::Ptr<pl::NCStep> decoClassifier = new pl::NCStep(decoCfg);
     decoPipe.addClassificationStep(decoClassifier);
 
     // Shows the whole pipeline
