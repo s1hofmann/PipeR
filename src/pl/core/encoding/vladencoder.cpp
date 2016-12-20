@@ -40,11 +40,11 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
 
     cv::Mat vladEncoded(assignments.rows, data.cols, CV_32F);
 
-//#ifdef USE_TBB
-//    tbb::parallel_for(int32_t(0), assignments.rows, int32_t(1), [&](int32_t cluster) {
-//#else
+#ifdef USE_TBB
+    tbb::parallel_for(int32_t(0), assignments.rows, int32_t(1), [&](int32_t cluster) {
+#else
     for(int32_t cluster = 0; cluster < assignments.rows; ++cluster) {
-//#endif
+#endif
         //Storage for every thread
         cv::Mat1f pAccumulator = cv::Mat1f::zeros(1, data.cols);
 
@@ -67,9 +67,9 @@ cv::Mat VladEncoder::encode(const cv::Mat &data)
         }
         pAccumulator.copyTo(vladEncoded.row(cluster));
     }
-//#ifdef USE_TBB
-//    );
-//#endif
+#ifdef USE_TBB
+    );
+#endif
 
     if((mNormType & NORM_SSR) == 1) {
         normalizeData(vladEncoded, NORM_SSR);
