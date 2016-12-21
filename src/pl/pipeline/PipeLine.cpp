@@ -461,7 +461,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int3
                     fileLog.report("Unable to save descriptor", descriptorFile, ". Skipping!");
                     continue;
                 } else {
-                    fileLog.report("Wrote descriptor", descriptorFile, ".");
+                    fileLog.inform("Wrote descriptor", descriptorFile, ".");
                     continue;
                 }
             } else {
@@ -497,7 +497,7 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int3
     // Apply dimensionality reduction
     if(!this->mDimensionalityReduction.empty() && mPipelineConfig->rebuildPca()) {
         if(mDebugMode) {
-            consoleLog.inform("Perfom dimensionality reduction...");
+            consoleLog.inform("Perfoming dimensionality reduction...");
         }
         if(!this->mDebugMode) {
             reduced = this->mDimensionalityReduction->train(allFeatures);
@@ -533,7 +533,7 @@ void PipeLine::train(const std::vector<std::pair<std::string, int32_t>> &input) 
 
     // Load descriptors with corresponding labels
     std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
-                                                                                               mPipelineConfig->maxDescriptors());
+                                                                                                   mPipelineConfig->maxDescriptors());
 
     if(mDebugMode) {
         debug.inform("Data size:", filesWithLabels.size());
@@ -626,7 +626,7 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int32_t>> &inpu
 
     // Load descriptors with corresponding labels
     std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
-                                                                                               mPipelineConfig->maxDescriptors());
+                                                                                                   mPipelineConfig->maxDescriptors());
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
