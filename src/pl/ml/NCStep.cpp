@@ -109,12 +109,19 @@ cv::Mat NCStep::predictImpl(const bool debugMode,
     std::vector<cv::DMatch> matches;
     cv::BFMatcher matcher;
 
-    if(input.type() != CV_64F) {
-        cv::Mat tmp;
-        input.convertTo(tmp, CV_64F);
-        matcher.match(tmp, classifierData, matches);
+    cv::Mat cl;
+    if(classifierData.type() != CV_32F) {
+        classifierData.convertTo(cl, CV_32F);
     } else {
-        matcher.match(input, classifierData, matches);
+        cl = classifierData;
+    }
+
+    if(input.type() != CV_32F) {
+        cv::Mat tmp;
+        input.convertTo(tmp, CV_32F);
+        matcher.match(tmp, cl, matches);
+    } else {
+        matcher.match(input, cl, matches);
     }
     for(size_t i = 0; i < matches.size(); ++i) {
         results.at<uchar>(matches[i].queryIdx, matches[i].trainIdx) = 1;
