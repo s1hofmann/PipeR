@@ -169,7 +169,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     double bestLambda = 0;
     double bestLearningRate = 0;
     double bestMultiplier = 0;
-    double bestF = 0;
+    double bestMetric = 0;
     std::string bestLoss;
 
     std::vector<cv::Mat1d> trainingsDescriptorCache(config->folds());
@@ -177,12 +177,12 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
     std::vector<cv::Mat1d> testDescriptorCache(config->folds());
     std::vector<cv::Mat1d> testLabelCache(config->folds());
 
-    for(std::string loss : losses) {
-        for(double lambda : lambdas) {
+    for(double lambda : lambdas) {
 //        for(double lambda = lambdaStart; lambda < lambdaEnd; lambda += lambdaInc) {
-            for(double lr : learningRates) {
+        for(double lr : learningRates) {
 //            for(double lr = lrStart; lr < lrEnd; lr += lrInc) {
-                for(double mul : multipliers) {
+            for(double mul : multipliers) {
+                for(std::string loss : losses) {
 //                for(double mul = mulStart; mul < mulEnd; mul += mulInc) {
                     if(debugMode) {
                         debug("Lambda:", lambda);
@@ -191,7 +191,7 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         debug("Loss function:", loss);
                     }
 
-                    double avgF = 0;
+                    double avgMetric = 0;
 
                     // Iterate over folds
                     for(size_t fold = 0; fold < config->folds(); ++fold) {
@@ -270,23 +270,23 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                             debug("Recall:", r);
                             debug("F1 score:", f);
                         }
-                        avgF += f;
+                        avgMetric += p;
                     }
-                    avgF /= config->folds();
+                    avgMetric /= config->folds();
 
-                    if(avgF > bestF) {
+                    if(avgMetric > bestMetric) {
                         bestLoss = loss;
                         bestLambda = lambda;
                         bestLearningRate = lr;
                         bestMultiplier = mul;
-                        bestF = avgF;
+                        bestMetric = avgMetric;
                     }
                 }
             }
         }
     }
 
-    debug("Best F1 score:", bestF);
+    debug("Best metric score:", bestMetric);
     debug("Best loss:", bestLoss);
     debug("Best lambda:", bestLambda);
     debug("Best learning rate:", bestLearningRate);
