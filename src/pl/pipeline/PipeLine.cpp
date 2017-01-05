@@ -625,8 +625,7 @@ void PipeLine::optimize(const std::vector<std::pair<std::string, int32_t>> &inpu
                         debug);
 
     // Load descriptors with corresponding labels
-    std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile(),
-                                                                                                   mPipelineConfig->maxDescriptors());
+    std::vector<std::pair<std::string, int32_t>> filesWithLabels = FileUtil::getFilesFromLabelFile(mPipelineConfig->descriptorLabelFile());
 
     if(mDebugMode) {
         if(!this->mDimensionalityReduction.empty() && !this->mEncoding.empty()) {
