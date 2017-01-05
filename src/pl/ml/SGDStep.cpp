@@ -237,8 +237,9 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                         }
 
                         if(debugMode) { debug("Setting up SVM."); }
+
                         cv::Ptr<VlFeatWrapper::SGDSolver> solver = new VlFeatWrapper::SGDSolver(trainingsDescriptorCache[fold],
-                                                                                                trainingsDescriptorCache[fold],
+                                                                                                trainingsLabelCache[fold],
                                                                                                 lambda);
 
                         if(debugMode) { debug("Setting parameters."); }
@@ -270,7 +271,8 @@ cv::Mat SGDStep::optimizeImpl(const bool debugMode,
                             debug("Recall:", r);
                             debug("F1 score:", f);
                         }
-                        avgMetric += p;
+                        avgMetric += f;
+                        solver.release();
                     }
                     avgMetric /= config->folds();
 
