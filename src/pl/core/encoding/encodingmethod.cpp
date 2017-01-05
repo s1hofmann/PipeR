@@ -16,8 +16,14 @@ cv::Mat1b EncodingMethod::assign(const cv::Mat &data,
 
     cv::BFMatcher matcher;
     std::vector<cv::DMatch> assignments;
+    cv::Mat tmp;
+    if(data.type() != CV_32F) {
+        data.convertTo(tmp, CV_32F);
+    } else {
+        tmp = data;
+    }
 
-    matcher.match(data, means, assignments);
+    matcher.match(tmp, means, assignments);
 
     for(size_t i = 0; i < assignments.size(); ++i) {
         assignmentMap.at<uchar>(assignments[i].trainIdx, assignments[i].queryIdx) = 1;

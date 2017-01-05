@@ -20,13 +20,19 @@ VladEncoder::~VladEncoder() {}
 
 void VladEncoder::loadData(const std::string &file_name)
 {
+    cv::Mat tmp;
     cv::FileStorage fs(file_name, cv::FileStorage::READ);
     if(fs["means"].isNone() || fs["means"].empty()) {
         std::stringstream s;
         s << "No node 'means' in file: " << file_name << std::endl;
         throw pl::EncodingError(s.str(), currentMethod, currentLine);
     }
-    fs["means"] >> mMeans;
+    fs["means"] >> tmp;
+    if(tmp.type() != CV_32F) {
+        tmp.convertTo(mMeans, CV_32F);
+    } else {
+        mMeans = tmp;
+    }
     fs.release();
 }
 
