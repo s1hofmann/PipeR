@@ -21,8 +21,6 @@ uint32_t Metrics::truePositives(const cv::Mat1d predictions, const cv::Mat1d lab
     tp.setTo(1, intPredictions == intLabels);
     tp.setTo(0, intPredictions == static_cast<int>(negativeLabel));
 
-    std::cout << "true positives: " << cv::countNonZero(tp) << std::endl;
-
     return cv::countNonZero(tp);
 }
 
@@ -36,8 +34,6 @@ uint32_t Metrics::falsePositives(const cv::Mat1d predictions, const cv::Mat1d la
     cv::Mat1b tp = cv::Mat1b::zeros(predictions.size());
     tp.setTo(1, intPredictions != intLabels);
     tp.setTo(0, intPredictions == static_cast<int>(negativeLabel));
-
-    std::cout << "false positives " << cv::countNonZero(tp) << std::endl;
 
     return cv::countNonZero(tp);
 }
@@ -53,8 +49,6 @@ uint32_t Metrics::trueNegatives(const cv::Mat1d predictions, const cv::Mat1d lab
     tp.setTo(1, intPredictions == intLabels);
     tp.setTo(0, intPredictions == static_cast<int>(positiveLabel));
 
-    std::cout << "true negatives: " << cv::countNonZero(tp) << std::endl;
-
     return cv::countNonZero(tp);
 }
 
@@ -68,8 +62,6 @@ uint32_t Metrics::falseNegatives(const cv::Mat1d predictions, const cv::Mat1d la
     cv::Mat1b tp = cv::Mat1b::zeros(predictions.size());
     tp.setTo(1, intPredictions != intLabels);
     tp.setTo(0, intPredictions == static_cast<int>(positiveLabel));
-
-    std::cout << "false negatives: " << cv::countNonZero(tp) << std::endl;
 
     return cv::countNonZero(tp);
 }
