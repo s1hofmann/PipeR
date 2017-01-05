@@ -4,7 +4,7 @@ namespace pl {
 
 ClusterError::ClusterError(const std::string &msg, const std::string &where, const int32_t line)
     :
-        BaseError(msg, where, line)
+        BaseError("ClusterError", msg, where, line)
 {
 }
 

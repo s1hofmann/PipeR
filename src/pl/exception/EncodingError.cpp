@@ -4,7 +4,7 @@ namespace pl {
 
 EncodingError::EncodingError(const std::string &msg, const std::string &where, const int32_t line)
     :
-        BaseError(msg, where, line)
+        BaseError("EncodingError", msg, where, line)
 {
 }
 
