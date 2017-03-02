@@ -7,6 +7,19 @@ from os.path import join, split, splitext, abspath
 from sys import argv
 from argparse import ArgumentParser
 
+class VersionInfo(object):
+    @staticmethod
+    def major():
+        return int(cv2.__version__.split('.')[0])
+
+    @staticmethod
+    def minor():
+        return int(cv2.__version__.split('.')[1])
+
+    @staticmethod
+    def patch():
+        return int(cv2.__version__.split('.')[2])
+
 
 class Rect(object):
     def __init__(self, x, y, width, height):
@@ -69,6 +82,7 @@ class AnnotationFile(object):
         self._tree = ET.parse(annotation_file)
         self._root = self._tree.getroot()
         self._annotation_objects = []
+        version = VersionInfo.major()
 
         for elem in self._root.iter('file'):
             ao = AnnotationObject(elem.attrib['filename'])
@@ -79,8 +93,12 @@ class AnnotationFile(object):
                 for poly in o.findall('fixpoints'):
                     coords = []
                     points = poly.text.split(",")
-                    for idx in range(0, len(points) - 1, 2):
-                        coords.append([float(points[idx]), float(points[idx + 1])])
+                    if version == 2:
+                        for idx in range(0, len(points) - 1, 2):
+                            coords.append([[float(points[idx]), float(points[idx + 1])]])
+                    elif version == 3:
+                        for idx in range(0, len(points) - 1, 2):
+                            coords.append([float(points[idx]), float(points[idx + 1])])
                     rect = cv2.boundingRect(np.array(coords, dtype=np.float32))
                     ao.add_box(rect[0], rect[1], rect[2], rect[3])
             if not ao.empty:
@@ -106,6 +124,7 @@ class SampleGenerator(object):
 
     def process(self, annotation_file):
         af = AnnotationFile(annotation_file)
+        print("Processing {} objects.".format(len(af.annotation_objects)))
         idx = 0
         for ao in af.annotation_objects:
             img = cv2.imread(join(self._working_dir, ao.filename))
