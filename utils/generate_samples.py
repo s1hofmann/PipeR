@@ -141,11 +141,18 @@ class SampleGenerator(object):
                         max_x = max(max_x, bbox.x + bbox.width)
                         min_y = min(min_y, bbox.y)
                         max_y = max(max_y, bbox.y + bbox.height)
-                        x = np.random.randint(bbox.x, bbox.x + bbox.width - self._width)
-                        y = np.random.randint(bbox.y, bbox.y + bbox.height - self._height)
-                        filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
-                        cv2.imwrite(join(self._positive_folder, filename), img[x:x+self._width, y:y+self._height])
-                        idx += 1
+                        left = bbox.x
+                        right = bbox.x + bbox.width - self._width
+                        top = bbox.y
+                        bottom = bbox.y + bbox.height - self._height
+                        if right <= left or bottom >= top:
+                            continue
+                        else:
+                            x = np.random.randint(left, right)
+                            y = np.random.randint(top, bottom)
+                            filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                            cv2.imwrite(join(self._positive_folder, filename), img[x:x+self._width, y:y+self._height])
+                            idx += 1
 
                 left_range = min_x - self._width
                 right_range = img.shape[0] - max_x - self._width
