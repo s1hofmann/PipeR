@@ -123,6 +123,9 @@ class SampleGenerator(object):
         self._negative_folder = negative_folder
         self._max_per_class = max_per_class
 
+    def assemble_filename(self, annotation_file, index, extension):
+        return "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(index), extension])
+
     def process(self, annotation_file):
         af = AnnotationFile(annotation_file)
         print("Processing {} objects.".format(len(af.annotation_objects)))
@@ -132,17 +135,20 @@ class SampleGenerator(object):
             img = cv2.imread(join(self._working_dir, ao.filename))
             file_ext = splitext(ao.filename)[-1]
             if img is not None:
+                rows = img.shape[0]
+                cols = img.shape[1]
+
                 samples_per_bounding_box = int(self._max_per_class / len(ao.bounding_boxes))
                 min_x = 10000
                 max_x = -10000
                 min_y = 10000
                 max_y = -10000
                 for bbox in ao.bounding_boxes:
+                    min_x = min(min_x, bbox.x)
+                    max_x = max(max_x, bbox.x + bbox.width)
+                    min_y = min(min_y, bbox.y)
+                    max_y = max(max_y, bbox.y + bbox.height)
                     for i in range(samples_per_bounding_box):
-                        min_x = min(min_x, bbox.x)
-                        max_x = max(max_x, bbox.x + bbox.width)
-                        min_y = min(min_y, bbox.y)
-                        max_y = max(max_y, bbox.y + bbox.height)
                         left = bbox.x
                         right = bbox.x + bbox.width - self._width
                         top = bbox.y
@@ -153,10 +159,10 @@ class SampleGenerator(object):
                             try:
                                 x = np.random.randint(left, right)
                                 y = np.random.randint(top, bottom)
-                                filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                                filename = self.assemble_filename(annotation_file, idx, file_ext)
                                 snippet = img[y:y+self._height, x:x+self._width]
                                 if area(snippet) == self._area:
-                                    cv2.imwrite(join(self._positive_folder, filename), img[y:y+self._height, x:x+self._width])
+                                    cv2.imwrite(join(self._positive_folder, filename), snippet)
                             except ValueError:
                                 print("ValueError")
                                 print("Left: {}, Right: {}".format(left,right))
@@ -164,23 +170,23 @@ class SampleGenerator(object):
                             idx += 1
 
                 left_range = min_x - self._width
-                right_range = img.shape[0] - max_x - self._width
+                right_range = cols - max_x - self._width
                 top_range = min_y - self._height
-                bottom_range = img.shape[1] - max_y - self._height
+                bottom_range = rows - max_y - self._height
                 step_size = int(left_range > 0) + int(right_range > 0) + int(top_range > 0) + int(bottom_range > 0)
                 for i in range(0, self._max_per_class, step_size):
                     if left_range > 0:
-                        y = np.random.randint(0, img.shape[1] - self._height)
+                        y = np.random.randint(0, rows - self._height)
                         x = np.random.randint(0, left_range)
-                        filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                        filename = self.assemble_filename(annotation_file, idx, file_ext)
                         snippet = img[y:y+self._height, x:x+self._width]
                         if area(snippet) == self._area:
                             cv2.imwrite(join(self._negative_folder, filename), snippet)
                             idx+=1
                     if right_range > 0:
-                        y = np.random.randint(0, img.shape[1] - self._height)
-                        x = np.random.randint(max_x, img.shape[0] - self._width)
-                        filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                        y = np.random.randint(0, rows - self._height)
+                        x = np.random.randint(max_x, cols - self._width)
+                        filename = self.assemble_filename(annotation_file, idx, file_ext)
                         snippet = img[y:y+self._height, x:x+self._width]
                         if area(snippet) == self._area:
                             cv2.imwrite(join(self._negative_folder, filename), snippet)
@@ -188,16 +194,16 @@ class SampleGenerator(object):
 
                     if top_range > 0:
                         y = np.random.randint(0, top_range)
-                        x = np.random.randint(0, img.shape[0] - self._width)
-                        filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                        x = np.random.randint(0, cols - self._width)
+                        filename = self.assemble_filename(annotation_file, idx, file_ext)
                         snippet = img[y:y+self._height, x:x+self._width]
                         if area(snippet) == self._area:
                             cv2.imwrite(join(self._negative_folder, filename), snippet)
                             idx+=1
                     if bottom_range > 0:
-                        y = np.random.randint(max_y, img.shape[1] - self._height)
-                        x = np.random.randint(0, img.shape[0] - self._width)
-                        filename = "".join(["_".join(split(annotation_file)[-1].split(".")[:-1]), '_', str(idx), file_ext])
+                        y = np.random.randint(max_y, rows - self._height)
+                        x = np.random.randint(0, cols - self._width)
+                        filename = self.assemble_filename(annotation_file, idx, file_ext)
                         snippet = img[y:y+self._height, x:x+self._width]
                         if area(snippet) == self._area:
                             cv2.imwrite(join(self._negative_folder, filename), snippet)
@@ -205,9 +211,9 @@ class SampleGenerator(object):
 
 def area(ndarr):
     area = 1
-    for dim in ndarr.shape:
+    for dim in ndarr.shape[:2]:
         area *= dim
-    return area/ndarr.shape[2]
+    return area
 
 
 if __name__ == '__main__':
