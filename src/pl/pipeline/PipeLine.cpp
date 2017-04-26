@@ -450,8 +450,14 @@ void PipeLine::generateDescriptors(const std::vector<std::pair<std::string, int3
                     postProcessed = postProcessed.colRange(0, postProcessed.cols - 2);
                 }
 
-                QFileInfo info(QString::fromStdString(input[idx].first));
-                std::string descriptorFile = info.baseName().toStdString() + ".ocvmb";
+                QString fileName = QString::fromStdString(input[idx].first);
+                QFileInfo info(fileName);
+                QStringList fileNameParts = info.fileName().split(".");
+                std::string descriptorFile;
+                for(size_t idx = 0; idx < fileNameParts.size() - 1; ++idx) {
+                    descriptorFile += fileNameParts[idx].toStdString();
+                }
+                descriptorFile += ".ocvmb";
                 bool saved = FileUtil::saveDescriptorWithLabel(postProcessed,
                                                                input[idx].second,
                                                                mPipelineConfig->descriptorDir(),
