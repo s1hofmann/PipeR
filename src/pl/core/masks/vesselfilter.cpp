@@ -14,6 +14,7 @@ VesselFilter::VesselFilter(const double_t sigma,
     cv::getDerivKernels(this->mDxx, this->mDyy, 2, 2, 3);
     cv::getDerivKernels(this->mDx, this->mDy, 1, 1, 3);
     this->mId = (cv::Mat1i(3, 1) << 0, 1, 0);
+    this->mId.convertTo(this->mId, this->mDyy.type());
 }
 
 
