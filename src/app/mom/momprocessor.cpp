@@ -25,7 +25,7 @@ MomProcessor::MomProcessor(int32_t argc, char *argv[])
             mStages = std::atoi(mArguments["stages"].c_str());
         }
         if(mArguments["window"].empty()) {
-            mWindowSize = 64;
+            mWindowSize = 256;
         } else {
             mWindowSize = std::atoi(mArguments["window"].c_str());
         }
@@ -178,6 +178,9 @@ int32_t MomProcessor::run()
 
 #ifdef MOM_TEXT
                 // Process text detection
+                if(debugMode) {
+                    console.debug("Calculating scale space.");
+                }
                 pl::GaussianScaleSpace sp(mOctaves, mStages);
                 std::vector<cv::Mat> scales;
                 try {
@@ -192,6 +195,9 @@ int32_t MomProcessor::run()
                 // Structuring element to dilate masks
                 cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
 
+                if(debugMode) {
+                    console.debug("Beginning multi scale detection.");
+                }
                 for(int32_t idx = scales.size() - 1; idx > -1; --idx) {
                     int32_t windowSize = mWindowSize;
                     int32_t width = scales[idx].cols;
@@ -211,14 +217,23 @@ int32_t MomProcessor::run()
                             cv::Range rows(r, r + windowSize);
                             cv::Range cols(c, c + windowSize);
                             cv::Mat part = scales[idx](rows, cols);
+                            if(debugMode) {
+                                console.debug("Running text pipe.");
+                            }
                             cv::Mat s = textPipe.run(part);
                             if(!s.empty() && s.at<float_t>(0) > 0) {
                                 score(rows, cols).setTo(255);
                             }
                         }
                     }
+                    if(debugMode) {
+                        console.debug("Generating text mask.");
+                    }
                     cv::resize(score, score, input.size());
                     cv::dilate(score, score, structuringElement);
+                    if(debugMode) {
+                        console.debug("Setting text mask.");
+                    }
                     textPipe.setFeatureDetectionMask(score);
 
                     textResult = score;

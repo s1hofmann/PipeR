@@ -754,6 +754,7 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
      * PREPROCESSING
      *********************************/
     if(!this->mPreprocessing.empty()) {
+        debug.inform("Preprocessing.");
         // First preprocessing step
         // Generate mask
         if(!this->mPreprocessing[0].second.empty()) {
@@ -795,9 +796,11 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
     cv::Mat featureMask;
 
     if(!this->mFeatureDetection.first.empty()) {
+        debug.inform("Extracting features.");
         if(!this->mFeatureDetectMask.empty()) {
             featureMask = this->mFeatureDetectMask;
         } else if(!this->mFeatureDetection.second.empty()) {
+            debug.inform("Calculating featuremask.");
             featureMask = this->mFeatureDetection.second->create(prep);
             // Check if an all zero mask was generated, in that case, neglect it
             if(cv::countNonZero(featureMask) == 0) {
@@ -821,6 +824,7 @@ cv::Mat PipeLine::run(const cv::Mat &inputMat)
     }
 
     if(!features.empty()) {
+        debug.inform("Postprocessing.");
         /*********************************
          * POSTPROCESSING
          *********************************/

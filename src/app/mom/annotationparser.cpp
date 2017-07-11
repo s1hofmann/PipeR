@@ -68,7 +68,7 @@ cv::Rect AnnotationParser::createBoundingBox(const std::string &annotation) cons
     return cv::Rect(std::stoi(strCoords[0]),
                     std::stoi(strCoords[1]),
                     std::stoi(strCoords[2]),
-            std::stoi(strCoords[3]));
+                    std::stoi(strCoords[3]));
 }
 
 std::vector<cv::Point> AnnotationParser::createContour(const std::string &annotation) const
